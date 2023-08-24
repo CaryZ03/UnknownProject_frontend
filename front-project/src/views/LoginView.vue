@@ -1,29 +1,87 @@
 <template>
-  <header>
-    <h2 class="logo">logo</h2>
-    <nav class="navigation">
-      <a href="#"><router-link to="community">community</router-link></a>
-      <a href="#"><router-link to="design">design</router-link> </a>
-      <a href="#"><router-link to="workspace">workspace</router-link></a>
-      <a href="#"><router-link to="chat">chat</router-link></a>
-      <button class="btnLogin-popup"><router-link to="Login">Login</router-link></button>
-    </nav>
-  </header>
+    <body>
+        <header>
+            <h2 class="logo">logo</h2>
+            <nav class="navigation">
+                <a href="#">Home</a>
+                <a href="#">About </a>
+                <a href="#">Service</a>
+                <a href="#">Contact</a>
+                <button class="btnLogin-popup">Login</button>
+            </nav>
+        </header>
+
+        <div class="wrapper">
+            <span class="icon-close"><ion-icon name="close-outline"></ion-icon></span>
+
+            <div class="form-box login">
+                <h2>Login</h2>
+                <form action="#">
+                    <div class="input-box">
+                        <span class="icon"><ion-icon name="mail-unread"></ion-icon></span>
+                        <input type="text" required>
+                        <label>Email</label>
+                    </div>
+
+                    <div class="input-box">
+                        <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+                        <input type="password" required>
+                        <label>password</label>
+                    </div>
+
+                    <div class="remember-forgot">
+                        <label><input type="checkbox">Remember Me</label>
+                        <a href="#">Forgot Password</a>
+                    </div>
+
+                    <button type="submit" class="btn">Login</button>
+
+                    <div class="login-register">
+                        <p>Don't have an account?<a href="#" class="register-link">Register</a></p>
+                    </div>
+                </form>
+            </div>
+
+            <div class="form-box register">
+                <h2>Registeration </h2>
+                <form action="#">
+                    <div class="input-box">
+                        <span class="icon"><ion-icon name="person"></ion-icon></span>
+                        <input type="text" required>
+                        <label>Email</label>
+                    </div>
+
+                    <div class="input-box">
+                        <span class="icon"><ion-icon name="mail-unread"></ion-icon></span>
+                        <input type="text" required>
+                        <label>Username</label>
+                    </div>
+
+                    <div class="input-box">
+                        <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+                        <input type="password" required>
+                        <label>password</label>
+                    </div>
+
+                    <div class="remember-forgot">
+                        <label><input type="checkbox">agree to the terms & conditions</label>
+                    </div>
+
+                    <button type="submit" class="btn">Register</button>
+
+                    <div class="login-register">
+                        <p>Already have an account?<a href="#" class="login-link">Login</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+        <!-- <script src="script.js"></script>
+        <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+        <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script> -->
+    </body>
 </template>
-
-<script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
-
-
-export default {
-  name: 'HomeView',
-  components: {
-    HelloWorld
-  }
-}
-</script>
-
 
 <script>
 export default {
@@ -223,18 +281,13 @@ header {
 
 
 
-
-
-
-
-
 .wrapper .icon-close {
     position: absolute;
     top: 0;
     right: 0;
     width: 45px;
     height: 45px;
-    background: #fff;
+    background: #7f7a7a;
     font-size: 2em;
     display: flex;
     color: #fff;
@@ -325,7 +378,7 @@ header {
     width: 100%;
     height: 45px;
 
-    background: #fff;
+    background: #424242;
     border: none;
     outline: none;
     border-radius: 6px;

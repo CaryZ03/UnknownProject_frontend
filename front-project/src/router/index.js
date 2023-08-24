@@ -9,15 +9,21 @@ const Design = () => import('../views/DesignView.vue')
 const WorkSpace = () => import('../views/WorkSpaceView.vue')
 const Chat = () =>import('../views/ChatView.vue')
 // const Author = () =>import('../views/')
-
+const Login = () =>import('../views/LoginView.vue')
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'home',
+    name: 'HomeView',
     component: HomeView
+
+  },
+  {
+    path: '/Login',
+    name: 'Login',
+    component: Login
   },
   {
     path: '/about',
