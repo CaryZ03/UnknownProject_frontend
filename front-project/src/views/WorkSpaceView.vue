@@ -69,57 +69,78 @@
       <div v-if="isMainVisible">
 
           <!-- 按钮1 -->
-          <div v-if="activeIndex ===0">
+          <transition name="el-zoom-in-center">
+            <div v-if="activeIndex ===0">
 
-            <span  class="inherited-styles-for-exported-element">项目列表</span>
-        
-          <el-table
-          :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
-          :default-sort = "{prop: 'date', order: 'descending'}"
-          style="width: 100%" >
-    <el-table-column
-      label="开始时间"
-      prop="date" sortable icon="el-icon-time">
-      <template slot-scope="scope">
-        <i class="el-icon-time"></i>
-        <span style="margin-left: 10px">{{ scope.row.date }}</span>
-      </template>
-    </el-table-column>
-    <el-table-column
-      label="项目名称" sortable
-      prop="name">
-    </el-table-column>
-    <el-table-column
-      align="right">
-      <template slot="header" slot-scope="scope">
-        <el-input
-          v-model="search"
+              <span  class="inherited-styles-for-exported-element">项目列表</span>
+          
+            <el-table
+            :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
+            :default-sort = "{prop: 'date', order: 'descending'}"
+            style="width: 100%" >
+      <el-table-column
+        label="开始时间"
+        prop="date" sortable icon="el-icon-time">
+        <template slot-scope="scope">
+          <i class="el-icon-time"></i>
+          <span style="margin-left: 10px">{{ scope.row.date }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="项目名称" sortable
+        prop="name">
+      </el-table-column>
+      <el-table-column
+        align="right">
+        <template slot="header" slot-scope="scope">
+          <el-input
+            v-model="search"
+            size="mini"
+            placeholder="输入关键字搜索"/>
+        </template>
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
+          <el-button
+            size="mini"
+            type="danger"
+            @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
+        </template>
+      </el-table-column>
+            </el-table>
+
+            <div class="program-bottom">
+               <el-button
           size="mini"
-          placeholder="输入关键字搜索"/>
-      </template>
-      <template slot-scope="scope">
-        <el-button
+          type="success" class="bottom-button"
+          >新建项目</el-button>
+          <el-button
           size="mini"
-          @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
-        <el-button
-          size="mini"
-          type="danger"
-          @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
-      </template>
-    </el-table-column>
-          </el-table>
-          </div>
-     
+          type="success" class="bottom-button"
+          >新建项目</el-button>
+            </div>
+           
+            </div>
+          </transition>
 
           <!-- 按钮2 -->
-          <el-table :data="tableData" v-if="activeIndex === 1">
-        <el-table-column prop="date" label="日期" width="140">
-        </el-table-column>
-        <el-table-column prop="name" label="姓名" width="120">
-        </el-table-column>
-        <el-table-column prop="address" label="地址">
-        </el-table-column>
-          </el-table>
+          <transition name="el-zoom-in-center">  
+            <div v-if="activeIndex === 1">
+              <span  class="inherited-styles-for-exported-element">文档列表</span>
+
+              <el-table :data="tableData" >
+          <el-table-column prop="date" label="日期" width="140">
+          </el-table-column>
+          <el-table-column prop="name" label="姓名" width="120">
+          </el-table-column>
+          <el-table-column prop="address" label="地址">
+          </el-table-column>
+            </el-table>
+            </div>
+              
+          </transition>
+          
       </div>
       
     </el-main>
@@ -170,8 +191,14 @@ export default {
   
     methods: {
       async changeContent(index) {
+       this.activeIndex = -1;
+          setTimeout(() => {
+          this.activeIndex = index;
+        },300); // 这里设置一个延迟，
+       
+      
 
-    this.activeIndex = index;
+
     // 根据按钮索引来执行相应的操作，比如请求数据或更新页面内容
     // 示例中直接在控制台输出信息来表示切换内容
    
@@ -194,6 +221,18 @@ export default {
 
 
 <style scoped>
+
+.bottom-button{
+  margin: 10px;
+}
+.program-bottom{
+  display: flex;
+  background-color: #faf9f9;
+  margin: 22px 0 0;
+  padding: 0 ;
+  border-radius: 5px;
+  justify-content: flex-end; 
+}
    .el-header {
     background-color: #212427;
     color: #e7e2e2;
