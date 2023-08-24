@@ -31,7 +31,7 @@ export default {
   },
   mounted() {
     // 连接到聊天室的Socket服务器
-    const socket = io('http://localhost:3000');
+    const socket = io('http://localhost:8080');
 
     // 监听来自服务器的新消息
     socket.on('newMessage', (message) => {
@@ -41,7 +41,7 @@ export default {
   methods: {
     sendMessage() {
       // 发送消息到服务器
-      axios.post('http://localhost:3000/messages', { text: this.messageText })
+      axios.post('http://localhost:8080/messages', { text: this.messageText })
         .then(() => {
           this.messageText = '';
         })
