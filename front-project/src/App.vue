@@ -10,6 +10,6 @@
 
 
 
-<style scoped>
+<style scope>
 
 </style>
