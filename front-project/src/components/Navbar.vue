@@ -5,10 +5,8 @@
         <router-link to="/contact">Contact</router-link>
     </nav>     -->
     <el-menu
-    :default-active="activeIndex2"
     class="el-menu-demo"
     mode="horizontal"
-    @select="handleSelect"
     background-color="#545c64"
     text-color="#fff"
     active-text-color="#ffd04b">
@@ -28,7 +26,7 @@
   <el-menu-item index="3"><router-link to="/Community" class="menu-item-custom">Community</router-link></el-menu-item>
   <el-menu-item index="4"><a href="https://www.ele.me" target="_blank" class="menu-item-custom">订单管理</a></el-menu-item>
   <div class="menu-right-top">
-    <el-menu-item index="5" class="menu-avatar"><el-avatar :size="small" :src="circleUrl"></el-avatar>
+    <el-menu-item index="5" class="menu-avatar"><el-avatar size="small" :src="circleUrl"></el-avatar>
         <el-divider direction="vertical"></el-divider>
         用户名</el-menu-item>
     <el-menu-item index="6" class="menu-bell">
