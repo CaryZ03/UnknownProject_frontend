@@ -2,48 +2,138 @@
   <div class="background">
     <el-container style="height: 100%; border: 2px solid #eee">
   <!-- 侧边栏 -->
+  
   <el-aside width="250px" style="background-color:#2a2d30 ;height: 100%; padding: 0;">
+    
+    <!-- aside top -->
+    <div class="aside-top">
+      <i class="el-icon-user"></i>
+      <span style="padding-left: 8px;
+padding-right: 7px;">{{ teamCreater }}的团队</span>
+      
+      <el-popover
+  placement="right"
+  width="400"
+  trigger="click" >
+        <!--内容  -->
+        <div class=" inherited-styles-for-exported-element2">
+          
+          <!-- 用户姓名栏 -->
+          <div class="flex-shrink-0 p-2 text-ellipsis h-9 text-grey3">
+            {{ teamCreater }}
+          </div>
+          
+          <!-- 团队空间列表 -->
+          <div class="overflow-y-auto pb-1 select-none">
+            <div>
+              <!-- 空间列表item 1 -->
+              <div style="opacity: 1;">
+                <div data-test-id="aside-space-item" class="flex relative items-center justify-between cursor-pointer px-2 rounded text-black animate-hover h-[58px]">
+                  <div class="flex items-center w-10/12">
+                    <span class="mr-2 flex items-center">
+                      
+                        <div class="flex items-center">
+                      
+                          <div class="relative">
+                            <span class="text-h4 flex flex-shrink-0 
+                            select-none items-center justify-center rounded 
+                            uppercase leading-none text-black2 
+                            w-[34px] h-[34px]" 
+                            style="font-size: 20px; 
+                            background-color: rgb(250, 225, 67);">
+                            m
+                            </span>
+                          </div>
+
+                        </div>
+                    </span>
+
+                    <div class="w-full text-ellipsis">
+                      <div data-no-cancel-selected="true" class="text-ellipsis w-full block">morty的空间</div>
+                      <div class="text-ellipsis text-grey3 text-t4 mt-px w-full">个人版</div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+              <!-- 空间列表item 2 -->
+              <div style="opacity: 1;">
+                <div data-test-id="aside-space-item" class="flex relative items-center justify-between cursor-pointer px-2 rounded text-black animate-hover h-[58px]">
+                  <div class="flex items-center w-10/12">
+                    <span class="mr-2 flex items-center">
+                      <div class="flex items-center">      
+                        <div class="relative">
+                            <!-- 图标 -->
+                            <span class="text-h4 flex flex-shrink-0 select-none 
+                            items-center justify-center rounded uppercase 
+                            leading-none text-black2 w-[34px] h-[34px]" 
+                            style="font-size: 20px; 
+                            background-color: rgb(62, 193, 250);">
+                            P
+                            </span>
+                        </div>
+                      </div>
+                    </span>
+                    <div class="w-full text-ellipsis">
+                      <div data-no-cancel-selected="true" class="text-ellipsis w-full block">Pencil的团队空间</div>
+                      <div class="text-ellipsis text-grey3 text-t4 mt-px w-full">小组试用版</div>
+                    </div>
+
+                    <i class="el-icon-check"></i>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+
+        <el-button  size="mini" icon="el-icon-sort" slot="reference" circle></el-button>
+      </el-popover>
+
+        
+          
+      
+    </div>
+
+
     <el-menu :default-openeds="[ '1','2','3']"  class="el-menu-vertical-demo"
       background-color="#2a2d30"
       text-color="#fff"
       active-text-color="#ffd04b">
       <el-submenu index="1">
-        <template slot="title"><i class="el-icon-message" ></i>项目管理</template>
+        <template slot="title"><i class="el-icon-collection" ></i>项目管理</template>
         <el-menu-item-group>
           <!-- <template slot="title">分组一</template> -->
-          <el-menu-item index="1-1" @click="changeContent(0)">项目列表</el-menu-item>
-          <!-- <el-menu-item index="1-2">选项2</el-menu-item> -->
+          <el-menu-item index="1-1" @click="changeContent(0)"><i class="el-icon-s-order"></i>项目列表</el-menu-item>
+          <el-menu-item index="1-2" @click="changeContent(0.1)"><i class="el-icon-delete"></i>回收站</el-menu-item>
         </el-menu-item-group>
 
       </el-submenu>
       <el-submenu index="2">
-        <template slot="title"><i class="el-icon-menu" @click="changeContent(1)"></i>文档管理</template>
+        <template slot="title"><i class="el-icon-document" @click="changeContent(1)"></i>文档管理</template>
         <el-menu-item-group>
           <template slot="title">分组一</template>
-          <el-menu-item index="2-1" @click="changeContent(1)">文档列表</el-menu-item>
+          <el-menu-item index="2-1" @click="changeContent(1)"><i class="el-icon-s-order"></i>文档列表</el-menu-item>
+          <el-menu-item index="2-2" @click="changeContent(1.1)"><i class="el-icon-delete"></i>回收站</el-menu-item>
         </el-menu-item-group>
-        <el-menu-item-group title="分组2">
-          <el-menu-item index="2-3">选项3</el-menu-item>
-        </el-menu-item-group>
-        <el-submenu index="2-4">
-          <template slot="title">选项4</template>
-          <el-menu-item index="2-4-1">选项4-1</el-menu-item>
-        </el-submenu>
+
+       
+
+        
       </el-submenu>
       <el-submenu index="3">
-        <template slot="title"><i class="el-icon-setting" @click="changeContent(2)"></i>导航三</template>
+        <template slot="title"><i class="el-icon-setting" @click="changeContent(2)"></i>团队管理</template>
         <el-menu-item-group>
           <template slot="title">分组一</template>
-          <el-menu-item index="3-1">选项1</el-menu-item>
-          <el-menu-item index="3-2">选项2</el-menu-item>
+          <el-menu-item index="3-1" @click="changeContent(2)"><i class="el-icon-user"></i>人员管理</el-menu-item>
+          <el-menu-item index="3-2" @click="changeContent(2.1)"><i class="
+el-icon-chat-line-round"></i>团队群聊</el-menu-item>
         </el-menu-item-group>
-        <el-menu-item-group title="分组2">
-          <el-menu-item index="3-3">选项3</el-menu-item>
-        </el-menu-item-group>
-        <el-submenu index="3-4">
-          <template slot="title">选项4</template>
-          <el-menu-item index="3-4-1">选项4-1</el-menu-item>
-        </el-submenu>
+        
       </el-submenu>
     </el-menu>
   </el-aside>
@@ -69,15 +159,16 @@
       <div v-if="isMainVisible">
 
           <!-- 按钮1 -->
-          <transition name="el-zoom-in-center">
+          <transition name="el-fade-in-linear">
             <div v-if="activeIndex ===0">
-
-              <span  class="inherited-styles-for-exported-element">项目列表</span>
-          
+              
+              <span  class="inherited-styles-for-exported-element"><i class="el-icon-s-order"></i>项目列表</span>
+             
             <el-table
             :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
             :default-sort = "{prop: 'date', order: 'descending'}"
             style="width: 100%" >
+
       <el-table-column
         label="开始时间"
         prop="date" sortable icon="el-icon-time">
@@ -86,10 +177,29 @@
           <span style="margin-left: 10px">{{ scope.row.date }}</span>
         </template>
       </el-table-column>
+
       <el-table-column
         label="项目名称" sortable
         prop="name">
+        <template slot-scope="scope">
+    <template v-if="scope.row.editable">
+      <div style="display: flex;">
+            <el-input v-model="scope.row.name" size="mini" @blur="saveEdit(scope.row)" ref="nameInput"></el-input>
+            <el-button type="text" icon="el-icon-check" @click="saveEdit(scope.row)"></el-button>
+      </div>
+    </template>
+    <template v-else>
+        <span @click="startEdit(scope.row)">{{ scope.row.name }}</span>
+        <el-button type="text" icon="el-icon-edit" @click="startEdit(scope.row)" style="float: right;"></el-button>
+    </template>
+  </template>
       </el-table-column>
+
+      <el-table-column
+        label="负责人" sortable
+        prop="person">
+      </el-table-column>
+
       <el-table-column
         align="right">
         <template slot="header" slot-scope="scope">
@@ -108,35 +218,482 @@
             @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
         </template>
       </el-table-column>
+
             </el-table>
 
             <div class="program-bottom">
-               <el-button
-          size="mini"
-          type="success" class="bottom-button"
-          >新建项目</el-button>
-          <el-button
-          size="mini"
-          type="success" class="bottom-button"
-          >新建项目</el-button>
+               <!--按钮  -->
+              <el-button
+                  size="mini"
+                  type="success" class="bottom-button"
+                  @click="newProjectDialogVisible = true"
+                  icon="el-icon-circle-plus-outline"
+                  >新建项目
+              </el-button>
+
+              <el-button
+                  size="mini"
+                   class="bottom-button"
+                  @click="changeContent(0.1)"
+                  >回收站
+              </el-button>
+
+              <!-- 对话框 -->
+              <el-dialog
+                  title="新建项目"
+                  :visible.sync="newProjectDialogVisible"
+                  width="30%"
+                  @close="resetNewProject"
+                >
+                  <el-form ref="newProjectForm" :model="newProject">
+                    <el-form-item label="开始时间" required>
+                      <el-date-picker v-model="newProject.date" type="date" placeholder="请选择开始日期" format="yyyy-MM-dd"></el-date-picker>
+                    </el-form-item>
+                    <el-form-item label="项目名称" required>
+                      <el-input v-model="newProject.name" placeholder="请输入项目名称"></el-input>
+                    </el-form-item>
+                    <el-form-item label="负责人" required>
+                      <el-input v-model="newProject.person" placeholder="请输入负责人"></el-input>
+                    </el-form-item>
+                  </el-form>
+
+                  <span slot="footer" class="dialog-footer">
+                    <el-button @click="newProjectDialogVisible = false">取消</el-button>
+                    <el-button type="primary" @click="addNewProject">确定</el-button>
+                  </span>
+              </el-dialog>
+          
+          </div>
+
+           
             </div>
+          </transition>
+
+          <!-- 按钮1.1 -->
+          <transition name="el-fade-in-linear">
+            <div v-if="activeIndex ===0.1">
+              
+              <span  class="inherited-styles-for-exported-element"><i class="el-icon-delete"></i>项目回收站</span>
+             
+            <el-table
+            :data="ProgRecycleTable.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
+            :default-sort = "{prop: 'date', order: 'descending'}"
+            style="width: 100%" >
+      <!-- column 1 -->
+      <el-table-column
+        label="开始时间"
+        prop="date" sortable icon="el-icon-time">
+        <template slot-scope="scope">
+          <i class="el-icon-time"></i>
+          <span style="margin-left: 10px">{{ scope.row.date }}</span>
+        </template>
+      </el-table-column>
+
+      <!-- column 2 -->
+      <el-table-column
+        label="项目名称" sortable
+        prop="name">
+        <template slot-scope="scope">
+    <template v-if="scope.row.editable">
+      <div style="display: flex;">
+            <el-input v-model="scope.row.name" size="mini" @blur="saveEdit(scope.row)" ref="nameInput"></el-input>
+            <el-button type="text" icon="el-icon-check" @click="saveEdit(scope.row)"></el-button>
+      </div>
+    </template>
+    <template v-else>
+        <span @click="startEdit(scope.row)">{{ scope.row.name }}</span>
+        <el-button type="text" icon="el-icon-edit" @click="startEdit(scope.row)" style="float: right;"></el-button>
+    </template>
+  </template>
+      </el-table-column>
+
+      <!-- column 3 -->
+      <el-table-column
+        label="负责人" sortable
+        prop="person">
+      </el-table-column>
+
+      <!-- column 4 -->
+      <el-table-column
+        align="right">
+        <template slot="header" slot-scope="scope">
+          <el-input
+            v-model="search"
+            size="mini"
+            placeholder="输入关键字搜索"/>
+        </template>
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="success"
+            @click="handleRecycle(scope.$index, scope.row)">Recycle</el-button>
+          <el-button
+            size="mini"
+            type="danger"
+            @click="handleDelete2(scope.$index, scope.row)">Delete</el-button>
+        </template>
+      </el-table-column>
+
+            </el-table>
+
+          
            
             </div>
           </transition>
 
           <!-- 按钮2 -->
-          <transition name="el-zoom-in-center">  
+          <transition name="el-fade-in-linear">  
             <div v-if="activeIndex === 1">
-              <span  class="inherited-styles-for-exported-element">文档列表</span>
 
-              <el-table :data="tableData" >
-          <el-table-column prop="date" label="日期" width="140">
-          </el-table-column>
-          <el-table-column prop="name" label="姓名" width="120">
-          </el-table-column>
-          <el-table-column prop="address" label="地址">
-          </el-table-column>
-            </el-table>
+              <span  class="inherited-styles-for-exported-element">文档列表</span>
+              <div>
+                <el-dropdown >
+                  <span class="el-dropdown-link" >
+                   <el-button icon="el-icon-s-grid" size="mini">
+                   </el-button>
+                   <i class="el-icon-arrow-down el-icon--right"></i>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item @click.native="changeDisplay('list')">列表模式</el-dropdown-item>
+                    <el-dropdown-item @click.native="changeDisplay('thumbnail')">略缩图模式</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </div>
+
+              <!-- docuList-top -->
+              <div class="program-bottom" style="border-radius: 0px; !important">
+
+                
+
+                <el-button
+                  size="mini"
+                  type="success" class="bottom-button"
+                  @click="newDocumentDialogVisible = true"
+                  icon="el-icon-circle-plus-outline"
+                  >新建文档
+              </el-button>
+
+              <el-button
+                  size="mini"
+                  type="primary" class="bottom-button"
+                  icon="el-icon-upload2"
+                  >上传
+              </el-button>
+
+              <!-- 新建文档对话框 -->
+              <el-dialog
+                  title="新建文档"
+                  :visible.sync="newDocumentDialogVisible"
+                  width="30%"
+                  @close="resetNewDocument"
+                >
+                  <el-form ref="newDocumentForm" :model="newDocument">
+                    <el-form-item label="文件名" required>
+                      <el-input v-model="newDocument.name" placeholder="请输入文件名"></el-input>
+                    </el-form-item>
+
+                    <!-- <el-form-item label="上次修改时间" required>
+                      <el-date-picker v-model="newDocument.lastChangeTime" type="datetime" placeholder="请选择上次修改时间"></el-date-picker>
+                    </el-form-item> -->
+
+                    <el-form-item label="文件大小" required>
+                      <el-input v-model="newDocument.size" placeholder="请输入文件大小"></el-input>
+                    </el-form-item>
+
+                    <!-- 其他表单项 -->
+                  </el-form>
+
+                  <span slot="footer" class="dialog-footer">
+                    <el-button @click="newDocumentDialogVisible = false">取消</el-button>
+                    <el-button type="primary" @click="addNewDocument">确定</el-button>
+                  </span>
+              </el-dialog>
+
+              </div>
+              
+              <!-- 列表展示 -->
+              <div v-if="displayMode === 'list'">
+                 <el-table
+             :data="documentTable.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
+             :default-sort = "{prop: 'date', order: 'descending'}"
+             style="width: 100%" >
+                <!-- column 1 -->
+                <el-table-column
+                  label="文件名" sortable
+                  prop="name">
+                  <template slot-scope="scope">
+              <template v-if="scope.row.editable">
+                <div style="display: flex;">
+                      <el-input v-model="scope.row.name" size="mini" @blur="saveEditDoc(scope.row)" ref="nameInput"></el-input>
+                      <el-button type="text" icon="el-icon-check" @click="saveEditDoc(scope.row)"></el-button>
+                </div>
+              </template>
+              <template v-else>
+                  <span @click="startEdit(scope.row)">{{ scope.row.name }}</span>
+                  <el-button type="text" icon="el-icon-edit" @click="startEdit(scope.row)" style="float: right;"></el-button>
+              </template>
+            </template>
+                </el-table-column>
+          
+                <!-- column 2 -->
+                <el-table-column
+                  label="上次修改时间" sortable
+                  prop="lastChangeTime">
+                </el-table-column>
+
+                <!-- column 3 -->
+                <el-table-column
+                  label="文件大小" sortable
+                  prop="size">
+                </el-table-column>
+          
+                <!-- column 4 -->
+                <el-table-column
+                  align="right">
+                  <template slot="header" slot-scope="scope">
+                    <el-input
+                      v-model="search"
+                      size="mini"
+                      placeholder="输入关键字搜索"/>
+                  </template>
+                  <template slot-scope="scope">
+                    <el-button
+                      size="mini"
+                      @click="handleEditDoc(scope.$index, scope.row)">Edit</el-button>
+                    <el-button
+                      size="mini"
+                      type="danger"
+                      @click="handleDeleteDoc(scope.$index, scope.row)">Delete</el-button>
+                  </template>
+                </el-table-column>
+          
+                 </el-table>
+              </div>
+
+              <!-- 略缩图展示 -->
+              <div v-if="displayMode === 'thumbnail'">
+                  <!-- 略缩图模式布局 -->
+                  <div class="pic-background">
+                    <!-- <el-row>
+                    <el-col v-for="document in documentTable" :key="document.id" :span="6">
+                      <el-card>
+                        <img src="https://cdn.flowus.cn/assets/byte-icon/light/grey/doc-search-two.svg" alt="文档略缩图" style="width: 100%">
+                        <div>{{ document.name }}</div>
+                      </el-card>
+                    </el-col>
+                  </el-row> -->
+
+                  <el-row style="display:flex; flex-wrap:wrap">
+                     
+                        <el-card :body-style="{ padding: '0px' }" v-for="(document,index) in documentTable" :key="index"   shadow="hover" style="margin: 0 0 0 30px; width: 30%; ">
+                          <img src="https://cdn.flowus.cn/assets/byte-icon/light/grey/doc-search-two.svg" class="image" style="height: 100px;">
+                          <div style="padding: 14px;">
+                            <span>{{document.name}}</span>
+                            <div class="bottom clearfix">
+                              <time class="time">{{ document.lastChangeTime }}</time>
+                              <el-button type="danger"  size="mini" style="float:right;" @click="handleDeleteFlex(document,index)">delete</el-button>
+                            </div>
+                          </div>
+                        </el-card>
+                      
+                  </el-row>
+                  </div>
+                  
+                </div>
+                                    
+            </div>
+              
+          </transition>
+
+          <!-- 按钮2.1 -->
+          <transition name="el-fade-in-linear">  
+            <div v-if="activeIndex === 1.1">
+
+              <span  class="inherited-styles-for-exported-element">回收站</span>
+
+
+             <el-table
+             :data="documentRecycleTable.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
+             :default-sort = "{prop: 'date', order: 'descending'}"
+             style="width: 100%" >
+
+ 
+       <!-- column 1 -->
+       <el-table-column
+         label="文件名" sortable
+         prop="name">
+         <template slot-scope="scope">
+     <template v-if="scope.row.editable">
+       <div style="display: flex;">
+             <el-input v-model="scope.row.name" size="mini" @blur="saveEditDoc(scope.row)" ref="nameInput"></el-input>
+             <el-button type="text" icon="el-icon-check" @click="saveEditDoc(scope.row)"></el-button>
+       </div>
+     </template>
+     <template v-else>
+         <span @click="startEdit(scope.row)">{{ scope.row.name }}</span>
+         <el-button type="text" icon="el-icon-edit" @click="startEdit(scope.row)" style="float: right;"></el-button>
+     </template>
+   </template>
+       </el-table-column>
+ 
+       <!-- column 2 -->
+       <el-table-column
+         label="上次修改时间" sortable
+         prop="lastChangeTime">
+       </el-table-column>
+
+       <!-- column 3 -->
+       <el-table-column
+         label="文件大小" sortable
+         prop="size">
+       </el-table-column>
+ 
+       <!-- column 4 -->
+       <el-table-column
+         align="right">
+         <template slot="header" slot-scope="scope">
+           <el-input
+             v-model="search"
+             size="mini"
+             placeholder="输入关键字搜索"/>
+         </template>
+         <template slot-scope="scope">
+           <el-button
+             size="mini"
+             type="success"
+             @click="handleRecycleDoc(scope.$index, scope.row)">Recycle</el-button>
+           <el-button
+             size="mini"
+             type="danger"
+             @click="handleDeleteDoc2(scope.$index, scope.row)">Delete</el-button>
+         </template>
+       </el-table-column>
+ 
+             </el-table>
+            </div>
+              
+          </transition>
+
+          <!-- 按钮3 -->
+          <transition name="el-fade-in-linear">  
+            <div v-if="activeIndex === 2">
+
+              <span  class="inherited-styles-for-exported-element">个人信息</span>
+              
+              <el-card shadow="hover" style="width: 500px;">
+                <div style="display: flex; align-items: center;">
+                  <el-avatar :size="80" :round="true">{{ getInitials(personInform.realname) }}</el-avatar>
+                  <div style="margin-left: 20px;">
+                    <h3>{{ personInform.realname }}</h3>
+                    <p>Nickname: {{ personInform.nickname }}</p>
+                    <p>Email: {{ personInform.address }}</p>
+                    <p>Identity: {{ personInform.identity }}</p>
+                  </div>
+                </div>
+              </el-card>
+
+              <span  class="inherited-styles-for-exported-element">团队成员信息</span>
+
+              <el-table
+             :data="TeamPersonInform.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
+             :default-sort = "{prop: 'date', order: 'descending'}"
+             style="width: 100%" >
+
+          
+                <!-- column 1 -->
+                <el-table-column
+                  label="昵称" sortable
+                  prop="nickname">
+                </el-table-column>
+
+                <!-- column 2 -->
+                <el-table-column
+                  label="真实姓名" sortable
+                  prop="realname">
+                </el-table-column>
+
+                 <!-- column 3 -->
+                 <el-table-column
+                  label="邮箱" sortable
+                  prop="address">
+                </el-table-column>
+
+                 <!-- column 4 -->
+                 <el-table-column
+                  label="身份" sortable
+                  prop="identity" >
+
+                  <template slot-scope="{ row }">
+                      <el-tag :type="getTagType(row.identity)">{{ row.identity }}</el-tag>
+                    </template>
+                    <!-- <template slot="header" slot-scope="scope">身份
+                      <el-select v-model="selectedIdentity" placeholder="请选择身份">
+                        <el-option
+                          v-for="identity in uniqueIdentities"
+                          :key="identity"
+                          :label="identity"
+                          :value="identity"
+                        ></el-option>
+                      </el-select>
+                    </template> -->
+                </el-table-column>
+          
+                <!-- column 5 -->
+                <el-table-column
+                  align="right">
+                  <template slot="header" slot-scope="scope">
+                    <el-input
+                      v-model="search"
+                      size="mini"
+                      placeholder="输入关键字搜索"/>
+                  </template>
+                  <template slot-scope="scope">
+                    <el-button
+                      size="mini"
+                      type="success"
+                      @click="setIdentity(scope.$index , scope.row)" v-if="personInform.identity === '管理员'">设为管理员</el-button>
+
+                      <el-button
+                      size="mini"
+                      type="success"
+                      @click="showEditIdentityDialog(scope.$index, scope.row)" v-if="personInform.identity === '团队创建者'"
+                      >编辑身份</el-button>
+
+                    <el-button
+                      size="mini"
+                      type="danger"
+                      @click="removePerson(scope.$index, scope.row)" v-if="personInform.identity === '团队创建者' || 
+                      personInform.identity === '管理员'
+                      ">移出团队</el-button>
+                  </template>
+                </el-table-column>
+                
+
+             </el-table>
+
+              <!-- changeIdentity -->
+              <el-dialog :visible.sync="editIdentityDialogVisible" title="编辑身份" @close="closeEditIdentityDialog">
+                      <el-form ref="editIdentityForm" :model="editIdentityForm" label-width="80px">
+                        <el-form-item label="姓名">
+                          <span>{{ editIdentityForm.realname }}</span>
+                        </el-form-item>
+                        <el-form-item label="当前身份">
+                          <span>{{ editIdentityForm.identity }}</span>
+                        </el-form-item>
+                        <el-form-item label="选择身份">
+                          <el-select v-model="editIdentityForm.newIdentity" placeholder="请选择身份">
+                            <el-option label="管理员" value="管理员"></el-option>
+                            <el-option label="普通成员" value="普通成员"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-form>
+                      <div slot="footer" class="dialog-footer">
+                        <el-button @click="closeEditIdentityDialog">取消</el-button>
+                        <el-button type="primary" @click="updateIdentity">确认</el-button>
+                      </div>
+                </el-dialog>
+
+
             </div>
               
           </transition>
@@ -154,38 +711,155 @@
 
 
 <script>
+import moment from 'moment';
 
 export default {
   data() {
-      const item = {
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      };
+      
       return {
-        tableData: Array(2).fill(item) ,
+        
         activeIndex: 0, // 默认选中的按钮索引为0
 
         //项目表
         tableData: [{
           date: '2016-05-02',
           name: '123213',
-          address: '上海市普陀区金沙江路 1518 弄'
+          person: 'sddsaw',
+          address: '上海市普陀区金沙江路 1518 弄',
+          editable: false , // 添加 editable 属性，默认为 false
+          tempName: '' , // 添加 tempName 属性，默认为空字符串
         }, {
           date: '2016-05-04',
           name: 'sb',
-          address: '上海市普陀区金沙江路 1517 弄'
+          person: 'sddsaw',
+          address: '上海市普陀区金沙江路 1517 弄',
+          editable: false  ,// 添加 editable 属性，默认为 false
+          tempName: ''  // 添加 tempName 属性，默认为空字符串
         }, {
           date: '2016-05-01',
           name: 'nmsl',
-          address: '上海市普陀区金沙江路 1519 弄'
+          person: 'sddsaw',
+          address: '上海市普陀区金沙江路 1519 弄',
+          editable: false , // 添加 editable 属性，默认为 false
+          tempName: ''  // 添加 tempName 属性，默认为空字符串
         }, {
           date: '2016-05-03',
           name: 'nmcb',
-          address: '上海市普陀区金沙江路 1516 弄'
+          person: 'sddsaw',
+          address: '上海市普陀区金沙江路 1516 弄',
+          editable: false , // 添加 editable 属性，默认为 false
+          tempName: ''  // 添加 tempName 属性，默认为空字符串
         }],
+        //项目回收站表
+        ProgRecycleTable: [{
+          date: '2016-02-06',
+          name: 'rddfrdg',
+          person: 'yyyt',
+          address: '上海市普陀区金沙江路 1518 弄',
+          editable: false , // 添加 editable 属性，默认为 false
+          tempName: '' , // 添加 tempName 属性，默认为空字符串
+        },{
+          date: '2016-04-09',
+          name: 'awxd',
+          person: 'nt',
+          address: '上海市普陀区金沙江路 1517 弄',
+          editable: false  ,// 添加 editable 属性，默认为 false
+          tempName: ''  // 添加 tempName 属性，默认为空字符串
+        }
+        ],
+        //文档表
+        documentTable: [{
+          name: 'ajwdw.doc',
+          lastChangeTime: '2016-03-21 11:39',
+          size: '1.1MB',
+          editable: false,
+        },{
+          name: 'pp.doc',
+          lastChangeTime: '2016-06-25 12:21',
+          size: '11KB',
+          editable: false,
+        }],
+
+        documentRecycleTable: [{
+          name: 'wdafefrrfr.doc',
+          lastChangeTime: '2016-07-21 09:39',
+          size: '1.7MB',
+          editable: false,
+        },{
+          name: 'bbc.doc',
+          lastChangeTime: '2008-03-21 07:39',
+          size: '5.1MB',
+          editable: false,
+        },
+        ],
+
+
         search: '' ,
         isMainVisible: true, // 控制 <el-main> 的可见性
+
+        //aside-top
+        teamCreater: 'pencil',
+
+        //new project
+        newProjectDialogVisible: false,
+        newProject: {
+          date: '',
+          name: '',
+          person: ''
+        },
+
+        //new document
+        newDocumentDialogVisible: false,
+        newDocument: {
+          name: '',
+          lastChangeTime: '',
+          size: ''
+        },
+
+        displayMode: 'list', // 初始展示模式为列表模式
+
+        personInform: {
+          nickname: "morty",
+          realname: "刘兆丰",
+          address: "326855092@qq.com",
+          identity: "团队创建者",
+        },
+
+        TeamPersonInform:[{
+          nickname: "pencil",
+          realname: "铅笔",
+          address: "323412132@qq.com",
+          identity: "管理员",
+        },{
+          nickname: "niumo",
+          realname: "煞笔",
+          address: "326853442@qq.com",
+          identity: "普通成员",
+        },{
+          nickname: "dick",
+          realname: "迪肯",
+          address: "326123092@qq.com",
+          identity: "团队创建者",
+        },{
+          nickname: "morty",
+          realname: "刘兆丰",
+          address: "326855092@qq.com",
+          identity: "团队创建者",
+        }],
+
+        //changeIdentity
+        editIdentityDialogVisible: false,
+        editIdentityForm: {
+          realname: "",
+          identity: "",
+          newIdentity: "",
+          index: "",
+        },
+        
+        //identity-tag
+        selectedIdentity: '', // 当前选中的身份
+        uniqueIdentities: [] // 不重复的身份列表
+
       }
     },
   
@@ -205,22 +879,724 @@ export default {
     console.log(`切换到按钮${index + 1}的内容`);
 
     
-  },
+      },
 
-  handleEdit(index, row) {
+      handleEdit(index, row) {
+
         console.log(index, row);
       },
+
       handleDelete(index, row) {
         console.log(index, row);
+        this.$confirm('确定要删除项目吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+
+          // 在这里执行具体的删除逻辑
+          const index = this.tableData.indexOf(row);
+          if (index !== -1) {
+            this.tableData.splice(index, 1);
+            this.ProgRecycleTable.push(row);
+          }
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+      },
+
+      handleDeleteDoc(index, row) {
+        console.log(index, row);
+        this.$confirm('确定要删除该文件吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+
+          // 在这里执行具体的删除逻辑
+          const index = this.documentTable.indexOf(row);
+          if (index !== -1) {
+            this.documentTable.splice(index, 1);
+            this.documentRecycleTable.push(row);
+          }
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+      },
+
+      handleDeleteDoc2(index, row) {
+        console.log(index, row);
+        this.$confirm('此次删除后将无法恢复，确定要删除吗？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+
+          // 在这里执行具体的删除逻辑
+          this.documentRecycleTable.splice(index, 1);
+       
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+      },
+
+      handleDelete2(index, row) {
+        console.log(index, row);
+        this.$confirm('此次删除后将无法恢复，确定要删除吗？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+
+          this.ProgRecycleTable.splice(index,1);
+
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+      },
+
+      startEdit(row) {
+    row.editable = true;
+    // row.tempName = row.name;  // 将当前名称保存到 tempName 中
+    this.$nextTick(() => {  // 等待下一次 DOM 更新后自动聚焦输入框
+      this.$refs.nameInput[0].focus();
+    });
+      },
+      saveEdit(row) {
+    row.editable = false;
+    // row.name = row.tempName;  // 将编辑后的值保存回 name 属性
+
+    // 将编辑后的值保存回 tableData 数组中对应项目的 name 属性
+    const targetItem = this.tableData.find(item => item.date === row.date);
+    targetItem.name = row.name;
+    console.log(this.tableData.find(item => item.date === row.date));
+    console.log(this.tableData)
+    //上传后端
+    // ...
+    
+
+    this.$message({
+      type: 'success',
+      message: '保存成功'
+    });
+      },
+
+      saveEditDoc(row) {
+    row.editable = false;
+    // row.name = row.tempName;  // 将编辑后的值保存回 name 属性
+
+    // 将编辑后的值保存回 tableData 数组中对应项目的 name 属性
+    row.name = row.name + '.doc'
+
+    //上传后端
+    // ...
+    
+
+    this.$message({
+      type: 'success',
+      message: '保存成功'
+    });
+      },
+
+
+      addNewProject() {
+        // 验证表单数据
+        this.$refs.newProjectForm.validate(valid => {
+          if (valid) {
+            // 将新项目添加到 tableData 数组中
+            this.tableData.push({
+              date: moment(this.newProject.date).format('YYYY-MM-DD'),
+              name: this.newProject.name,
+              person: this.newProject.person,
+              address: '' , // 根据需求添加其他属性
+              editable: false,
+            });
+
+            this.newProjectDialogVisible = false;  // 关闭对话框
+
+            this.$message.success('新项目添加成功');
+            console.log(this.tableData)
+          }
+        });
+        },
+      resetNewProject() {
+          this.$refs.newProjectForm.resetFields();  // 重置表单数据
+          this.newProjectDialogVisible = false;  // 关闭对话框
+        },
+      
+      handleRecycle(index, row) {
+        // 将要移动到回收站的项目从 tableData 数组中删除
+        this.ProgRecycleTable.splice(index, 1);
+
+        // 在回收站表中添加被移动的项目
+        this.tableData.push(row);
+
+        this.$message({
+            type: 'success',
+            message: '项目已成功回收'
+        });
+      },
+
+      handleRecycleDoc(index, row) {
+
+        this.documentRecycleTable.splice(index, 1);
+        this.documentTable.push(row);
+
+        this.$message({
+            type: 'success',
+            message: '文档已成功回收'
+        });
+      },
+
+      addNewDocument() {
+    // 验证表单数据
+    this.$refs.newDocumentForm.validate(valid => {
+      if (valid) {
+
+        const currentDate = moment().format('YYYY-MM-DD HH:mm'); // 获取当前时间并格式化
+        // 将新文档添加到 documentTable 数组中
+        this.documentTable.push({
+          name: this.newDocument.name+'.doc',
+          lastChangeTime: currentDate,
+          size: this.newDocument.size
+        });
+
+        this.newDocumentDialogVisible = false;  // 关闭对话框
+
+        this.$message.success('新文档添加成功');
       }
+    });
+      },
+      resetNewDocument() {
+    this.$refs.newDocumentForm.resetFields();  // 重置表单数据
+    this.newDocumentDialogVisible = false;  // 关闭对话框
+      },
+
+      changeDisplay(a){
+        this.displayMode = a;
+        console.log(this.displayMode)
+      },
+
+      handleDeleteFlex(document,index){
+        this.$confirm('确定要删除该文件吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+
+          // 在这里执行具体的删除逻辑
+          this.documentTable.splice(index, 1);
+          this.documentRecycleTable.push(document);
+       
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+          
+      },
+
+      getInitials(name) {
+      const splitName = name.split(" ");
+      const initials = splitName.map((part) => part[0]).join("");
+      return initials.toUpperCase();
+    },
+
+    setIdentity(index , row){
+      if( row.identity === '普通成员'){
+        row.identity = '管理员';
+        this.$message({
+            type: 'success',
+            message: '设置管理员成功'
+        });
+      }
+      else{
+        this.$alert('您的权限不够，只能将普通成员设为管理员', '提示', {
+          confirmButtonText: '确定',
+          callback: action => {
+            // this.$message({
+            //   type: 'info',
+            //   message: `action: ${ action }`
+            // });
+          }
+        });
+      }
+      
+    },
+
+    removePerson(index,row){
+      if(this.personInform.identity === '管理员' && row.identity !== '普通成员'){
+        this.$alert('您的权限不够，只能移除普通成员', '提示', {
+          confirmButtonText: '确定',
+          callback: action => {
+            // this.$message({
+            //   type: 'info',
+            //   message: `action: ${ action }`
+            // });
+          }
+        });
+      }
+      else if(this.personInform.identity === '团队创建者' && row.realname === this.personInform.realname){
+        this.$alert('不能移除自己', '提示', {
+          confirmButtonText: '确定',
+          callback: action => {
+            // this.$message({
+            //   type: 'info',
+            //   message: `action: ${ action }`
+            // });
+          }
+        });
+      }
+      else{
+        this.$confirm('确定要移出该成员吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+
+          // 在这里执行具体的删除逻辑
+          this.TeamPersonInform.splice(index,1);
+
+          this.$message({
+            type: 'success',
+            message: '移除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          });          
+        });
+        }   
+      },
+
+    showEditIdentityDialog(index, row) {
+      if(row.identity === '团队创建者'){
+        this.$alert('不能修改团队创建者身份', '提示', {
+          confirmButtonText: '确定',
+          callback: action => {
+            // this.$message({
+            //   type: 'info',
+            //   message: `action: ${ action }`
+            // });
+          }
+        });
+      }
+      else{
+        this.editIdentityForm.realname = row.realname;
+      this.editIdentityForm.identity = row.identity;
+      this.editIdentityDialogVisible = true;
+      this.editIdentityForm.index = index;
+      }
+    },
+    closeEditIdentityDialog() {
+      this.$refs.editIdentityForm.resetFields();
+      this.editIdentityDialogVisible = false;
+    },
+    updateIdentity() {
+      // 在这里处理更新身份的逻辑，可以通过调用后端接口来实现更新
+      // const { realname, newIdentity } = this.editIdentityForm;
+      // 更新身份的代码...
+      this.TeamPersonInform[this.editIdentityForm.index].identity = this.editIdentityForm.newIdentity;
+
+      // 关闭对话框
+      this.closeEditIdentityDialog();
+    },
+
+    getTagType(identity) {
+    // 根据不同的身份类型返回标签的类型
+    // 这里可以根据具体的业务逻辑设置不同的颜色或样式
+    if (identity === '普通用户') {
+      return 'info';
+    } else if (identity === '管理员') {
+      return 'success';
+    } else if (identity === '团队创建者') {
+      return 'warning';
+    } else {
+      return 'primary';
+    }
+
   },
+
+    
+  },
+
+  created(){
+    this.uniqueIdentities = Array.from(new Set(this.TeamPersonInform.map(item => item.identity)));
+  }
+    
 }
 
 </script>
 
+<style scoped>
+/* 上方展开栏的专属样式*/
+body {
+  background: #eee;
+  /* This is just a helper in case the element has a transparent background or white colors. */
+}
 
+/* * {
+  outline: 0;
+  transition: background-color .1s ease-out;
+}
+
+*, ::after, ::before {
+  border-style: solid;
+  border-width: 0;
+  box-sizing: border-box;
+} */
+
+.inherited-styles-for-exported-element2 {
+  font-family: "PingFang SC", "Microsoft YaHei", ui-sans-serif,
+   -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, 
+   "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+  tab-size: 4;
+  width: 100%;
+}
+
+svg {
+  vertical-align: middle;
+}
+
+*, ::after, ::before {
+  -webkit-font-smoothing: subpixel-antialiased;
+  border-color: #e5e5e5;
+}
+
+::selection {
+  background: rgba(24, 160, 251, .12);
+}
+
+:disabled {
+  cursor: default;
+}
+
+.text-t2, .text-t4 {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.text-t4 {
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.text-h4 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.text-ellipsis {
+  overflow: hidden;
+  text-wrap: nowrap;
+  white-space-collapse: collapse;
+}
+
+.animate-hover {
+  transition-duration: .1s;
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(.4, 0, .2, 1);
+  user-select: none;
+}
+
+.next-modal {
+  background-clip: padding-box;
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: rgba(0, 0, 0, .03) 0 0 0 1px, rgba(0, 0, 0, .1) 0 3px 6px, rgba(0, 0, 0, .1) 0 12px 20px;
+  color: #000;
+}
+
+.relative {
+  position: relative;
+}
+
+.mx-2 {
+  margin-left: .5rem;
+  margin-right: .5rem;
+}
+
+.mr-1 {
+  margin-right: .25rem;
+}
+
+.mr-2 {
+  margin-right: .5rem;
+}
+
+.mt-px {
+  margin-top: 1px;
+}
+
+.block {
+  display: block;
+}
+
+.inline {
+  display: inline;
+}
+
+.flex {
+  display: flex;
+}
+
+.h-full {
+  height: 100%;
+}
+
+.h-9 {
+  height: 2.25rem;
+}
+
+.h-5 {
+  height: 1.25rem;
+}
+
+.h-10 {
+  height: 2.5rem;
+}
+
+.h-\[34px\] {
+  height: 34px;
+}
+
+.h-\[58px\] {
+  height: 58px;
+}
+
+.h-\[1em\] {
+  height: 1em;
+}
+
+.max-h-\[70vh\] {
+  max-height: 70vh;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.w-5 {
+  width: 1.25rem;
+}
+
+.w-10\/12 {
+  width: 83.3333%;
+}
+
+.w-64 {
+  width: 16rem;
+}
+
+.w-\[34px\] {
+  width: 34px;
+}
+
+.w-\[1em\] {
+  width: 1em;
+}
+
+.flex-shrink-0 {
+  flex-shrink: 0;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-\[grab\] {
+  cursor: grab;
+}
+
+.select-none {
+  user-select: none;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.overflow-y-auto {
+  overflow-y: auto;
+}
+
+.text-ellipsis {
+  text-overflow: ellipsis;
+}
+
+.rounded {
+  border-radius: .25rem;
+}
+
+.border-t {
+  border-top-width: 1px;
+}
+
+.border-grey6 {
+  border-color: #e5e5e5;
+}
+
+.fill-current {
+  fill: currentcolor;
+}
+
+.p-2 {
+  padding: .5rem;
+}
+
+.px-2 {
+  padding-left: .5rem;
+  padding-right: .5rem;
+}
+
+.pb-1 {
+  padding-bottom: .25rem;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+.leading-none {
+  line-height: 1;
+}
+
+.text-grey4 {
+  color: #bdbdbd;
+}
+
+.text-grey3 {
+  color: #828282;
+}
+
+.text-black, .text-black2 {
+  color: #000;
+}
+
+::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: transparent;
+}
+
+.animate-hover:hover {
+  background-color: rgba(0, 0, 0, .06);
+}
+
+.overflow-y-auto:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, .2);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, .3) !important;
+}
+
+html {
+  font-size: 16px;
+  /* This is IMPORTANT since some copied values use "REM" units */
+}
+</style>
 
 <style scoped>
+
+.time {
+    font-size: 13px;
+    color: #999;
+  }
+  
+  .bottom {
+    margin-top: 13px;
+    line-height: 12px;
+  }
+
+  .button {
+    padding: 0;
+    float: right;
+  }
+
+  .image {
+    width: 100%;
+    display: block;
+  }
+
+  .clearfix:before,
+  .clearfix:after {
+      display: table;
+      content: "";
+  }
+  
+  .clearfix:after {
+      clear: both
+  }
+
+/* new ^^^^*/
+
+
+.pic-background{
+  background-color: #faf9f9;
+  /* border-radius: 5px; */
+  padding: 22px 0 22px 31px;
+}
+.aside-top{
+  color: #e7e2e2;
+  font-family: "PingFang SC", "Microsoft YaHei", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 64px;
+  tab-size: 4;
+  word-break: break-word;
+  margin: 0 0 0 20px;
+}
 
 .bottom-button{
   margin: 10px;
@@ -259,7 +1635,7 @@ export default {
   .inherited-styles-for-exported-element {
   color: #e7e2e2;
   font-family: "PingFang SC", "Microsoft YaHei", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
-  font-size: 20px;
+  font-size: 15px;
   font-weight: 600;
   line-height: 64px;
   tab-size: 4;
