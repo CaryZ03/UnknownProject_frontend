@@ -1,6 +1,5 @@
 <template>
     <div class="community">
-        <Navbar />
         <div class="sidebar">
             <div>
                 <el-input
@@ -140,12 +139,10 @@
 </template>
   
   <script>
-  import Navbar from '@/components/Navbar.vue'
 
   export default {
     name: 'Community',
     components: {
-        Navbar
     },
     data() {
         return {
