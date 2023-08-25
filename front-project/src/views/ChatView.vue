@@ -1,7 +1,62 @@
 <template>
     <el-container>
         <el-aside class="el-aside">
-          
+          <div class="department-container">
+            <div 
+            class="department" :class="{ 'department-hovered': hoverList[0].hover }"
+            @mouseover="hoverList[0].hover = true"
+            @mouseout="hoverList[0].hover = false">
+              <el-row>
+                <el-col :span="6">
+                  <el-badge :value="this.redDotNum" class="red_dot" v-if="this.redDotNum > 0">
+                    <el-avatar shape="square" :size="70" :src="circleUrl" class="department-avatar-red" v-if="this.redDotNum > 0"></el-avatar>
+                  </el-badge>
+                  <el-avatar shape="square" :size="70" :src="circleUrl" class="department-avatar" v-else></el-avatar>
+
+                </el-col>
+                <el-col :span="18">
+                  <div class="department-name">花季猫狗猪猪兔兔牛马丁真收容中心</div>
+                  <div class="depertment-latest-message">
+                    Xenon: 收到的消息
+                  </div>
+                </el-col>
+              </el-row>
+            </div>
+            <div
+            class="department" :class="{ 'department-hovered': hoverList[1].hover }"
+            @mouseover="hoverList[1].hover = true"
+            @mouseout="hoverList[1].hover = false"
+            >
+              <el-row>
+                <el-col :span="6">
+                  <el-badge :value="this.redDotNum" class="red_dot" v-if="this.redDotNum > 0">
+                    <el-avatar shape="square" :size="70" :src="sys_message_url" class="department-avatar-red" v-if="this.redDotNum > 0"></el-avatar>
+                  </el-badge>
+                  <el-avatar shape="square" :size="70" :src="sys_message_url" class="department-avatar-red" v-else></el-avatar>
+                </el-col>
+                <el-col :span="18">
+                  <div class="department-name">系统消息</div>
+                  <div class="depertment-latest-message">
+                    Xenon: 收到的消息
+                  </div>
+                </el-col>
+              </el-row>
+            </div>
+            <div class="department">
+              <el-row>
+                <el-col :span="6">
+                  <el-avatar shape="square" :size="70" :src="circleUrl" class="department-avatar"></el-avatar>
+                </el-col>
+                <el-col :span="18">
+                  <div class="department-name">花季猫狗猪猪兔兔牛马丁真收容中心</div>
+                  <div class="depertment-latest-message">
+                    Xenon: 收到的消息
+                  </div>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
+      
         </el-aside>
 
         <el-container>
@@ -72,7 +127,9 @@
                     :rows="4"
                     placeholder="请输入内容"
                     v-model="messageInput"
-                    class="inputArea-body">
+                    class="inputArea-body"
+                    @keyup.enter.native="handleEnter"
+                    >
                     </el-input>
                     <el-button type="success" plain class="send-button" @click="sendMessage">发送</el-button>
                 </div>
@@ -93,11 +150,17 @@
             messageInput: '',
             chatSocket: null,
             circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
+            sys_message_url: "https://bpic.51yuansu.com/pic3/cover/03/59/43/5bd10c8228793_610.jpg?x-oss-process=image/sharpen,100",
             chatMessages: [
               { id: 1, content: "Hello", isSentByCurrentUser: true },
               { id: 2, content: "Hi there", isSentByCurrentUser: false },
               { id: 3, content: "How are you?", isSentByCurrentUser: true },
               { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false }
+            ],
+            redDotNum: 10,
+            hoverList: [
+              { id: 1, hover: true },
+              { id: 2, hover: true },
             ],
         };
     },
@@ -114,6 +177,10 @@
             }
             this.chatMessages.push(recv_message_used);
             },
+        handleEnter() {
+          console.log('回车键被按下');
+          this.sendMessage();
+        },
         sendMessage() {
             const send_message = JSON.stringify({
                 'message': this.messageInput,
@@ -163,8 +230,6 @@
   .el-aside {
     background-color: #D3DCE6;
     color: #333;
-    text-align: center;
-    line-height: 200px;
     margin-bottom: -900px;
     width: 500px !important;
     margin-left: 60px;
@@ -238,5 +303,40 @@
     color: #000;
     align-self: flex-start;
     position: relative;
+  }
+  .department-container {
+    margin-left: 35px;
+    margin-top: 35px;
+  }
+  .department {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+    width: 420px;
+    height: 100px;
+    margin-left: 0px;
+    transition: background-color 0.3s ease-out;
+  }
+  .department-hovered{
+    background-color: #a3a3a3;
+  }
+  .department-avatar {
+    margin-left: 18px;
+    margin-top: 15px;
+  }
+  .department-avatar-red {
+    margin-left: 18px;
+    margin-top: 5px;
+  }
+  .department-name {
+    font-size: 18px;
+    margin-top: 12px;
+  }
+  .depertment-latest-message {
+    font-size: 15px;
+    margin-top: 30px;
+    color: #717171;
+  }
+  .red_dot {
+    margin-top: 10px;
+    margin-right: 40px;
   }
   </style>
