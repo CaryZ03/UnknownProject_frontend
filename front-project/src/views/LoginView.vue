@@ -3,10 +3,11 @@
         <header>
             <h2 class="logo">logo</h2>
             <nav class="navigation">
-                <a href="#">Home</a>
-                <a href="#">About </a>
-                <a href="#">Service</a>
-                <a href="#">Contact</a>
+                <a href="#"><router-link to=""></router-link></a>
+                <a href="#"><router-link to=""></router-link></a>
+                <a href="#"><router-link to=""></router-link></a>
+                <a href="#"><router-link to=""></router-link></a>
+                <a href="#"><router-link to=""></router-link></a>
                 <button class="btnLogin-popup">Login</button>
             </nav>
         </header>
@@ -88,12 +89,41 @@ export default {
     components: {},
     props: {},
     data() {
-        return {
-        };
-    },
+    return {
+      user: {
+        username: '',
+        password: ''
+      },
+      userR: {
+        username: '',
+        password1: '',
+        password2: ''
+      },
+      userChange: {
+        username: '',
+        password1: '',
+        password2: ''
+      },
+      isAgree: false,
+      isRemember: false
+    }
+  },
     watch: {},
     computed: {},
-    methods: {},
+    methods: {
+        login(){
+
+        },
+        register(){
+
+        },
+        forgetPass(){
+
+        },
+        checkEmail(){
+
+        }
+    },
     created() { },
     mounted() {
 

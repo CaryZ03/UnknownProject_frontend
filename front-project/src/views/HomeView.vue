@@ -1,14 +1,17 @@
 <template>
-  <header>
+  <div>
+    <header>
     <h2 class="logo">logo</h2>
     <nav class="navigation">
-      <a href="#"><router-link to="community">community</router-link></a>
-      <a href="#"><router-link to="design">design</router-link> </a>
-      <a href="#"><router-link to="workspace">workspace</router-link></a>
-      <a href="#"><router-link to="chat">chat</router-link></a>
+      <a href="#"><router-link to="Community">community</router-link></a>
+      <a href="#"><router-link to="Workspace">design</router-link> </a>
+      <a href="#"><router-link to="Workspace">workspace</router-link></a>
+      <a href="#"><router-link to="Chat">chat</router-link></a>
       <button class="btnLogin-popup"><router-link to="Login">Login</router-link></button>
     </nav>
   </header>
+  <router-view></router-view>
+  </div>
 </template>
 
 <script>
@@ -39,30 +42,30 @@ export default {
     created() { },
     mounted() {
 
-        const wrapper = document.querySelector('.wrapper')
-        const loginLink = document.querySelector('.login-link')
-        const registerLink = document.querySelector('.register-link')
+        // const wrapper = document.querySelector('.wrapper')
+        // const loginLink = document.querySelector('.login-link')
+        // const registerLink = document.querySelector('.register-link')
 
-        const btnLogin = document.querySelector('.btnLogin-popup')
-        const iconClose = document.querySelector('.icon-close')
+        // const btnLogin = document.querySelector('.btnLogin-popup')
+        // const iconClose = document.querySelector('.icon-close')
 
-        registerLink.addEventListener('click', () => {
-            wrapper.classList.add('active');
-        });
+        // registerLink.addEventListener('click', () => {
+        //     wrapper.classList.add('active');
+        // });
 
-        loginLink.addEventListener('click', () => {
-            wrapper.classList.remove('active');
-        });
-
-
-        btnLogin.addEventListener('click', () => {
-            wrapper.classList.add('active-popup');
-        });
+        // loginLink.addEventListener('click', () => {
+        //     wrapper.classList.remove('active');
+        // });
 
 
-        iconClose.addEventListener('click', () => {
-            wrapper.classList.remove('active-popup');
-        })
+        // btnLogin.addEventListener('click', () => {
+        //     wrapper.classList.add('active-popup');
+        // });
+
+
+        // iconClose.addEventListener('click', () => {
+        //     wrapper.classList.remove('active-popup');
+        // })
 
     }
 };
@@ -82,22 +85,33 @@ body {
     min-height: 100vh;
     /* background: url('background.jpg'); */
 
+    background: url(../assets/background.png);
+
     background-size: cover;
     background-position: center;
 }
 
 
 header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    padding: 20px 100px;
-    /* background: red; */
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 99;
+align-items: center;
+box-sizing: border-box;
+display: flex;
+font-family: Poppins, sans-serif;
+justify-content: space-between;
+left: 0;
+list-style: none;
+margin: 0;
+padding: 20px 100px;
+position: fixed;
+text-decoration: none;
+top: 0;
+width: 100%;
+z-index: 99;
+color: rgba(0, 0, 0, 0);
+box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+border-color: rgba(88, 39, 39, 1);
+background-color: initial;
+background-image: linear-gradient(220.55deg, #565656 0%, #181818 100%);
 }
 
 .logo {

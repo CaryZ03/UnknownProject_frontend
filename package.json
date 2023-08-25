@@ -2,6 +2,7 @@
   "dependencies": {
     "element-ui": "^2.15.13",
     "three": "^0.155.0",
-    "vue-ionicons": "^3.0.5"
+    "vue-ionicons": "^3.0.5",
+    "vuedraggable": "^2.24.3"
   }
 }
