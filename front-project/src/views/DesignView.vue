@@ -56,24 +56,27 @@ export default {
         this.stage.on('dragend', () => {
             this.isDragging = false
         });
+
+        // var startPos;
         this.stage.on('mousedown touchstart', (event) => {
-            
+
             if (!this.overShape) {
                 const { x, y } = event.target.getStage().getPointerPosition();
-                
+                console.log("!!!!!!!!!!!!!!!!")
+                // startPos = {x,y}
                 if (this.isDragging) return;
-                
                 this.isDrawing = true;
                 switch (this.drawShape) {
                     case 'circle':
                         this.shape = new Konva.Circle({
-                            x: start.x,
-                            y: start.y,
+                            x: x,
+                            y: y,
                             radius: 0,
                             stroke: 'black',
                             strokeWidth: 2,
+                            fill: 'red',
                             draggable: true,
-                            
+
                         });
                         console.log("draw circle")
                         break;
@@ -88,13 +91,13 @@ export default {
                             fill: 'red',
                             draggable: true,
                         });
-                        console.log("draw react")
+                        console.log("draw rect")
                         break;
+
 
                     default:
                         break;
                 }
-
 
                 this.shape.on('mouseover', () => {
                     this.overShape = true;
@@ -110,14 +113,16 @@ export default {
         this.stage.on('mousemove touchmove', (event) => {
             if (!this.isDrawing) return;
             if (this.isDragging) return;
-
-            console.log("!!!!!!!!!!!?????????????")
+            console.log("break2")
+            const { x, y } = event.target.getStage().getPointerPosition();
             switch (this.drawShape) {
                 case 'circle':
-                    const pos = this.stage.getPointerPosition();
+                const pos = this.stage.getPointerPosition();
                     const radius = Math.sqrt(
-                        Math.pow(pos.x - start.x, 2) + Math.pow(pos.y - start.y, 2)
+                        Math.pow(x - this.shape.x(),2) + Math.pow(y - this.shape.y(),2)
                     );
+
+                    console.log(radius)
                     this.shape.radius(radius)
                     this.layer.batchDraw();
                     // 更新圆形的半径和位置
@@ -126,16 +131,12 @@ export default {
                     break;
 
                 case 'rect':
-                    console.log("break2")
-                    const { x, y } = event.target.getStage().getPointerPosition();
                     const width = x - this.shape.x();
                     const height = y - this.shape.y();
                     this.shape.width(width);
                     this.shape.height(height);
                     this.layer.batchDraw();
-                    console.log("draw rect")
                     break;
-
                 default:
                     break;
             }

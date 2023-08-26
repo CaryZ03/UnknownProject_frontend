@@ -1,6 +1,9 @@
 <template>
     <div class="container">
 
+        <div class="sidebar">
+            <toolbar></toolbar>
+        </div>
         <div ref="stageContainer" class="canvas-container"></div>
 
 
@@ -9,6 +12,7 @@
   
 <script>
 import Konva from 'konva';
+import toolbar from '@/components/Prototype/toolbar.vue';
 export default {
     data() {
         return {
@@ -25,6 +29,9 @@ export default {
             drawShape: 'circle'
 
         };
+    },
+    components: {
+        toolbar
     },
     mounted() {
         //检测鼠标状态

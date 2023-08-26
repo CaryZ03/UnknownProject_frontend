@@ -9,6 +9,16 @@ import AllIosIcon from "vue-ionicons/dist/ionicons-ios.js";
 
 import VueKonva from 'vue-konva'
 
+import TDesign from 'tdesign-vue';
+
+// 引入组件库的少量全局样式变量
+import 'tdesign-vue/es/style/index.css';
+
+Vue.use(TDesign);
+// VueDraggableResizable
+import VueDraggableResizable from 'vue-draggable-resizable'
+Vue.component('vue-draggable-resizable', VueDraggableResizable)
+
 //全局使用ionicons图标
 Vue.use(VueKonva);
 Vue.use(AllIosIcon);
