@@ -3,7 +3,7 @@ import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 
 
-
+const Text = () => import('../views/TextView.vue')
 const Community = () => import('../views/CommunityView.vue')
 const Design = () => import('../views/DesignView.vue')
 const WorkSpace = () => import('../views/WorkSpaceView.vue')
@@ -24,6 +24,11 @@ const routes = [
     path: '/Login',
     name: 'Login',
     component: Login
+  },
+  {
+    path: '/Text',
+    name: 'Text',
+    component: Text
   },
   {
     path: '/about',

@@ -1,11 +1,15 @@
 <template>
+    <div>
+    <Navbar></Navbar>
     <el-container>
         <el-aside class="el-aside">
           <div class="department-container">
             <div 
             class="department" :class="{ 'department-hovered': hoverList[0].hover }"
             @mouseover="hoverList[0].hover = true"
-            @mouseout="hoverList[0].hover = false">
+            @mouseout="hoverList[0].hover = false"
+            @click=""
+            >
               <el-row>
                 <el-col :span="6">
                   <el-badge :value="this.redDotNum" class="red_dot" v-if="this.redDotNum > 0">
@@ -61,8 +65,8 @@
 
         <el-container>
             <el-header>花季猫狗猪猪兔兔牛马丁真收容中心(6)</el-header>
-            <el-main>
-              <div class="scrollContainer" id="scrollContainer">
+            <el-main id="scrollContainer" class="scrollContainer">
+              <div>
               <div class="recv-message">
                   <el-row>
                         <el-col :span="1">
@@ -118,11 +122,53 @@
                 </div>
               </div>
             </div>
+
+            <!-- 文件框 -->
+            <div>
+                    <input type="file" ref="fileInput" style="display: none" @change="send_file">
+            </div>
+
+            <!-- 历史记录对话框 -->
+            <div>
+              <el-dialog
+                title="历史记录" 
+                :visible.sync="historyVisible"
+                width="30%"
+                :before-close="handleClose">
+                <span>历史记录</span>
+                <span slot="footer" class="dialog-footer">
+                  <el-button @click="historyVisible = false">取 消</el-button>
+                  <el-button type="primary" @click="historyVisible = false">确 定</el-button>
+                </span>
+              </el-dialog>
+            </div>
             </el-main>
             <el-footer>
-                <i class="el-icon-upload icon-set"></i>
-                <i class="el-icon-picture icon-set"></i>
-                <i class="el-icon-chat-dot-round icon-set"></i>
+              <el-row id="icon-button">
+                <el-col :span="3">
+                  <i class="el-icon-folder-opened icon-set" @click="openFileManager"></i>
+                  <i class="el-icon-picture icon-set"></i>
+                  <i class="el-icon-chat-dot-round icon-set" @click="historyVisible = true"></i>
+                </el-col>
+                <el-col :span="1">
+                  <el-popover
+                    placement="top"
+                    width="160"
+                    v-model="atVisible" id="atPop">
+                    <p>这是一段内容这是一段内容确定删除吗？</p>
+                    <div style="text-align: right; margin: 0">
+                      <el-button size="mini" type="text" @click="atVisible = false">取消</el-button>
+                      <el-button type="primary" size="mini" @click="atVisible = false">确定</el-button>
+                    </div>
+                  <div class="at" slot="reference">@</div>
+                </el-popover>
+                </el-col>
+                <el-col :span="20">
+                
+                </el-col>
+              </el-row>
+                
+
                 <div class="inputArea">
                 <el-input
                     type="textarea"
@@ -138,14 +184,18 @@
             </el-footer>
         </el-container>
     </el-container>
+  </div>
 </template>
   
   <script>
+import Navbar from '@/components/Navbar.vue';
+
 
   export default {
     name: 'Chat',
     components: {
-    },
+    Navbar
+},
     data() {
         return {
             chatLog: '',
@@ -170,27 +220,33 @@
               { id: 1, hover: false },
               { id: 2, hover: false },
             ],
+            historyVisible: false,
+            atVisible: false,
         };
     },
     mounted() {
         this.chatSocket = new WebSocket('ws://127.0.0.1:8000/ws/chat/1/');
         this.chatSocket.onmessage = this.handleMessage;
         this.scrollToBottom();
-        console.log('mounted');
     },
     updated() {
         this.scrollToBottom();
-        console.log('updated');
     },
     methods: {
+
+        handleClose(done) {
+          this.$confirm('确认关闭？')
+            .then(_ => {
+              done();
+            })
+            .catch(_ => {});
+        },
+        
         scrollToBottom() {
           this.$nextTick(function () {
             const container = document.querySelector('#scrollContainer');
-            console.log(container);
             container.scrollTop = container.scrollHeight;
             container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
-            console.log(container.scrollHeight);
-            console.log(container.scrollTop);
           });
 
         },
@@ -208,7 +264,7 @@
           this.sendMessage();
         },
         sendMessage() {
-            if (this.messageInput === '\n') {
+            if (this.messageInput === '\n' || this.messageInput === '') {
               this.messageInput = '';
               return;
             }
@@ -231,7 +287,24 @@
             // console.log(send_message)
             // console.log(this.chatMessages)
             console.log("send success")
-            }
+            },
+
+            openFileManager() {
+              this.$refs.fileInput.click();
+            },
+            send_file() {
+
+              const selectedFile = event.target.files[0];
+              // 在这里可以处理选中的文件，例如发送到服务器等
+              console.log('选中的文件:', selectedFile);
+
+              const h = this.$createElement;
+
+              this.$notify({
+                title: '发送问卷',
+                message: h('i', { style: 'color: teal'}, '文件已发送')
+              });
+            },
         }
     }
   </script>
@@ -269,10 +342,12 @@
     background-color: #E9EEF3;
     color: #333;
     margin-right: 100px;
+    height: 650px;
+    overflow: auto;
   }
   .scrollContainer {
     height: 650px;
-    overflow: auto;
+    // overflow: auto;
   }
   .scrollContainer::-webkit-scrollbar-thumb {
         /*滚动条里面小方块*/
@@ -315,6 +390,17 @@
   .icon-set {
     font-size: 30px;
     margin-right: 10px;
+  } 
+  #icon-button {
+    line-height: 50px;
+  }
+  .at {
+    font-size: 30px;
+    margin: -7px 45px 0 -36px;
+    line-height: 50px;
+  }
+  .el-popover {
+    width: 300px !important;
   }
   .inputArea {
     margin-top: -20px !important;

@@ -1,41 +1,25 @@
 <template>
-  <div class="container">
-    <div 
-      class="box" 
-      :class="{ 'hovered': hover }"
-      @mouseover="hover = true"
-      @mouseout="hover = false"
-    ></div>
-  </div>
+  <div ref="editorContainer" class="editorContainer"></div>
 </template>
-
 <script>
+import { createEditor } from '@textbus/editor';
+import '@textbus/editor/bundles/textbus.min.css';
+
 export default {
-  components: {
-  },
-  data() {
-      return {
-          hover: false,
-      };
-  },
+  mounted() {
+    const editor = createEditor();
+    editor.mount(this.$refs.editorContainer)
+    editor.onChange.subscribe(() => {
+      console.log(editor.getHTML());
+    });
+  }
 }
 </script>
 
-
 <style scoped>
-.container {
-  width: 200px;
-  height: 200px;
-}
-
-.box {
-  width: 100%;
-  height: 100%;
-  background-color: lightblue;
-  transition: background-color 0.3s ease-out;
-}
-
-.hovered {
-  background-color: darkblue;
-}
+  .editorContainer {
+    width: 500px;
+    height: 500px;
+    
+  }
 </style>
