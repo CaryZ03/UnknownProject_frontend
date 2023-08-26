@@ -6,7 +6,7 @@
   </div>
 </template>
 
-<style>
+<style scoped>
 .chat-container {
   width: 100%;
   height: 300px;

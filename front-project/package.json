@@ -12,6 +12,7 @@
     "core-js": "^3.8.3",
     "element-ui": "^2.15.13",
     "konva": "^9.2.0",
+    "moment": "^2.29.4",
     "moveable": "^0.51.1",
     "vue": "^2.6.14",
     "vue-draggable-resizable": "^2.3.0",

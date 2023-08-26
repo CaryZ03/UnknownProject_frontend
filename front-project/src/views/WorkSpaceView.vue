@@ -99,8 +99,18 @@ padding-right: 7px;">{{ teamCreater }}的团队</span>
       
     </div>
 
+    <div class="aside-top-below" v-if="this.isProgramChosen === true">
+      <span style="padding-left: 8px;
+padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ this.currentProgram.name }}</span>
+    </div>
 
-    <el-menu :default-openeds="[ '1','2','3']"  class="el-menu-vertical-demo"
+    <!-- 返回工作栏按钮 -->
+    <div  v-if="this.isProgramChosen === true">
+      <el-button  @click="backToWorkspace()" style="margin: 16px 0 0 41px;" size="mini">返回工作台</el-button>
+    </div>
+
+    <!-- 左侧导航栏 -->
+    <el-menu :default-openeds="[ '1','2',]"  class="el-menu-vertical-demo"
       background-color="#2a2d30"
       text-color="#fff"
       active-text-color="#ffd04b">
@@ -108,12 +118,15 @@ padding-right: 7px;">{{ teamCreater }}的团队</span>
         <template slot="title"><i class="el-icon-collection" ></i>项目管理</template>
         <el-menu-item-group>
           <!-- <template slot="title">分组一</template> -->
-          <el-menu-item index="1-1" @click="changeContent(0)"><i class="el-icon-s-order"></i>项目列表</el-menu-item>
-          <el-menu-item index="1-2" @click="changeContent(0.1)"><i class="el-icon-delete"></i>回收站</el-menu-item>
+          <el-menu-item index="1-1" @click="changeContent(3)" v-if="this.isProgramChosen === true"><i class="el-icon-s-order"></i>项目详情</el-menu-item>
+          <el-menu-item index="1-2" @click="changeContent(0)" v-if="this.isProgramChosen === false"><i class="el-icon-s-order"></i>项目列表</el-menu-item>
+          <el-menu-item index="1-2" @click="changeContent(0)" v-if="this.isProgramChosen"><i class="el-icon-sort"></i>切换项目</el-menu-item>
+          <el-menu-item index="1-3" @click="changeContent(0.1)" v-if="this.isProgramChosen === false"><i class="el-icon-delete"></i>回收站</el-menu-item>
         </el-menu-item-group>
 
       </el-submenu>
-      <el-submenu index="2">
+
+      <el-submenu index="2" v-if="this.isProgramChosen === true">
         <template slot="title"><i class="el-icon-document" @click="changeContent(1)"></i>文档管理</template>
         <el-menu-item-group>
           <template slot="title">分组一</template>
@@ -125,12 +138,36 @@ padding-right: 7px;">{{ teamCreater }}的团队</span>
 
         
       </el-submenu>
-      <el-submenu index="3">
+
+      <!-- 3 -->
+      <el-submenu index="3" v-if="this.isProgramChosen === true">
+        <template slot="title"><i class="el-icon-document" @click="changeContent(1)"></i>原型管理</template>
+        <el-menu-item-group>
+          <template slot="title">分组一</template>
+          <el-menu-item index="3-1" @click="changeContent(4)"><i class="el-icon-s-order"></i>原型列表</el-menu-item>
+          <el-menu-item index="3-2" @click="changeContent(4.1)"><i class="el-icon-delete"></i>回收站</el-menu-item>
+        </el-menu-item-group>
+      </el-submenu>
+
+      <!-- 4 -->
+      <el-submenu index="4" v-if="this.isProgramChosen === true">
+        <template slot="title"><i class="el-icon-document" @click="changeContent(1)"></i>需求管理</template>
+        <el-menu-item-group>
+          <template slot="title">分组一</template>
+          <el-menu-item index="4-1" @click="changeContent(5)"><i class="el-icon-s-order"></i>需求列表</el-menu-item>
+          <el-menu-item index="4-2" @click="changeContent(5.1)"><i class="el-icon-delete"></i>回收站</el-menu-item>
+        </el-menu-item-group>
+      </el-submenu>
+
+
+
+
+      <el-submenu index="5">
         <template slot="title"><i class="el-icon-setting" @click="changeContent(2)"></i>团队管理</template>
         <el-menu-item-group>
           <template slot="title">分组一</template>
-          <el-menu-item index="3-1" @click="changeContent(2)"><i class="el-icon-user"></i>人员管理</el-menu-item>
-          <el-menu-item index="3-2" @click="changeContent(2.1)"><i class="
+          <el-menu-item index="5-1" @click="changeContent(2)"><i class="el-icon-user"></i>人员管理</el-menu-item>
+          <el-menu-item index="5-2" @click="changeContent(2.1)"><i class="
 el-icon-chat-line-round"></i>团队群聊</el-menu-item>
         </el-menu-item-group>
         
@@ -141,9 +178,17 @@ el-icon-chat-line-round"></i>团队群聊</el-menu-item>
   <!-- 右边部分 -->
   <el-container>
     <!-- 右侧导航栏 header -->
-    <el-header style="text-align: right; font-size: 12px">
-      <span class="header-left">项目管理</span>
-      <el-dropdown>
+    <el-header style="color: #eee; font-size: 12px; display: flex">
+     
+        <el-breadcrumb separator="/" style="margin: 28px 0 0;color:#eee ; ">
+          <el-breadcrumb-item :to="{ path: '/' }" >首页</el-breadcrumb-item>
+          <el-breadcrumb-item >工作台</el-breadcrumb-item>
+          <el-breadcrumb-item v-if="this.isProgramChosen">{{this.currentProgram.name}}</el-breadcrumb-item>
+        </el-breadcrumb>
+      
+      <span style="margin: 28px 0 0;margin-left: auto; " >
+        {{this.personInform.nickname}}
+      <el-dropdown >
         <i class="el-icon-setting" style="margin-right: 15px"></i>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item>查看</el-dropdown-item>
@@ -151,7 +196,8 @@ el-icon-chat-line-round"></i>团队群聊</el-menu-item>
           <el-dropdown-item>删除</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
-      <span>王小虎</span>
+    </span>  
+     
     </el-header>
     
     <!-- 右侧主内容 -->
@@ -164,10 +210,11 @@ el-icon-chat-line-round"></i>团队群聊</el-menu-item>
               
               <span  class="inherited-styles-for-exported-element"><i class="el-icon-s-order"></i>项目列表</span>
              
+            <!-- 项目列表（未选中项目时） -->
             <el-table
             :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
             :default-sort = "{prop: 'date', order: 'descending'}"
-            style="width: 100%" >
+            style="width: 100%" v-if="this.isProgramChosen === false">
 
       <el-table-column
         label="开始时间"
@@ -202,26 +249,81 @@ el-icon-chat-line-round"></i>团队群聊</el-menu-item>
 
       <el-table-column
         align="right">
-        <template slot="header" slot-scope="scope">
+        <template slot="header" slot-scope="scope" >
           <el-input
             v-model="search"
             size="mini"
             placeholder="输入关键字搜索"/>
         </template>
-        <template slot-scope="scope">
+        <template slot-scope="scope" >
           <el-button
             size="mini"
-            @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
+            @click="handleEdit(scope.$index, scope.row)">查看</el-button>
           <el-button
             size="mini"
             type="danger"
-            @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
+            @click="handleDelete(scope.$index, scope.row)" >删除</el-button>
         </template>
       </el-table-column>
 
             </el-table>
 
-            <div class="program-bottom">
+            <!-- 项目列表（选中项目时） -->
+            <el-table
+            :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
+            :default-sort = "{prop: 'date', order: 'descending'}"
+            style="width: 100%" v-if="this.isProgramChosen ">
+
+      <el-table-column
+        label="开始时间"
+        prop="date" sortable icon="el-icon-time">
+        <template slot-scope="scope">
+          <i class="el-icon-time"></i>
+          <span style="margin-left: 10px">{{ scope.row.date }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column
+        label="项目名称" sortable
+        prop="name">
+        <template slot-scope="scope">
+    <template v-if="scope.row.editable">
+      <div style="display: flex;">
+            <el-input v-model="scope.row.name" size="mini" @blur="saveEdit(scope.row)" ref="nameInput"></el-input>
+            <el-button type="text" icon="el-icon-check" @click="saveEdit(scope.row)"></el-button>
+      </div>
+    </template>
+    <template v-else>
+        <span @click="startEdit(scope.row)">{{ scope.row.name }}</span>
+        <el-button type="text" icon="el-icon-edit" @click="startEdit(scope.row)" style="float: right;"></el-button>
+    </template>
+  </template>
+      </el-table-column>
+
+      <el-table-column
+        label="负责人" sortable
+        prop="person">
+      </el-table-column>
+
+      <el-table-column
+        align="right">
+        <template slot="header" slot-scope="scope" >
+          <el-input
+            v-model="search"
+            size="mini"
+            placeholder="输入关键字搜索"/>
+        </template>
+        <template slot-scope="scope" >
+          <el-button
+            size="mini"
+            @click="handleEdit(scope.$index, scope.row)">切换</el-button>
+   
+        </template>
+      </el-table-column>
+
+            </el-table>
+
+            <div class="program-bottom" v-if="this.isProgramChosen === false">
                <!--按钮  -->
               <el-button
                   size="mini"
@@ -671,6 +773,19 @@ el-icon-chat-line-round"></i>团队群聊</el-menu-item>
 
              </el-table>
 
+                 <!-- 生成邀请链接按钮 -->
+              <div class="program-bottom" v-if="this.personInform.identity !== '普通成员'">
+                <!--按钮  -->
+                <el-button
+                    size="mini"
+                    type="success" class="bottom-button"
+                    @click="generateLink()"
+                    icon="el-icon-circle-plus-outline"
+                    >生成邀请链接
+                </el-button>
+
+              </div>
+
               <!-- changeIdentity -->
               <el-dialog :visible.sync="editIdentityDialogVisible" title="编辑身份" @close="closeEditIdentityDialog">
                       <el-form ref="editIdentityForm" :model="editIdentityForm" label-width="80px">
@@ -697,6 +812,501 @@ el-icon-chat-line-round"></i>团队群聊</el-menu-item>
             </div>
               
           </transition>
+
+
+
+          <!-- 按钮4 -->
+          <transition name="el-fade-in-linear">  
+            <div v-if="activeIndex === 3">
+
+              <span  class="inherited-styles-for-exported-element">项目信息</span>
+              
+              <el-form :model="currentProgram" label-width="100px">
+                <el-form-item label="日期">
+                  <el-input v-model="currentProgram.date" readonly></el-input>
+                </el-form-item>
+                <el-form-item label="名称">
+                  <el-input v-model="currentProgram.name" readonly></el-input>
+                </el-form-item>
+                <el-form-item label="负责人">
+                  <el-input v-model="currentProgram.person" readonly></el-input>
+                </el-form-item>
+              </el-form>
+
+            </div>
+              
+          </transition>
+
+
+          <!-- 按钮5 -->
+          <transition name="el-fade-in-linear">  
+            <div v-if="activeIndex === 4">
+
+              <span  class="inherited-styles-for-exported-element">原型列表</span>
+              <div>
+                <el-dropdown >
+                  <span class="el-dropdown-link" >
+                   <el-button icon="el-icon-s-grid" size="mini">
+                   </el-button>
+                   <i class="el-icon-arrow-down el-icon--right"></i>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item @click.native="changeDisplay('list')">列表模式</el-dropdown-item>
+                    <el-dropdown-item @click.native="changeDisplay('thumbnail')">略缩图模式</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </div>
+
+              <!-- docuList-top -->
+              <div class="program-bottom" style="border-radius: 0px; !important">
+
+                
+
+                <el-button
+                  size="mini"
+                  type="success" class="bottom-button"
+                  @click="newProtoDialogVisible = true"
+                  icon="el-icon-circle-plus-outline"
+                  >新建原型
+              </el-button>
+
+              <el-button
+                  size="mini"
+                  type="primary" class="bottom-button"
+                  icon="el-icon-upload2"
+                  >上传
+              </el-button>
+
+              <!-- 新建文档对话框 -->
+              <el-dialog
+                  title="新建原型"
+                  :visible.sync="newProtoDialogVisible"
+                  width="30%"
+                  @close="resetNewProto"
+                >
+                  <el-form ref="newProtoForm" :model="newProto">
+                    <el-form-item label="原型名" required>
+                      <el-input v-model="newProto.name" placeholder="请输入原型名"></el-input>
+                    </el-form-item>
+
+                    <!-- <el-form-item label="上次修改时间" required>
+                      <el-date-picker v-model="newDocument.lastChangeTime" type="datetime" placeholder="请选择上次修改时间"></el-date-picker>
+                    </el-form-item> -->
+
+                    <el-form-item label="大小" required>
+                      <el-input v-model="newProto.size" placeholder="请输入大小"></el-input>
+                    </el-form-item>
+
+                    <!-- 其他表单项 -->
+                  </el-form>
+
+                  <span slot="footer" class="dialog-footer">
+                    <el-button @click="newProtoDialogVisible = false">取消</el-button>
+                    <el-button type="primary" @click="addNewProto">确定</el-button>
+                  </span>
+              </el-dialog>
+
+              </div>
+              
+              <!-- 列表展示 -->
+              <div v-if="displayMode === 'list'">
+                 <el-table
+             :data="protoTable.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
+             :default-sort = "{prop: 'date', order: 'descending'}"
+             style="width: 100%" >
+                <!-- column 1 -->
+                <el-table-column
+                  label="原型名" sortable
+                  prop="name">
+                  <template slot-scope="scope">
+              <template v-if="scope.row.editable">
+                <div style="display: flex;">
+                      <el-input v-model="scope.row.name" size="mini" @blur="saveEdit(scope.row)" ref="nameInput"></el-input>
+                      <el-button type="text" icon="el-icon-check" @click="saveEdit(scope.row)"></el-button>
+                </div>
+              </template>
+              <template v-else>
+                  <span @click="startEdit(scope.row)">{{ scope.row.name }}</span>
+                  <el-button type="text" icon="el-icon-edit" @click="startEdit(scope.row)" style="float: right;"></el-button>
+              </template>
+            </template>
+                </el-table-column>
+          
+                <!-- column 2 -->
+                <el-table-column
+                  label="上次修改时间" sortable
+                  prop="lastChangeTime">
+                </el-table-column>
+
+                <!-- column 3 -->
+                <el-table-column
+                  label="大小" sortable
+                  prop="size">
+                </el-table-column>
+          
+                <!-- column 4 -->
+                <el-table-column
+                  align="right">
+                  <template slot="header" slot-scope="scope">
+                    <el-input
+                      v-model="search"
+                      size="mini"
+                      placeholder="输入关键字搜索"/>
+                  </template>
+                  <template slot-scope="scope">
+                    <el-button
+                      size="mini"
+                      @click="handleEditProto(scope.$index, scope.row)">Edit</el-button>
+                    <el-button
+                      size="mini"
+                      type="danger"
+                      @click="handleDeleteProto(scope.$index, scope.row)">Delete</el-button>
+                  </template>
+                </el-table-column>
+          
+                 </el-table>
+              </div>
+
+              <!-- 略缩图展示 -->
+              <div v-if="displayMode === 'thumbnail'">
+                  <!-- 略缩图模式布局 -->
+                  <div class="pic-background">
+                    <!-- <el-row>
+                    <el-col v-for="document in documentTable" :key="document.id" :span="6">
+                      <el-card>
+                        <img src="https://cdn.flowus.cn/assets/byte-icon/light/grey/doc-search-two.svg" alt="文档略缩图" style="width: 100%">
+                        <div>{{ document.name }}</div>
+                      </el-card>
+                    </el-col>
+                  </el-row> -->
+
+                  <el-row style="display:flex; flex-wrap:wrap">
+                     
+                        <el-card :body-style="{ padding: '0px' }" v-for="(proto,index) in protoTable" :key="index"   shadow="hover" style="margin: 0 0 0 30px; width: 30%; ">
+                          <img src="https://cdn.flowus.cn/assets/byte-icon/light/grey/doc-search-two.svg" class="image" style="height: 100px;">
+                          <div style="padding: 14px;">
+                            <span>{{proto.name}}</span>
+                            <div class="bottom clearfix">
+                              <time class="time">{{ proto.lastChangeTime }}</time>
+                              <el-button type="danger"  size="mini" style="float:right;" @click="handleDeleteFlexProto(proto,index)">delete</el-button>
+                            </div>
+                          </div>
+                        </el-card>
+                      
+                  </el-row>
+                  </div>
+                  
+                </div>
+                                    
+            </div>
+              
+          </transition>
+
+          <!-- 按钮5.1 -->
+          <transition name="el-fade-in-linear">  
+            <div v-if="activeIndex === 4.1">
+
+              <span  class="inherited-styles-for-exported-element">回收站</span>
+
+
+             <el-table
+             :data="protoRecycleTable.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
+             :default-sort = "{prop: 'date', order: 'descending'}"
+             style="width: 100%" >
+
+ 
+       <!-- column 1 -->
+       <el-table-column
+         label="原型名" sortable
+         prop="name">
+         <template slot-scope="scope">
+     <template v-if="scope.row.editable">
+       <div style="display: flex;">
+             <el-input v-model="scope.row.name" size="mini" @blur="saveEdit(scope.row)" ref="nameInput"></el-input>
+             <el-button type="text" icon="el-icon-check" @click="saveEdit(scope.row)"></el-button>
+       </div>
+     </template>
+     <template v-else>
+         <span @click="startEdit(scope.row)">{{ scope.row.name }}</span>
+         <el-button type="text" icon="el-icon-edit" @click="startEdit(scope.row)" style="float: right;"></el-button>
+     </template>
+   </template>
+       </el-table-column>
+ 
+       <!-- column 2 -->
+       <el-table-column
+         label="上次修改时间" sortable
+         prop="lastChangeTime">
+       </el-table-column>
+
+       <!-- column 3 -->
+       <el-table-column
+         label="大小" sortable
+         prop="size">
+       </el-table-column>
+ 
+       <!-- column 4 -->
+       <el-table-column
+         align="right">
+         <template slot="header" slot-scope="scope">
+           <el-input
+             v-model="search"
+             size="mini"
+             placeholder="输入关键字搜索"/>
+         </template>
+         <template slot-scope="scope">
+           <el-button
+             size="mini"
+             type="success"
+             @click="handleRecycleProto(scope.$index, scope.row)">Recycle</el-button>
+           <el-button
+             size="mini"
+             type="danger"
+             @click="handleDeleteProto2(scope.$index, scope.row)">Delete</el-button>
+         </template>
+       </el-table-column>
+ 
+             </el-table>
+            </div>
+              
+          </transition>
+
+          <!-- 按钮6 -->
+          <transition name="el-fade-in-linear">  
+            <div v-if="activeIndex === 5">
+
+              <span  class="inherited-styles-for-exported-element">需求列表</span>
+              
+              <!-- docuList-top -->
+              <div class="program-bottom" style="border-radius: 0px; !important">
+
+                
+
+                <el-button
+                  size="mini"
+                  type="success" class="bottom-button"
+                  @click="newDemandDialogVisible = true"
+                  icon="el-icon-circle-plus-outline"
+                  >新建需求
+              </el-button>
+
+              <el-button
+                  size="mini"
+                  type="primary" class="bottom-button"
+                  icon="el-icon-upload2"
+                  >上传
+              </el-button>
+
+              <!-- 新建需求对话框 -->
+              <el-dialog
+                  title="创建新需求"
+                  :visible.sync="newDemandDialogVisible"
+                  :before-close="handleCloseDialog">
+                  <!-- 在这里放置需要用户输入数据的表单 -->
+                  <el-form ref="createForm" :model="createForm" label-width="100px">
+                    <el-form-item label="需求内容">
+                      <el-input v-model="createForm.name" placeholder="请输入需求内容"></el-input>
+                    </el-form-item>
+                    <el-form-item label="开始时间">
+                      <el-date-picker v-model="createForm.startTime" type="date" placeholder="请选择开始时间"></el-date-picker>
+                    </el-form-item>
+                    <el-form-item label="预计完成时间">
+                      <el-date-picker v-model="createForm.endTime" type="date" placeholder="请选择预计完成时间"></el-date-picker>
+                    </el-form-item>
+                    <el-form-item label="负责人">
+                      <el-input v-model="createForm.person" placeholder="请输入负责人"></el-input>
+                    </el-form-item>
+                    <!-- <el-form-item label="完成状况">
+                      <el-input v-model="createForm.status" placeholder="请输入完成状况"></el-input>
+                    </el-form-item> -->
+                  </el-form>
+                  
+                  <span slot="footer" class="dialog-footer">
+                    <el-button @click="newDemandDialogVisible = false">取消</el-button>
+                    <el-button type="primary" @click="createDemand">创建</el-button>
+                  </span>
+                </el-dialog>
+
+              </div>
+              
+              <!-- 列表展示 -->
+
+              <!-- editable list -->
+              <div>
+                  <el-table :data="demandTable.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%">
+                    <!-- 需求内容 -->
+                    <el-table-column label="需求内容" prop="name" sortable>
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.name" @blur="saveData(scope.row)"></el-input>
+                      </template>
+                    </el-table-column>
+
+                    <!-- 开始时间 -->
+                    <el-table-column label="开始时间" prop="startTime" sortable>
+                      <template slot-scope="scope">
+                        <el-date-picker
+                          v-model="scope.row.startTime"
+                          type="date"
+                          format="yyyy-MM-dd"
+                          :picker-options="pickerOptions"
+                          @change="saveData(scope.row)">
+                        </el-date-picker>
+                      </template>
+                    </el-table-column>
+
+                    <!-- 预计完成时间 -->
+                    <el-table-column label="预计完成时间" prop="endTime" sortable>
+                      <template slot-scope="scope">
+                        <el-date-picker
+                          v-model="scope.row.endTime"
+                          type="date"
+                          format="yyyy-MM-dd"
+                          :picker-options="pickerOptions"
+                          @change="saveData(scope.row)">
+                        </el-date-picker>
+                      </template>
+                    </el-table-column>
+
+                    <!-- 负责人 -->
+                    <el-table-column label="负责人" prop="person" sortable>
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.person" @blur="saveData(scope.row)"></el-input>
+                      </template>
+                    </el-table-column>
+
+                    <!-- 完成状态 -->
+                    
+
+                    <el-table-column label="完成状况" prop="status" sortable>
+                      <template slot="header" slot-scope="scope">
+                        <span>完成状况</span>
+                      </template>
+                      <template slot-scope="scope">
+                        <el-tag :type="[scope.row.status === '已完成' ? 'success' : 'info']">{{ scope.row.status }}</el-tag>
+                        <el-dropdown @command="handleStatusChange(scope.row)" trigger="click">
+                          <span class="el-dropdown-link">
+                            <i class="el-icon-arrow-down el-icon--right"></i>
+                          </span>
+                          <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item command="已完成" v-if="scope.row.status !== '已完成'">已完成</el-dropdown-item>
+                            <el-dropdown-item command="未完成" v-if="scope.row.status !== '未完成'">未完成</el-dropdown-item>
+                          </el-dropdown-menu>
+                        </el-dropdown>
+                      </template>
+                    </el-table-column>
+
+
+                    <!-- 操作列 -->
+                    <el-table-column align="right" >
+                      <template slot="header" slot-scope="scope">
+                    <el-input
+                      v-model="search"
+                      size="mini"
+                      placeholder="输入关键字搜索"/>
+                  </template>
+                      <template slot-scope="scope">
+                        <!-- <el-button size="mini" @click="handleEdit(scope.row)">编辑</el-button> -->
+                        <el-button size="mini" type="danger" @click="handleDeleteDemand(scope.$index, scope.row)">删除</el-button>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </div>
+                                    
+            </div>
+              
+          </transition>
+
+          <!-- 按钮6.1 -->
+          <transition name="el-fade-in-linear">  
+            <div v-if="activeIndex === 5.1">
+
+              <span  class="inherited-styles-for-exported-element">回收站</span>
+              <!-- 列表展示 -->
+              <div>
+                  <el-table :data="demandRecycleTable.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%">
+                    <!-- 需求内容 -->
+                    <el-table-column label="需求内容" prop="name" sortable>
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.name" @blur="saveData(scope.row)"></el-input>
+                      </template>
+                    </el-table-column>
+
+                    <!-- 开始时间 -->
+                    <el-table-column label="开始时间" prop="startTime" sortable>
+                      <template slot-scope="scope">
+                        <el-date-picker
+                          v-model="scope.row.startTime"
+                          type="date"
+                          format="yyyy-MM-dd"
+                          :picker-options="pickerOptions"
+                          @change="saveData(scope.row)">
+                        </el-date-picker>
+                      </template>
+                    </el-table-column>
+
+                    <!-- 预计完成时间 -->
+                    <el-table-column label="预计完成时间" prop="endTime" sortable>
+                      <template slot-scope="scope">
+                        <el-date-picker
+                          v-model="scope.row.endTime"
+                          type="date"
+                          format="yyyy-MM-dd"
+                          :picker-options="pickerOptions"
+                          @change="saveData(scope.row)">
+                        </el-date-picker>
+                      </template>
+                    </el-table-column>
+
+                    <!-- 负责人 -->
+                    <el-table-column label="负责人" prop="person" sortable>
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.person" @blur="saveData(scope.row)"></el-input>
+                      </template>
+                    </el-table-column>
+
+                    <!-- 完成状态 -->
+                    
+
+                    <el-table-column label="完成状况" prop="status" sortable>
+                      <template slot="header" slot-scope="scope">
+                        <span>完成状况</span>
+                      </template>
+                      <template slot-scope="scope">
+                        <el-tag :type="[scope.row.status === '已完成' ? 'success' : 'info']">{{ scope.row.status }}</el-tag>
+                        <el-dropdown @command="handleStatusChange(scope.row)" trigger="click">
+                          <span class="el-dropdown-link">
+                            <i class="el-icon-arrow-down el-icon--right"></i>
+                          </span>
+                          <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item command="已完成" v-if="scope.row.status !== '已完成'">已完成</el-dropdown-item>
+                            <el-dropdown-item command="未完成" v-if="scope.row.status !== '未完成'">未完成</el-dropdown-item>
+                          </el-dropdown-menu>
+                        </el-dropdown>
+                      </template>
+                    </el-table-column>
+
+
+                    <!-- 操作列 -->
+                    <el-table-column align="right" >
+                      <template slot="header" slot-scope="scope">
+                    <el-input
+                      v-model="search"
+                      size="mini"
+                      placeholder="输入关键字搜索"/>
+                  </template>
+                      <template slot-scope="scope">
+                        <el-button size="mini" @click="handleRecycleDemand(scope.$index,scope.row)">回收</el-button>
+                        <el-button size="mini" type="danger" @click="handleDeleteDemand2(scope.$index, scope.row)">删除</el-button>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+              </div>
+
+           
+                                    
+            </div>
+              
+          </transition>
           
       </div>
       
@@ -718,6 +1328,19 @@ export default {
       
       return {
         
+        isProgramChosen: false, //是否进入项目详情页
+        currentProgram: {
+          date: '2016-05-02',
+          name: '123213',
+          person: 'sddsaw',
+          editable: false , // 添加 editable 属性，默认为 false
+          // tempName: '' , // 添加 tempName 属性，默认为空字符串
+
+          documentList: [],
+          protoList: [],
+          demandList: [],
+        }, //当前项目
+
         activeIndex: 0, // 默认选中的按钮索引为0
 
         //项目表
@@ -727,28 +1350,60 @@ export default {
           person: 'sddsaw',
           address: '上海市普陀区金沙江路 1518 弄',
           editable: false , // 添加 editable 属性，默认为 false
-          tempName: '' , // 添加 tempName 属性，默认为空字符串
+          // tempName: '' , // 添加 tempName 属性，默认为空字符串
+
+          documentList: [],
+          protoList: [],
+          demandList: [{
+            name:'chaonima',
+            startTime: '2021-03-21',
+            endTime: '2021-04-25',
+            person:'牛魔',
+            status: '已完成',
+       
+          },{
+            name:'按队伍啊低洼处',
+            startTime: '2022-03-21',
+            endTime: '2023-04-25',
+            person:'牛魔cb',
+            status: '未完成',
+
+          }],
+
+
         }, {
           date: '2016-05-04',
           name: 'sb',
           person: 'sddsaw',
           address: '上海市普陀区金沙江路 1517 弄',
           editable: false  ,// 添加 editable 属性，默认为 false
-          tempName: ''  // 添加 tempName 属性，默认为空字符串
+          // tempName: '' , // 添加 tempName 属性，默认为空字符串
+
+          documentList: [],
+          protoList: [],
+          demandList: [],
         }, {
           date: '2016-05-01',
           name: 'nmsl',
           person: 'sddsaw',
           address: '上海市普陀区金沙江路 1519 弄',
           editable: false , // 添加 editable 属性，默认为 false
-          tempName: ''  // 添加 tempName 属性，默认为空字符串
+          // tempName: ''  ,// 添加 tempName 属性，默认为空字符串
+
+          documentList: [],
+          protoList: [],
+          demandList: [],
         }, {
           date: '2016-05-03',
           name: 'nmcb',
           person: 'sddsaw',
           address: '上海市普陀区金沙江路 1516 弄',
           editable: false , // 添加 editable 属性，默认为 false
-          tempName: ''  // 添加 tempName 属性，默认为空字符串
+          // tempName: ''  ,// 添加 tempName 属性，默认为空字符串
+
+          documentList: [],
+          protoList: [],
+          demandList: [],
         }],
         //项目回收站表
         ProgRecycleTable: [{
@@ -757,14 +1412,22 @@ export default {
           person: 'yyyt',
           address: '上海市普陀区金沙江路 1518 弄',
           editable: false , // 添加 editable 属性，默认为 false
-          tempName: '' , // 添加 tempName 属性，默认为空字符串
+          // tempName: '' , // 添加 tempName 属性，默认为空字符串
+
+          documentList: [],
+          protoList: [],
+          demandList: [],
         },{
           date: '2016-04-09',
           name: 'awxd',
           person: 'nt',
           address: '上海市普陀区金沙江路 1517 弄',
           editable: false  ,// 添加 editable 属性，默认为 false
-          tempName: ''  // 添加 tempName 属性，默认为空字符串
+          // tempName: ''  // 添加 tempName 属性，默认为空字符串
+
+          documentList: [],
+          protoList: [],
+          demandList: [],
         }
         ],
         //文档表
@@ -794,6 +1457,25 @@ export default {
         ],
 
 
+        //原型表
+        protoTable:[{
+          name:'dawad',
+          lastChangeTime:'2022-12-22 12:11',
+          size:'123kb'
+        },
+
+        ],
+
+        protoRecycleTable: [],
+
+
+        //需求表
+        demandTable: [],
+
+        demandRecycleTable: [],
+
+
+
         search: '' ,
         isMainVisible: true, // 控制 <el-main> 的可见性
 
@@ -815,6 +1497,25 @@ export default {
           lastChangeTime: '',
           size: ''
         },
+
+        //new proto
+        newProtoDialogVisible: false,
+        newProto: {
+          name: '',
+          lastChangeTime: '',
+          size: ''
+        },
+
+        //new demand
+        newDemandDialogVisible: false,
+        createForm: {
+        name: '',
+        startTime: null,
+        endTime: null,
+        person: '',
+        status: ''
+      },
+
 
         displayMode: 'list', // 初始展示模式为列表模式
 
@@ -864,6 +1565,44 @@ export default {
     },
   
     methods: {
+
+      generateLink(){
+        const link='wnacudamdawdacdna';
+        //link=..
+        const el = document.createElement("textarea");
+        el.value = link;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand("copy");
+        document.body.removeChild(el);
+        this.$message.success("链接已复制到剪贴板");
+
+        this.$alert('链接已生成:'+link, '提示', {
+          confirmButtonText: '确定',
+          dangerouslyUseHTMLString: true,
+          callback: action => {
+            // this.$message({
+            //   type: 'info',
+            //   message: `action: ${ action }`
+            // });
+          }
+        }); 
+       
+      },
+
+      handleStatusChange(row) {
+      row.status = row.status === '已完成' ? '未完成' : '已完成';
+    },
+
+
+
+      backToWorkspace(){
+        console.log(1);
+        this.isProgramChosen = false;
+        this.currentProgram = {};
+        this.changeContent(0)
+      },
+
       async changeContent(index) {
        this.activeIndex = -1;
           setTimeout(() => {
@@ -884,6 +1623,16 @@ export default {
       handleEdit(index, row) {
 
         console.log(index, row);
+        this.isProgramChosen = true;
+        this.currentProgram = row;
+
+        //拷贝 documentTable
+        this.documentTable = row.documentList;
+
+        this.protoTable = row.protoList;
+        this.demandTable =  row.demandList;
+
+        this.changeContent(3);//切换到项目信息页面
       },
 
       handleDelete(index, row) {
@@ -983,6 +1732,108 @@ export default {
         });
       },
 
+      //proto
+      handleDeleteProto(index, row) {
+        console.log(index, row);
+        this.$confirm('确定要删除吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+
+          // 在这里执行具体的删除逻辑
+          const index = this.protoTable.indexOf(row);
+          if (index !== -1) {
+            this.protoTable.splice(index, 1);
+            this.protoRecycleTable.push(row);
+          }
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+      },
+
+      handleDeleteProto2(index, row) {
+        console.log(index, row);
+        this.$confirm('此次删除后将无法恢复，确定要删除吗？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+
+          // 在这里执行具体的删除逻辑
+          this.protoRecycleTable.splice(index, 1);
+       
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+      },
+
+      //demand
+      handleDeleteDemand(index, row) {
+        console.log(index, row);
+        this.$confirm('确定要删除吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+
+          // 在这里执行具体的删除逻辑
+ 
+            this.demandTable.splice(index, 1);
+            this.demandRecycleTable.push(row);
+        
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+      },
+
+      handleDeleteDemand2(index, row) {
+        console.log(index, row);
+        this.$confirm('此次删除后将无法恢复，确定要删除吗？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+
+          // 在这里执行具体的删除逻辑
+          this.demandRecycleTable.splice(index, 1);
+       
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+      },
+
+
+
+
       startEdit(row) {
     row.editable = true;
     // row.tempName = row.name;  // 将当前名称保存到 tempName 中
@@ -990,6 +1841,8 @@ export default {
       this.$refs.nameInput[0].focus();
     });
       },
+
+
       saveEdit(row) {
     row.editable = false;
     // row.name = row.tempName;  // 将编辑后的值保存回 name 属性
@@ -1038,6 +1891,11 @@ export default {
               person: this.newProject.person,
               address: '' , // 根据需求添加其他属性
               editable: false,
+              
+              documentList: [],
+            protoList: [],
+            demandList: [],
+
             });
 
             this.newProjectDialogVisible = false;  // 关闭对话框
@@ -1076,6 +1934,31 @@ export default {
         });
       },
 
+      handleRecycleProto(index, row) {
+
+        this.protoRecycleTable.splice(index, 1);
+        this.protoTable.push(row);
+
+        this.$message({
+            type: 'success',
+            message: '已成功回收'
+        });
+      },
+
+      handleRecycleDemand(index, row) {
+
+        this.demandRecycleTable.splice(index, 1);
+        this.demandTable.push(row);
+
+        this.$message({
+            type: 'success',
+            message: '已成功回收'
+        });
+      },
+
+
+      //document
+
       addNewDocument() {
     // 验证表单数据
     this.$refs.newDocumentForm.validate(valid => {
@@ -1086,7 +1969,8 @@ export default {
         this.documentTable.push({
           name: this.newDocument.name+'.doc',
           lastChangeTime: currentDate,
-          size: this.newDocument.size
+          size: this.newDocument.size,
+          editable: false,
         });
 
         this.newDocumentDialogVisible = false;  // 关闭对话框
@@ -1100,11 +1984,76 @@ export default {
     this.newDocumentDialogVisible = false;  // 关闭对话框
       },
 
+      //proto
+      addNewProto() {
+    // 验证表单数据
+    this.$refs.newProtoForm.validate(valid => {
+      if (valid) {
+
+        const currentDate = moment().format('YYYY-MM-DD HH:mm'); // 获取当前时间并格式化
+        // 将新文档添加到 documentTable 数组中
+        this.protoTable.push({
+          name: this.newProto.name,
+          lastChangeTime: currentDate,
+          size: this.newProto.size,
+          editable: false
+        });
+
+        this.newProtoDialogVisible = false;  // 关闭对话框
+
+        this.$message.success('新原型添加成功');
+      }
+    });
+      },
+
+      resetNewProto() {
+    this.$refs.newProtoForm.resetFields();  // 重置表单数据
+    this.newProtoDialogVisible = false;  // 关闭对话框
+      },
+
+
+      //demand
+
+    handleCloseDialog(done) {
+      // 清空表单数据
+      this.$refs.createForm.resetFields();
+      done();
+    },
+    createDemand() {
+      // 在这里处理创建新需求的逻辑，将数据提交到后端保存
+      // 验证表单数据
+    this.$refs.createForm.validate(valid => {
+      if (valid) {
+
+        const currentDate = moment().format('YYYY-MM-DD HH:mm'); // 获取当前时间并格式化
+        // 将新文档添加到 documentTable 数组中
+        this.demandTable.push({
+          name: this.createForm.name,
+          startTime: moment(this.createForm.startTime).format('YYYY-MM-DD'),
+          endTime: moment(this.createForm.endTime).format('YYYY-MM-DD'),
+          person: this.createForm.person,
+          status: '未完成',
+          editable: false
+        });
+
+          console.log(this.createForm);
+        // 提示用户创建成功或失败
+        this.$message.success('创建成功');
+        this.newDemandDialogVisible = false;
+      }
+    });
+
+     
+    },
+  
+
+
       changeDisplay(a){
         this.displayMode = a;
         console.log(this.displayMode)
       },
 
+      //document
       handleDeleteFlex(document,index){
         this.$confirm('确定要删除该文件吗?', '提示', {
           confirmButtonText: '确定',
@@ -1115,6 +2064,32 @@ export default {
           // 在这里执行具体的删除逻辑
           this.documentTable.splice(index, 1);
           this.documentRecycleTable.push(document);
+       
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+          
+      },
+
+
+      //proto
+      handleDeleteFlexProto(proto,index){
+        this.$confirm('确定要删除吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+
+          // 在这里执行具体的删除逻辑
+          this.protoTable.splice(index, 1);
+          this.protoRecycleTable.push(proto);
        
           this.$message({
             type: 'success',
@@ -1549,6 +2524,33 @@ html {
 
 <style scoped>
 
+.aside-top-below{
+  font-size: 15px;
+font-weight: 600;
+color: #76b5db;
+padding-left: 25px;
+}
+.el-form-item__label {
+  font-weight: bold;
+}
+.el-input.is-disabled .el-input__inner {
+  background-color: #f5f7fa;
+  border-color: #dcdfe6;
+  color: #c0c4cc;
+}
+
+/* el-breadcrumb */
+.el-breadcrumb ::v-deep .el-breadcrumb__inner {
+        color: #f4f3f1 !important;
+        font-weight:400 !important;
+}
+/* 被选中时的颜色 */
+.el-breadcrumb__item:last-child ::v-deep .el-breadcrumb__inner {
+        color: #76b5db !important;
+        font-weight:800 !important;
+}
+
+
 .time {
     font-size: 13px;
     color: #999;
@@ -1612,7 +2614,7 @@ html {
    .el-header {
     background-color: #212427;
     color: #e7e2e2;
-    line-height: 60px;
+    /* line-height: 60px; */
   }
   
   .el-aside {
