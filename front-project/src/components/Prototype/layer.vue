@@ -27,20 +27,10 @@ export default {
         };
     },
     mounted() {
-        //检测鼠标状态
-        // this.stage.on('mousedown',()=>{
-        //     this.isMouseDown=true
-        //     console.log("!!!!!!!!!!!!!!!!")
-        // });
-
-        // this.stage.on('mouseup',()=>{
-        //     this.isMouseDown=false
-        // });
-        //konvas舞台
         this.stage = new Konva.Stage({
             container: this.$refs.stageContainer,
-            width: window.innerWidth,
-            height: window.innerHeight,
+            width: window.innerWidth/2,
+            height: window.innerHeight/2,
             draggable: false
         });
         this.layer = new Konva.Layer();

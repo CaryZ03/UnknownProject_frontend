@@ -1,370 +1,419 @@
 <template>
-  <div>
+  <div class="container">
     <header>
-    <h2 class="logo">logo</h2>
-    <nav class="navigation">
-      <a href="#"><router-link to="Community">community</router-link></a>
-      <a href="#"><router-link to="Workspace">design</router-link> </a>
-      <a href="#"><router-link to="Workspace">workspace</router-link></a>
-      <a href="#"><router-link to="Chat">chat</router-link></a>
-      <button class="btnLogin-popup"><router-link to="Login">Login</router-link></button>
-    </nav>
-  </header>
-  <router-view></router-view>
+      <h2 class="logo">logo</h2>
+      <nav class="navigation">
+        <a href=""><router-link to="">Home</router-link></a>
+        <a href=""><router-link to="">Community</router-link></a>
+        <a href=""><router-link to="WorkSpace">WorkSpace</router-link></a>
+        <a href=""><router-link to=""></router-link></a>
+        <button class="btnLogin-popup">Login</button>
+      </nav>
+    </header>
+
+    <div class="wrapper">
+      <span class="icon-close"><ion-icon name="close-outline"></ion-icon></span>
+
+      <div class="form-box login">
+        <h2>Login</h2>
+        <form action="#">
+          <div class="input-box">
+            <span class="icon"><ion-icon name="mail-unread"></ion-icon></span>
+            <input type="text" required />
+            <label>Email</label>
+          </div>
+
+          <div class="input-box">
+            <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+            <input type="password" required />
+            <label>password</label>
+          </div>
+
+          <div class="remember-forgot">
+            <label><input type="checkbox" />Remember Me</label>
+            <a href="#">Forgot Password</a>
+          </div>
+
+          <button type="submit" class="btn">Login</button>
+
+          <div class="login-register">
+            <p>
+              Don't have an account?<a href="#" class="register-link"
+                >Register</a
+              >
+            </p>
+          </div>
+        </form>
+      </div>
+
+      <div class="form-box register">
+        <h2>Registeration</h2>
+        <form action="#">
+          <div class="input-box">
+            <span class="icon"><ion-icon name="person"></ion-icon></span>
+            <input type="text" required />
+            <label>Email</label>
+          </div>
+
+          <div class="input-box">
+            <span class="icon"><ion-icon name="mail-unread"></ion-icon></span>
+            <input type="text" required />
+            <label>Username</label>
+          </div>
+
+          <div class="input-box">
+            <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+            <input type="password" required />
+            <label>password</label>
+          </div>
+
+          <div class="remember-forgot">
+            <label
+              ><input type="checkbox" />agree to the terms & conditions</label
+            >
+          </div>
+
+          <button type="submit" class="btn">Register</button>
+
+          <div class="login-register">
+            <p>
+              Already have an account?<a href="#" class="login-link">Login</a>
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
-
-
-export default {
-  name: 'HomeView',
-  components: {
-    HelloWorld
-  }
-}
+// import HelloWorld from '@/components/HelloWorld.vue'
 </script>
 
 
 <script>
 export default {
-    components: {},
-    props: {},
-    data() {
-        return {
-        };
-    },
-    watch: {},
-    computed: {},
-    methods: {},
-    created() { },
-    mounted() {
+  components: {},
+  props: {},
+  data() {
+    return {};
+  },
+  watch: {},
+  computed: {},
+  methods: {},
+  created() {},
+  mounted() {
+    const wrapper = document.querySelector(".wrapper");
+    const loginLink = document.querySelector(".login-link");
+    const registerLink = document.querySelector(".register-link");
 
-        // const wrapper = document.querySelector('.wrapper')
-        // const loginLink = document.querySelector('.login-link')
-        // const registerLink = document.querySelector('.register-link')
+    const btnLogin = document.querySelector(".btnLogin-popup");
+    const iconClose = document.querySelector(".icon-close");
 
-        // const btnLogin = document.querySelector('.btnLogin-popup')
-        // const iconClose = document.querySelector('.icon-close')
+    registerLink.addEventListener("click", () => {
+      wrapper.classList.add("active");
+    });
 
-        // registerLink.addEventListener('click', () => {
-        //     wrapper.classList.add('active');
-        // });
+    loginLink.addEventListener("click", () => {
+      wrapper.classList.remove("active");
+    });
 
-        // loginLink.addEventListener('click', () => {
-        //     wrapper.classList.remove('active');
-        // });
+    btnLogin.addEventListener("click", () => {
+      wrapper.classList.add("active-popup");
+    });
 
-
-        // btnLogin.addEventListener('click', () => {
-        //     wrapper.classList.add('active-popup');
-        // });
-
-
-        // iconClose.addEventListener('click', () => {
-        //     wrapper.classList.remove('active-popup');
-        // })
-
-    }
+    iconClose.addEventListener("click", () => {
+      wrapper.classList.remove("active-popup");
+    });
+  },
 };
 </script>
 <style  scoped>
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: url("../assets/background.png");
+  background-size: cover;
+  background-position: center;
+
+  display: flex; /* 添加 flex 布局 */
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
 }
 
 body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    /* background: url('background.jpg'); */
-
-    background: url(../assets/background.png);
-
-    background-size: cover;
-    background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  /* background: url('../assets/background.png'); */
+  background-size: contain;
+  /* background-size: cover; */
+  background-position: center;
 }
 
-
 header {
-align-items: center;
-box-sizing: border-box;
-display: flex;
-font-family: Poppins, sans-serif;
-justify-content: space-between;
-left: 0;
-list-style: none;
-margin: 0;
-padding: 20px 100px;
-position: fixed;
-text-decoration: none;
-top: 0;
-width: 100%;
-z-index: 99;
-color: rgba(0, 0, 0, 0);
-box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-border-color: rgba(88, 39, 39, 1);
-background-color: initial;
-background-image: linear-gradient(220.55deg, #565656 0%, #181818 100%);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 20px 100px;
+  /* background: red; */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 99;
 }
 
 .logo {
-    font-size: 2em;
-    color: #fff;
-    user-select: none;
-
+  font-size: 2em;
+  color: #fff;
+  user-select: none;
 }
 
 .navigation {
-    position: relative;
-    font-size: 1.1em;
-    color: #fff;
-    text-decoration: none;
-    font-weight: 500;
-    margin-left: 40px;
+  position: relative;
+  font-size: 1.1em;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  margin-left: 40px;
 }
 
-
 .navigation .btnLogin-popup {
-    width: 130px;
-    height: 50px;
-    background: transparent;
-    border: 2px solid #fff;
-    outline: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 1.1em;
-    color: #fff;
-    font-weight: 500;
-    margin-left: 40px;
-    transition: .3s;
+  width: 130px;
+  height: 50px;
+  background: transparent;
+  border: 2px solid #fff;
+  outline: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.1em;
+  color: #fff;
+  font-weight: 500;
+  margin-left: 40px;
+  transition: 0.3s;
 }
 
 .navigation a {
-    position: relative;
-    font-size: 1.1em;
-    color: #fff;
-    text-decoration: none;
-    font-weight: 500;
-    margin-left: 40px;
+  position: relative;
+  font-size: 1.1em;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  margin-left: 40px;
 }
 
 .navigation a::after {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 3px;
-    bottom: -6px;
-    left: 0;
-    background: #fff;
-    border-radius: 5px;
-    transform-origin: right;
-    transform: scaleX(0);
-    transition: transform .4s;
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 3px;
+  bottom: -6px;
+  left: 0;
+  background: #fff;
+  border-radius: 5px;
+  transform-origin: right;
+  transform: scaleX(0);
+  transition: transform 0.4s;
 }
 
 .navigation a:hover::after {
-    transform-origin: left;
-    transform: scaleX(1);
+  transform-origin: left;
+  transform: scaleX(1);
 }
 
-
 .navigation .btnLogin-popup:hover {
-    background: #fff;
-    color: #fff;
-
+  background: #fff;
+  color: #fff;
 }
 
 .wrapper {
-    position: relative;
-    width: 400px;
-    height: 440px;
-    background: transparent;
-    border: 2px solid rgba(255, 255, 255, .5);
-    border-radius: 20px;
-    backdrop-filter: blur(20px);
-    box-shadow: 0 0 30px rgba(0, 0, 0, .5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
+  position: absolute;
+  width: 400px;
+  height: 440px;
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
 
-    transform: scale(0);
-    transition: transform .5s ease, height .2s ease;
+  transform: scale(0);
+  transition: transform 0.5s ease, height 0.2s ease;
 }
 
 .wrapper.active-popup {
-    transform: scale(1);
+  transform: scale(1);
 }
 
 .wrapper.active {
-    height: 520px;
-
+  height: 520px;
 }
 
 .wrapper .form-box {
-    width: 100%;
-    padding: 40px;
+  width: 100%;
+  padding: 40px;
 }
 
 .wrapper .form-box.login {
-    transition: transform .18s ease;
-    transform: translateX(0);
+  transition: transform 0.18s ease;
+  transform: translateX(0);
 }
 
 .wrapper.active .form-box.login {
-    /* display: none; */
-    transition: none;
-    transform: translateX(-400px);
+  /* display: none; */
+  transition: none;
+  transform: translateX(-400px);
 }
 
 .wrapper .form-box.register {
-    position: absolute;
-    transform: translateX(400px);
+  position: absolute;
+  transform: translateX(400px);
 }
 
 .wrapper.active .form-box.register {
-    /* display: none; */
-    transition: transform .18s ease;
-    transform: translateX(0);
+  /* display: none; */
+  transition: transform 0.18s ease;
+  transform: translateX(0);
 }
 
-
-
-
-
-
-
-
 .wrapper .icon-close {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 45px;
-    height: 45px;
-    background: #fff;
-    font-size: 2em;
-    display: flex;
-    color: #fff;
-    justify-content: center;
-    align-items: center;
-    border-bottom-left-radius: 20px;
-    cursor: pointer;
-    z-index: 1;
-
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 45px;
+  height: 45px;
+  background: #fff;
+  font-size: 2em;
+  display: flex;
+  color: #fff;
+  justify-content: center;
+  align-items: center;
+  border-bottom-left-radius: 20px;
+  cursor: pointer;
+  z-index: 1;
 }
 
 .form-box h2 {
-    font-size: 2em;
-    color: #fff;
-    text-align: center;
+  font-size: 2em;
+  color: #fff;
+  text-align: center;
 }
 
 .input-box {
-    position: relative;
-    width: 100%;
-    height: 50px;
-    border-bottom: 2px solid #fff;
-    margin: 30px 0;
+  position: relative;
+  width: 100%;
+  height: 50px;
+  border-bottom: 2px solid #fff;
+  margin: 30px 0;
 }
 
 /* .input-box input:not(:placeholder-shown)~label, */
-.input-box input:focus~label,
-.input-box input:valid~label {
-    top: -5px;
+.input-box input:focus ~ label,
+.input-box input:valid ~ label {
+  top: -5px;
 }
 
 .input-box label {
-    position: absolute;
-    top: 50%;
-    left: 5px;
-    transform: translateY(-50%);
-    font-size: 1em;
-    color: #fff;
-    font-weight: 500;
-    pointer-events: none;
-    transition: all .3s ease;
+  position: absolute;
+  top: 50%;
+  left: 5px;
+  transform: translateY(-50%);
+  font-size: 1em;
+  color: #fff;
+  font-weight: 500;
+  pointer-events: none;
+  transition: all 0.3s ease;
 }
 
 .input-box input {
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    border: none;
-    outline: none;
-    font-size: 1em;
-    color: #fff;
-    font-weight: 600;
-    padding: 0 35px 0 5px;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 1em;
+  color: #fff;
+  font-weight: 600;
+  padding: 0 35px 0 5px;
 }
 
 .input-box .icon {
-    position: absolute;
-    right: 8px;
-    font-size: 1.2em;
-    color: #fff;
-    line-height: 57px;
+  position: absolute;
+  right: 8px;
+  font-size: 1.2em;
+  color: #fff;
+  line-height: 57px;
 }
 
 .remember-forgot {
-    font-size: .9em;
-    color: #fff;
-    font-weight: 500;
-    margin: -15px 0 15px;
-    display: flex;
-    justify-content: space-between;
+  font-size: 0.9em;
+  color: #fff;
+  font-weight: 500;
+  margin: -15px 0 15px;
+  display: flex;
+  justify-content: space-between;
 }
 
 .remember-forgot label input {
-    accent-color: #fff;
-    margin: 3px;
+  accent-color: #fff;
+  margin: 3px;
 }
 
 .remember-forgot a {
-    color: #fff;
-    text-decoration: none;
+  color: #ffffff;
+  text-decoration: none;
 }
 
 .remember-forgot a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .btn {
-    width: 100%;
-    height: 45px;
+  width: 100%;
+  height: 45px;
 
-    background: #fff;
-    border: none;
-    outline: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 1em;
-    color: #fff;
-    font-weight: 500;
-
+  background: #fff;
+  border: none;
+  outline: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1em;
+  color: #fff;
+  font-weight: 500;
 }
 
 .login-register {
-    font-size: .9em;
-    color: #fff;
-    text-align: center;
-    font-weight: 500;
-    margin: 25px 0 10px;
+  font-size: 0.9em;
+  color: #fff;
+  text-align: center;
+  font-weight: 500;
+  margin: 25px 0 10px;
 }
 
 .login-register p a {
-    color: #fff;
-    text-decoration: none;
-    font-weight: 600;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
 }
 
 .login-register p a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 </style>
