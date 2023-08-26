@@ -1,54 +1,84 @@
 <template>
-  <div>
-    <h1>在线聊天室</h1>
-
-    <!-- 聊天消息列表 -->
-    <div class="message-list">
-      <div v-for="message in messages" :key="message.id">
-        <strong>{{ message.username }}:</strong>
-        <span>{{ message.text }}</span>
-      </div>
-    </div>
-
-    <!-- 输入框 -->
-    <div class="input-box">
-      <input type="text" v-model="messageText" @keyup.enter="sendMessage" placeholder="输入消息">
-      <button @click="sendMessage">发送</button>
+  <div class="chat-container">
+    <div v-for="message in chatMessages" :key="message.id" :class="['chat-bubble', message.isSentByCurrentUser ? 'sent' : 'received']">
+      {{ message.content }}
     </div>
   </div>
 </template>
 
-<script>
-import axios from 'axios';
-import io from 'socket.io-client';
+<style>
+.chat-container {
+  width: 100%;
+  height: 300px;
+  overflow-y: auto;
+}
 
+.chat-bubble {
+  display: inline-block;
+  max-width: 80%;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 20px;
+}
+
+.sent {
+  background-color: #3498db;
+  color: #fff;
+  align-self: flex-end;
+  position: relative;
+}
+
+.received {
+  background-color: #e5e5ea;
+  color: #000;
+  align-self: flex-start;
+  position: relative;
+}
+.sent::before {
+ content: "";
+ position: absolute;
+ right: -10px;
+ top: 50%;
+ transform: translateY(-50%);
+ border-width: 10px;
+ border-style: solid;
+ border-color: transparent transparent transparent #3498db;
+}
+
+.received {
+ background-color: #e5e5ea;
+ color: #000;
+ align-self: flex-start;
+ position: relative;
+}
+
+.received::before {
+ content: "";
+ border-right: 10px solid #448844;
+ border-bottom: 10px solid transparent;
+ border-top: 10px solid transparent;
+ /* position: absolute;
+  left: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-width: 10px;
+  border-style: solid;
+  border-color: transparent #e5e5ea transparent transparent; */
+}
+
+</style>
+
+<script>
 export default {
   data() {
     return {
-      messages: [],
-      messageText: '',
+      chatMessages: [
+        { id: 1, content: "Hello", isSentByCurrentUser: true },
+        { id: 2, content: "Hi there", isSentByCurrentUser: false },
+        { id: 3, content: "How are you?", isSentByCurrentUser: true },
+        { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false }
+      ]
     };
-  },
-  mounted() {
-    // 连接到聊天室的Socket服务器
-    const socket = io('http://localhost:8080');
-
-    // 监听来自服务器的新消息
-    socket.on('newMessage', (message) => {
-      this.messages.push(message);
-    });
-  },
-  methods: {
-    sendMessage() {
-      // 发送消息到服务器
-      axios.post('http://localhost:8080/messages', { text: this.messageText })
-        .then(() => {
-          this.messageText = '';
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    },
-  },
+  }
 };
 </script>

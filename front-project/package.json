@@ -11,10 +11,15 @@
   "dependencies": {
     "core-js": "^3.8.3",
     "element-ui": "^2.15.13",
-    "layui": "^2.8.15",
-    "moment": "^2.29.4",
+    "konva": "^9.2.0",
+    "moveable": "^0.51.1",
     "vue": "^2.6.14",
+    "vue-draggable-resizable": "^2.3.0",
+    "vue-ionicons": "^3.0.5",
+    "vue-konva": "^2.1.7",
+    "vue-moveable": "^2.0.0-beta.83",
     "vue-router": "^3.5.1",
+    "vuedraggable": "^2.24.3",
     "vuex": "^3.6.2"
   },
   "devDependencies": {
