@@ -23,7 +23,7 @@ jobs:
           script: |            
             cd /root/UnknowProject/UnknownProject_frontend
             git pull
-            cd front-project
+            cd ./front-project
             npm install
             npm run build
 
