@@ -38,7 +38,7 @@
 
           <div class="login-register">
             <p>
-              Don't have an account?<a href="" class="register-link"
+              Don't have an account?<a href="#" class="register-link"
                 >Register</a
               >
             </p>
@@ -67,17 +67,24 @@
             <label>repeat password</label>
           </div>
 
+          <div v-show="showVeriBox" class="input-box">
+            <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+            <input type="password" v-model="vericode" required />
+            <label>Vericode</label>
+          </div>
+
           <div class="remember-forgot">
             <label
               ><input type="checkbox" />agree to the terms & conditions</label
             >
           </div>
 
-          <button @click="register" class="btn">Register</button>
+          <button v-if="!showVeriBox" @click="register" class="btn">Register</button>
+          <button v-else @click="ensureVericodeReg" class="btn">Ensure</button>
 
           <div class="login-register">
             <p>
-              Already have an account?<a href="" class="login-link">Login</a>
+              Already have an account?<a href="#" class="login-link">Login</a>
             </p>
           </div>
         </form>
@@ -113,6 +120,7 @@ export default {
       vericode: "",
       isAgree: false,
       isRemember: false,
+      showVeriBox: false,
     };
   },
   watch: {},
@@ -125,16 +133,18 @@ export default {
       await this.$api.user
         .post_user_login(data)
         .then((response) => {
-          if (response.data["errno"] === 0){
-            console.log("11111")
-          }
-          else{
-            console.log("2222")
+          if (response.data["errno"] == 0) {
+            console.log("11111");
+            this.$router.push({
+              path: `/WorsSpace`,
+            });
+          } else {
+            console.log(response.data);
           }
         })
         .catch((error) => {
           Message.error("登录失败");
-          console.log(error);
+          console.log("!!!!!!!!!!!!!");
           // alert("wa")
         });
     },
@@ -147,7 +157,7 @@ export default {
       };
       console.log("data.username" + data.username);
 
-      this.$api.userInfo.postUserInfo_SendVeri(data).then((res) => {
+      this.$api.user.postUserInfo_SendVeri(data).then((res) => {
         alert("what fuck");
         if (res.data.errno == 0) {
           //发送邮箱成功，等验证码
@@ -228,39 +238,91 @@ export default {
     },
 
     async register() {
-      // todo 检测邮箱正确性
-      console.log("isagree:" + this.isAgree);
+      //检测注册邮箱合理性
       this.$api.user
         .post_user_register_check(this.userR)
         .then((res) => {
-          if (response.data["errno"] == 0) {
-            // todo 跳出输入验证码
+          // 如果邮箱合理
+          if (res.data["errno"] == 0) {
+            // 发邮件
+            const emailJson = {
+              email: this.userR.email,
+            };
             this.$api.user
-              .post_send_verification_code(this.userR.email)
+              .post_send_verification_code(emailJson)
               .then((res2) => {
+                // 发邮箱成功
                 if (res2.data["errno"] == 0) {
-                  const tdata = {
-                    email: this.userR.email,
-                    verification_code: this.vericode,
-                  };
-                  //检测验证码
-                  this.$api.post_check_verification_code(tdata).then((res3) => {
-                    if (res3.data["errno"] == 0) {
-                      this.$api.post_user_register(this.userR).then((res4) => {
-                        if (res4.data["errno"] == 0) {
-                          alert("注册成功");
-                        }
-                      });
-                    }
-                  });
+                  this.showVeriBox = true;
                 }
+              })
+              .catch((error) => {
+                // 发邮件错误
               });
+          } else {
+            // 如果检测邮箱合理errno！=0
+            alert("wrong");
           }
         })
-        .catch((error) => {});
+        .catch((error) => {
+          // 检测邮箱合理error
+        });
     },
 
-    async send_verification_code() {},
+    send_verification_code() {
+      const data = {};
+      this.$api.user
+        .post_send_verification_code(data)
+        .then((res) => {
+          return res.data["errno"];
+        })
+        .catch((error) => {
+          return -1;
+        });
+    },
+
+    ensureVericodeReg() {
+      const tdata = {
+        "email": this.userR.email,
+        "verification_code": this.vericode,
+      };
+      //检测验证码
+      this.$api.user
+        .post_check_verification_code(tdata)
+        .then((res3) => {
+          // alert(res3.data["errno"])
+          // 验证码正确
+          if (res3.data["errno"] == 0) {
+            this.$api.user
+              .post_user_register(this.userR)
+              .then((res4) => {
+                if (res4.data["errno"] == 0) {
+                  alert("注册成功");
+                } else {
+                  alert("注册失败");
+                }
+              })
+              .catch((error) => {
+                // 注册失败
+              });
+          }
+          // 验证码输入错误
+          else {
+          }
+        })
+        .catch((error) => {
+          // 上传验证码错误
+        });
+        // 暂时给一次机会
+        this.showVeriBox=false
+      // 发邮箱errno！=0
+    },
+
+    async check_verification_code() {},
+
+    async user_register() {},
+
+    async user_login() {},
   },
   created() {},
   mounted() {
@@ -273,6 +335,7 @@ export default {
 
     registerLink.addEventListener("click", () => {
       wrapper.classList.add("active");
+      this.showVeriBox = false;
     });
 
     loginLink.addEventListener("click", () => {
@@ -285,6 +348,7 @@ export default {
 
     iconClose.addEventListener("click", () => {
       wrapper.classList.remove("active-popup");
+      this.showVeriBox = false;
     });
   },
 };
@@ -549,7 +613,7 @@ header {
   width: 100%;
   height: 45px;
 
-  background: #fff;
+  background: #4e4d4d;
   border: none;
   outline: none;
   border-radius: 6px;
