@@ -1,25 +1,115 @@
-<template>
-  <div ref="editorContainer" class="editorContainer"></div>
+<!-- <template>
+  <div>
+    <div id="user-info" ref="header"></div>
+    <div id="editor" ref="editor"></div>
+  </div>
 </template>
+
 <script>
-import { createEditor } from '@textbus/editor';
-import '@textbus/editor/bundles/textbus.min.css';
+import { createEditor, TableComponentSelectionAwarenessDelegate } from '@textbus/editor';
+import { Collaborate, collaborateModule } from '@textbus/collaborate';
+import {
+  CollaborateSelectionAwarenessDelegate,
+  RemoteSelection,
+  CollaborateCursor
+} from '@textbus/platform-browser'
+import { Selection } from '@textbus/core'
+import { WebrtcProvider } from 'y-webrtc'
 
 export default {
   mounted() {
-    const editor = createEditor();
-    editor.mount(this.$refs.editorContainer)
-    editor.onChange.subscribe(() => {
-      console.log(editor.getHTML());
-    });
+    const header = this.$refs.header
+    const editor = this.$refs.editor
+
+    const users = [
+      {
+        color: '#f00',
+        name: '张三'
+      },
+      {
+        color: '#448299',
+        name: '李国'
+      },
+      {
+        color: '#fe91dd',
+        name: '赵功'
+      },
+      {
+        color: '#1f2baf',
+        name: '载膛'
+      },
+      {
+        color: '#2aad30',
+        name: '魂牵梦萦'
+      },
+      {
+        color: '#c4ee6e',
+        name: '杰国'
+      },
+      {
+        color: '#00a6ff',
+        name: '膛世界杯'
+      }
+    ]
+
+    const editorInstance = createEditor({
+      theme: 'light',
+      placeholder: '请输入内容……',
+      imports: [
+        collaborateModule // 添加协作模块
+      ],
+      providers: [
+        {
+          provide: CollaborateSelectionAwarenessDelegate, // 提供表格框选协作选区特效支持
+          useClass: TableComponentSelectionAwarenessDelegate
+        }
+      ],
+      setup(starter) {
+        const selection = starter.get(Selection)
+        const collaborate = starter.get(Collaborate)
+        const collaborateCursor = starter.get(CollaborateCursor)
+
+        const provide = new WebrtcProvider('textbus', collaborate.yDoc)
+
+        const user = users[Math.floor(Math.random() * users.length)]
+        provide.awareness.setLocalStateField('user', user)
+
+        const subscription = selection.onChange.subscribe(() => {
+          const paths = selection.getPaths()
+          const localSelection = {
+            username: user.name,
+            color: user.color,
+            paths
+          }
+          provide.awareness.setLocalStateField('selection', localSelection)
+        })
+
+        provide.awareness.on('update', () => {
+          const remoteSelections = []
+          provide.awareness.getStates().forEach(state => {
+            if (state.user) {
+              users.push(state.user)
+            }
+            if (state.selection) {
+              remoteSelections.push(state.selection)
+            }
+          })
+          const selections = remoteSelections.filter(i => i.username !== user.name)
+          collaborateCursor.draw(selections)
+
+          header.innerHTML = users.map(i => {
+            return `<span style="color: ${i.color}">${i.name}</span>`
+          }).join('')
+        })
+
+        return () => {
+          provide.disconnect()
+          subscription.unsubscribe()
+        }
+      },
+    })
+
+    editorInstance.mount(editor)
   }
 }
-</script>
-
-<style scoped>
-  .editorContainer {
-    width: 500px;
-    height: 500px;
-    
-  }
-</style>
+</script> -->

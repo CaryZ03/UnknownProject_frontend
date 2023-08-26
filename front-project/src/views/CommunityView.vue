@@ -139,7 +139,6 @@
 </template>
   
   <script>
-
   export default {
     name: 'Community',
     components: {

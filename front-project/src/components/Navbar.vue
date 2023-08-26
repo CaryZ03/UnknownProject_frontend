@@ -14,7 +14,7 @@
   <el-submenu index="2">
     <template slot="title" class="menu-item-custom">我的工作台</template>
     <el-menu-item index="2-1"><router-link to="/Chat" class="menu-item-custom">Chat网页</router-link></el-menu-item>
-    <el-menu-item index="2-2">选项2</el-menu-item>
+    <el-menu-item index="2-2"><router-link to="/Text" class="menu-item-custom">在线文档</router-link></el-menu-item>
     <el-menu-item index="2-3">选项3</el-menu-item>
     <el-submenu index="2-4">
       <template slot="title">选项4</template>
