@@ -6,6 +6,9 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css'
 import api from './api';
 import AllIosIcon from "vue-ionicons/dist/ionicons-ios.js";
+import api from './api';
+Vue.prototype.$api = api;
+
 
 import VueKonva from 'vue-konva'
 

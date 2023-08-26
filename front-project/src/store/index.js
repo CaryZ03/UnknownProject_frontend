@@ -6,7 +6,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     isLogin: false,
-    curUserID: 1,
+    curUserMail: '',
+    curUserID: '',
   },
   getters: {
   },

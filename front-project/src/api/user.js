@@ -99,16 +99,11 @@ export async function post_change_profile(data) {
 }
 
 // check_team_list
-// data={
-//     'tm_list_type':,
-//     'uid':
-// }
-
 export async function get_check_team_list(data) {
     return request({
         method: 'GET',
         url:  `/user/check_team_list/${data.tm_list_type}`,
-        data: data,
+
         params:{
             uid: data.uid
         }
