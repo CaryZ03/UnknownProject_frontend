@@ -31,6 +31,7 @@ import '@textbus/editor/bundles/textbus.min.css';
         editor.onChange.subscribe(() => {
         console.log(editor);
         console.log(editor.getHTML());
+        console.log(typeof editor.getHTML());
         });
     },
     updated() {
