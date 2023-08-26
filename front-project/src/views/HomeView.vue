@@ -16,29 +16,29 @@
 
       <div class="form-box login">
         <h2>Login</h2>
-        <form action="#">
+        <form action="">
           <div class="input-box">
             <span class="icon"><ion-icon name="mail-unread"></ion-icon></span>
-            <input type="text" required />
+            <input type="text" v-model="user.email" required />
             <label>Email</label>
           </div>
 
           <div class="input-box">
             <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
-            <input type="password" required />
+            <input type="password" v-model="user.password" required />
             <label>password</label>
           </div>
 
           <div class="remember-forgot">
             <label><input type="checkbox" />Remember Me</label>
-            <a href="#">Forgot Password</a>
+            <a href="">Forgot Password</a>
           </div>
 
-          <button type="submit" class="btn">Login</button>
+          <button type="submit" @click.prevent="" class="btn">Login</button>
 
           <div class="login-register">
             <p>
-              Don't have an account?<a href="#" class="register-link"
+              Don't have an account?<a href="" class="register-link"
                 >Register</a
               >
             </p>
@@ -51,20 +51,20 @@
         <form action="#">
           <div class="input-box">
             <span class="icon"><ion-icon name="person"></ion-icon></span>
-            <input type="text" required />
+            <input type="text" v-model="userR.email" required />
             <label>Email</label>
           </div>
 
           <div class="input-box">
             <span class="icon"><ion-icon name="mail-unread"></ion-icon></span>
-            <input type="text" required />
-            <label>Username</label>
+            <input type="text" v-model="userR.password1" required />
+            <label>password</label>
           </div>
 
           <div class="input-box">
             <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
-            <input type="password" required />
-            <label>password</label>
+            <input type="password" v-model="userR.password2" required />
+            <label>repeat password</label>
           </div>
 
           <div class="remember-forgot">
@@ -73,11 +73,11 @@
             >
           </div>
 
-          <button type="submit" class="btn">Register</button>
+          <button type="submit" @click.prevent="" class="btn">Register</button>
 
           <div class="login-register">
             <p>
-              Already have an account?<a href="#" class="login-link">Login</a>
+              Already have an account?<a href="" class="login-link">Login</a>
             </p>
           </div>
         </form>
@@ -86,10 +86,6 @@
   </div>
 </template>
 
-<script>
-// @ is an alias to /src
-// import HelloWorld from '@/components/HelloWorld.vue'
-</script>
 
 
 <script>
@@ -97,11 +93,198 @@ export default {
   components: {},
   props: {},
   data() {
-    return {};
+    return {
+      user: {
+        email: "",
+        password: "",
+      },
+
+      userR: {
+        email: "",
+        password1: "",
+        password2: "",
+      },
+      userChange: {
+        email: "",
+        password1: "",
+        password2: "",
+      },
+      isAgree: false,
+      isRemember: false,
+    };
   },
   watch: {},
   computed: {},
-  methods: {},
+  methods: {
+    async login() {
+      const data = JSON.stringify(this.user);
+      console.log(data);
+
+      await this.$api.user
+        .post_user_login(data)
+        .then((response) => {
+          if (response.data["errno"] === 0) {
+            Message.success("登录成功");
+            console.log(response.data);
+            this.$store.state.token_key = response.data["token_key"];
+            this.$store.state.curUserID = response.data["uid"];
+
+            localStorage.setItem("curUserID", this.$store.state.curUserID);
+            localStorage.setItem("curUserName", this.$store.state.curUsername);
+            localStorage.setItem("token", response.data["token_key"]);
+            console.log(
+              "localStorage token register:" + localStorage.getItem("token")
+            );
+            localStorage.setItem("isLogin", true);
+
+            //   this.$store.state.isLogin = true
+            // this.$store.state.curUserID = localStorage.getItem("curUserID")
+            // this.$store.state.curUserName = localStorage.getItem("curUserName")
+            // this.$store.state.token_key = localStorage.getItem("token")
+
+            console.log(`/manage/${this.$store.state.curUserID}`);
+            // set cookie
+            this.$router.push({
+              // path: `/manage/${this.$store.state.curUserID}`,
+            });
+            this.$api.userInfo.getUserInfo_CheckToken().then((res) => {
+              console.log(res);
+            });
+          } else {
+            Message.error(response.data.msg);
+            console.log(response.data);
+            console.log("发生了奇怪的问题");
+          }
+        })
+        .catch((error) => {
+          Message.error("登录失败");
+          console.log(error);
+          // alert("wa")
+        });
+    },
+
+    forgetPass() {
+      // const
+      // this.$api.userInfo.postUserInfo_ChangeUserInfo(data)
+      const data = {
+        username: this.user.username,
+      };
+      console.log("data.username" + data.username);
+
+      this.$api.userInfo.postUserInfo_SendVeri(data).then((res) => {
+        alert("what fuck");
+        if (res.data.errno == 0) {
+          //发送邮箱成功，等验证码
+
+          this.$prompt("请输入验证码", "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+          })
+            .then(({ value }) => {
+              console.log("value2:jsontring" + JSON.stringify(value));
+              // console.log("value2:jsontring"+JSON.stringify(value2))
+              console.log("value2:" + value);
+              console.log("res.data.code" + res.data.code);
+              var value1;
+              if (value == res.data.code) {
+                //改邮箱
+                this.$message({
+                  type: "success",
+                  message: "验证码验证成功",
+                });
+
+                this.$prompt("请输入新密码", "提示", {
+                  confirmButtonText: "确定",
+                  cancelButtonText: "取消",
+                })
+                  .then(({ value }) => {
+                    this.userChange.password1 = value;
+                    this.userChange.password2 = value;
+
+                    const tmp = {
+                      username: this.user.username,
+                      password1: value,
+                      password2: value,
+                    };
+                    this.$api.userInfo
+                      .postUserInfo_ResetPassword(tmp)
+                      .then((res1) => {
+                        if (res1.data.errno == 0) {
+                          this.$message({
+                            type: "success",
+                            message: "修改成功",
+                          });
+                        } else {
+                          this.$message({
+                            type: "error",
+                            message: "修改失敗",
+                          });
+                        }
+                      });
+                  })
+                  .catch(() => {
+                    this.$message({
+                      type: "info",
+                      message: "取消輸入",
+                    });
+                  });
+                // this.addressIsBind = true;
+              } else {
+                this.$message({
+                  type: "error",
+                  message: "验证码错误",
+                });
+              }
+            })
+            .catch(() => {
+              this.$message({
+                type: "info",
+                message: "取消输入",
+              });
+            });
+        } else {
+          this.$message({
+            type: "error",
+            message: "验证码发送失败",
+          });
+        }
+      });
+    },
+
+    register() {
+      console.log("isagree:" + this.isAgree);
+      if (this.isAgree === false) {
+        Message.warning("请勾选用户协议");
+      } else {
+        console.log("????????:");
+        const data = JSON.stringify(this.userR);
+        console.log(data);
+        this.$api.userInfo
+          .postUserInfo_Register(data)
+          .then((response) => {
+            console.log(response.data);
+            if (response.data.errno == 0) {
+              // alert("注册成功")
+              Message.success("注册成功");
+              const wrapper = document.querySelector(".wrapper");
+              wrapper.classList.remove("active");
+            } else {
+              console.log(response.data);
+              if (response.data.errno == 1014) {
+                Message.error("密码必须含有数字和字母，且为6~20位");
+              } else {
+                Message.error(response.data.msg);
+              }
+            }
+          })
+          .catch((error) => {
+            // alert("注册失败")
+            Message.error("注册失败");
+            console.log(error);
+          });
+      }
+    },
+  },
   created() {},
   mounted() {
     const wrapper = document.querySelector(".wrapper");

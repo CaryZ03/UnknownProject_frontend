@@ -56,13 +56,13 @@ export async function post_delete_team(data) {
     })
 }
 
-export async function post_user_register_check(data) {
-    return request({
-        method: 'POST',
-        url: '/team/user_register_check',
-        data: data
-    })
-}
+// export async function post_user_register_check(data) {
+//     return request({
+//         method: 'POST',
+//         url: '/team/user_register_check',
+//         data: data
+//     })
+// }
 
 export async function post_join_team_url(data) {
     return request({

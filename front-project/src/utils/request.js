@@ -10,7 +10,7 @@ import store from "@/store";
 axios.defaults.withCredentials = true;
 
 const request = axios.create({
-  baseURL: 'http://182.92.102.246:1145/api',
+  baseURL: 'http://182.92.86.71:4514/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',

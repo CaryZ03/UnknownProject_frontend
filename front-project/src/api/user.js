@@ -102,10 +102,10 @@ export async function post_change_profile(data) {
 export async function get_check_team_list(data) {
     return request({
         method: 'GET',
-        url:  `/user/check_team_list/${tm_list_type}`,
-        data: data,
+        url:  `/user/check_team_list/${data.tm_list_type}`,
+
         params:{
-            uid: uid
+            uid: data.uid
         }
     })
 }
