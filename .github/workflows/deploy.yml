@@ -9,6 +9,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     
+    strategy:
+      matrix:
+        node-version: [18.9.0]
+        
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -16,7 +20,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '18.9.0' # 指定要使用的 Node.js 版本
+          node-version: '18.9.0'
 
       - name: Deploy to server
         uses: appleboy/ssh-action@master
