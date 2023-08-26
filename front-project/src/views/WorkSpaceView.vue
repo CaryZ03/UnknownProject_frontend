@@ -1559,7 +1559,11 @@ export default {
         
         //identity-tag
         selectedIdentity: '', // 当前选中的身份
-        uniqueIdentities: [] // 不重复的身份列表
+        uniqueIdentities: [], // 不重复的身份列表
+
+
+        //teamlist
+        teamList:[],
 
       }
     },
@@ -2231,6 +2235,30 @@ export default {
 
   created(){
     this.uniqueIdentities = Array.from(new Set(this.TeamPersonInform.map(item => item.identity)));
+  },
+
+  mounted: function (){
+
+    const tmp = {
+      'tm_list_type': 'joined',
+      'uid': this.$store.state.curUserID,
+    }
+
+    this.$api.user.get_check_team_list(tmp).then((response) => {
+      console.log(tmp)
+      console.log(response.data)
+      if (response.data.errno == 0) {
+        console.log("获取用户信息成功")
+        console.log(response.data.tm_info)
+        const tmObj = JSON.parse(response.data.tm_info);
+        console.log(tmObj);
+
+        
+      }
+    }).catch(error => {
+      alert("获取用户信息失败")
+      console.log(error)
+    })
   }
     
 }
