@@ -229,7 +229,7 @@ import Navbar from '@/components/Navbar.vue';
         };
     },
     mounted() {
-        this.chatSocket = new WebSocket('ws://182.92.86.71:4514/ws/chat/1/');
+        this.chatSocket = new WebSocket('ws://182.92.86.71:4514/ws/chat/1145/');
         this.chatSocket.onmessage = this.handleMessage;
         this.scrollToBottom();
     },
