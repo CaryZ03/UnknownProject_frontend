@@ -62,6 +62,7 @@
         <el-container>
             <el-header>花季猫狗猪猪兔兔牛马丁真收容中心(6)</el-header>
             <el-main>
+              <div class="scrollContainer" id="scrollContainer">
               <div class="recv-message">
                   <el-row>
                         <el-col :span="1">
@@ -116,6 +117,7 @@
                   </el-row>
                 </div>
               </div>
+            </div>
             </el-main>
             <el-footer>
                 <i class="el-icon-upload icon-set"></i>
@@ -155,21 +157,45 @@
               { id: 1, content: "Hello", isSentByCurrentUser: true },
               { id: 2, content: "Hi there", isSentByCurrentUser: false },
               { id: 3, content: "How are you?", isSentByCurrentUser: true },
-              { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false }
+              { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false },
+              { id: 3, content: "How are you?", isSentByCurrentUser: true },
+              { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false },
+              { id: 3, content: "How are you?", isSentByCurrentUser: true },
+              { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false },
+              { id: 3, content: "How are you?", isSentByCurrentUser: true },
+              { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false },
             ],
             redDotNum: 10,
             hoverList: [
-              { id: 1, hover: true },
-              { id: 2, hover: true },
+              { id: 1, hover: false },
+              { id: 2, hover: false },
             ],
         };
     },
     mounted() {
         this.chatSocket = new WebSocket('ws://127.0.0.1:8000/ws/chat/1/');
         this.chatSocket.onmessage = this.handleMessage;
+        this.scrollToBottom();
+        console.log('mounted');
+    },
+    updated() {
+        this.scrollToBottom();
+        console.log('updated');
     },
     methods: {
-        handleMessage(event) {
+        scrollToBottom() {
+          this.$nextTick(function () {
+            const container = document.querySelector('#scrollContainer');
+            console.log(container);
+            container.scrollTop = container.scrollHeight;
+            container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+            console.log(container.scrollHeight);
+            console.log(container.scrollTop);
+          });
+
+        },
+      
+        handleMessage(event) {  
             const data = JSON.parse(event.data);
             let recv_message_used = {
               content: data.message,
@@ -182,6 +208,10 @@
           this.sendMessage();
         },
         sendMessage() {
+            if (this.messageInput === '\n') {
+              this.messageInput = '';
+              return;
+            }
             const send_message = JSON.stringify({
                 'message': this.messageInput,
                 'user-id': '1234567',
@@ -239,10 +269,37 @@
     background-color: #E9EEF3;
     color: #333;
     margin-right: 100px;
-    height: 650px;
-    overflow: auto !important;
   }
-  
+  .scrollContainer {
+    height: 650px;
+    overflow: auto;
+  }
+  .scrollContainer::-webkit-scrollbar-thumb {
+        /*滚动条里面小方块*/
+        border-radius: 10px !important;
+        background-color: skyblue !important;
+        /*background-color: 0096c7 !important;*/
+        background-image: -webkit-linear-gradient(
+                45deg,
+                rgba(255, 255, 255, 0.2) 25%,
+                transparent 25%,
+                transparent 50%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0.2) 75%,
+                transparent 75%,
+                transparent
+        );
+    }
+    .scrollContainer::-webkit-scrollbar {
+        width: 10px !important; /*高宽分别对应横竖滚动条的尺寸*/
+        height: 1px !important;
+    }
+    .scrollContainer::-webkit-scrollbar-track {
+        /*滚动条里面轨道*/
+        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+        background: #ededed;
+        border-radius: 10px;
+    }
   body > .el-container {
     margin-bottom: 40px;
   }
