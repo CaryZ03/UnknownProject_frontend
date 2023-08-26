@@ -155,7 +155,10 @@
                     placement="top"
                     width="160"
                     v-model="atVisible" id="atPop">
-                    <p>这是一段内容这是一段内容确定删除吗？</p>
+                    <p>@成员</p>
+                    <div class="department-member" @click="atMember">Xenon</div>
+                    <div class="department-member" @click="atMember">猪</div>
+                    <div class="department-member" @click="atMember">丁真纯一郎</div>
                     <div style="text-align: right; margin: 0">
                       <el-button size="mini" type="text" @click="atVisible = false">取消</el-button>
                       <el-button type="primary" size="mini" @click="atVisible = false">确定</el-button>
@@ -225,7 +228,7 @@ import Navbar from '@/components/Navbar.vue';
         };
     },
     mounted() {
-        this.chatSocket = new WebSocket('ws://127.0.0.1:8000/ws/chat/1/');
+        this.chatSocket = new WebSocket('ws://182.92.86.71:4514/ws/chat/1/');
         this.chatSocket.onmessage = this.handleMessage;
         this.scrollToBottom();
     },
@@ -304,6 +307,10 @@ import Navbar from '@/components/Navbar.vue';
                 title: '发送问卷',
                 message: h('i', { style: 'color: teal'}, '文件已发送')
               });
+            },
+            atMember() {
+              // 传后端内容
+              this.messageInput += '@Xenon ';
             },
         }
     }
@@ -398,6 +405,10 @@ import Navbar from '@/components/Navbar.vue';
     font-size: 30px;
     margin: -7px 45px 0 -36px;
     line-height: 50px;
+  }
+  .department-member {
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    padding: 0 0 0 7px;
   }
   .el-popover {
     width: 300px !important;
