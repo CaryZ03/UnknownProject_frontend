@@ -29,6 +29,7 @@ import '@textbus/editor/bundles/textbus.min.css';
         const editor = createEditor();
         editor.mount(this.$refs.editorContainer)
         editor.onChange.subscribe(() => {
+        console.log(editor);
         console.log(editor.getHTML());
         });
     },
