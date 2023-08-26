@@ -21,8 +21,9 @@ jobs:
           key: ${{ secrets.SERVER_PRIVATE_KEY }}
           port: ${{ secrets.SERVER_PORT }}
           script: |            
-            cd /root/UnknowProject/UnknownProject_frontend/front-project
+            cd /root/UnknowProject/UnknownProject_frontend
             git pull
+            cd front-project
             npm install
             npm run build
 
