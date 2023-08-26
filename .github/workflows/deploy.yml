@@ -13,6 +13,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18.9.0' # 指定要使用的 Node.js 版本
+
       - name: Deploy to server
         uses: appleboy/ssh-action@master
         with:
@@ -28,5 +33,3 @@ jobs:
             npm run build
 
             sudo service nginx restart
-            
-
