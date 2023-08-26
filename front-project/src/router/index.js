@@ -7,17 +7,23 @@ import HomeView from '../views/HomeView.vue'
 const Community = () => import('../views/CommunityView.vue')
 const Design = () => import('../views/DesignView.vue')
 const WorkSpace = () => import('../views/WorkSpaceView.vue')
-const Chat = () =>import('../views/ChatView.vue')
+const Chat = () => import('../views/ChatView.vue')
 // const Author = () =>import('../views/')
-
+const Login = () => import('../views/LoginView.vue')
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'home',
+    name: 'Home',
     component: HomeView
+
+  },
+  {
+    path: '/Login',
+    name: 'Login',
+    component: Login
   },
   {
     path: '/about',
@@ -36,7 +42,7 @@ const routes = [
         path: 'author/:authorID',
         name: 'author'
       },
-      
+
 
     ]
 
@@ -52,7 +58,7 @@ const routes = [
     name: 'workSpace',
     component: WorkSpace,
 
-    children:[
+    children: [
       {
         path: 'Star',
         name: 'star',
@@ -78,7 +84,7 @@ const routes = [
     name: 'chat',
     component: Chat,
 
-    children:[
+    children: [
       {
         path: 'Coop',
         name: 'coop'
