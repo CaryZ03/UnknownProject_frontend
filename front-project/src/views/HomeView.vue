@@ -6,7 +6,7 @@
         <a href=""><router-link to="">Home</router-link></a>
         <a href=""><router-link to="">Community</router-link></a>
         <a href=""><router-link to="WorkSpace">WorkSpace</router-link></a>
-        <a href=""><router-link to=""></router-link></a>
+        <a href=""><router-link to="UML">UML</router-link></a>
         <button class="btnLogin-popup">Login</button>
       </nav>
     </header>
