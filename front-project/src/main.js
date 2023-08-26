@@ -4,9 +4,8 @@ import router from './router'
 import store from './store'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css'
-// import api from './api';
-import AllIosIcon from "vue-ionicons/dist/ionicons-ios.js";
 import api from './api';
+import AllIosIcon from "vue-ionicons/dist/ionicons-ios.js";
 Vue.prototype.$api = api;
 
 
@@ -27,7 +26,7 @@ Vue.use(VueKonva);
 Vue.use(AllIosIcon);
 Vue.use(ElementUI);
 Vue.config.productionTip = false
-// Vue.prototype.$api = api;
+Vue.prototype.$api = api;
 
 new Vue({
   router,
