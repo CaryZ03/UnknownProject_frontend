@@ -34,7 +34,7 @@
             <a href="">Forgot Password</a>
           </div>
 
-          <button type="submit" @click.prevent="" class="btn">Login</button>
+          <button @click="login" class="btn">Login</button>
 
           <div class="login-register">
             <p>
@@ -73,7 +73,7 @@
             >
           </div>
 
-          <button type="submit" @click.prevent="" class="btn">Register</button>
+          <button @click="register" class="btn">Register</button>
 
           <div class="login-register">
             <p>
@@ -109,6 +109,8 @@ export default {
         password1: "",
         password2: "",
       },
+
+      vericode: "",
       isAgree: false,
       isRemember: false,
     };
@@ -123,37 +125,11 @@ export default {
       await this.$api.user
         .post_user_login(data)
         .then((response) => {
-          if (response.data["errno"] === 0) {
-            Message.success("登录成功");
-            console.log(response.data);
-            this.$store.state.token_key = response.data["token_key"];
-            this.$store.state.curUserID = response.data["uid"];
-
-            localStorage.setItem("curUserID", this.$store.state.curUserID);
-            localStorage.setItem("curUserName", this.$store.state.curUsername);
-            localStorage.setItem("token", response.data["token_key"]);
-            console.log(
-              "localStorage token register:" + localStorage.getItem("token")
-            );
-            localStorage.setItem("isLogin", true);
-
-            //   this.$store.state.isLogin = true
-            // this.$store.state.curUserID = localStorage.getItem("curUserID")
-            // this.$store.state.curUserName = localStorage.getItem("curUserName")
-            // this.$store.state.token_key = localStorage.getItem("token")
-
-            console.log(`/manage/${this.$store.state.curUserID}`);
-            // set cookie
-            this.$router.push({
-              // path: `/manage/${this.$store.state.curUserID}`,
-            });
-            this.$api.userInfo.getUserInfo_CheckToken().then((res) => {
-              console.log(res);
-            });
-          } else {
-            Message.error(response.data.msg);
-            console.log(response.data);
-            console.log("发生了奇怪的问题");
+          if (response.data["errno"] === 0){
+            console.log("11111")
+          }
+          else{
+            console.log("2222")
           }
         })
         .catch((error) => {
@@ -251,39 +227,40 @@ export default {
       });
     },
 
-    register() {
+    async register() {
+      // todo 检测邮箱正确性
       console.log("isagree:" + this.isAgree);
-      if (this.isAgree === false) {
-        Message.warning("请勾选用户协议");
-      } else {
-        console.log("????????:");
-        const data = JSON.stringify(this.userR);
-        console.log(data);
-        this.$api.userInfo
-          .postUserInfo_Register(data)
-          .then((response) => {
-            console.log(response.data);
-            if (response.data.errno == 0) {
-              // alert("注册成功")
-              Message.success("注册成功");
-              const wrapper = document.querySelector(".wrapper");
-              wrapper.classList.remove("active");
-            } else {
-              console.log(response.data);
-              if (response.data.errno == 1014) {
-                Message.error("密码必须含有数字和字母，且为6~20位");
-              } else {
-                Message.error(response.data.msg);
-              }
-            }
-          })
-          .catch((error) => {
-            // alert("注册失败")
-            Message.error("注册失败");
-            console.log(error);
-          });
-      }
+      this.$api.user
+        .post_user_register_check(this.userR)
+        .then((res) => {
+          if (response.data["errno"] == 0) {
+            // todo 跳出输入验证码
+            this.$api.user
+              .post_send_verification_code(this.userR.email)
+              .then((res2) => {
+                if (res2.data["errno"] == 0) {
+                  const tdata = {
+                    email: this.userR.email,
+                    verification_code: this.vericode,
+                  };
+                  //检测验证码
+                  this.$api.post_check_verification_code(tdata).then((res3) => {
+                    if (res3.data["errno"] == 0) {
+                      this.$api.post_user_register(this.userR).then((res4) => {
+                        if (res4.data["errno"] == 0) {
+                          alert("注册成功");
+                        }
+                      });
+                    }
+                  });
+                }
+              });
+          }
+        })
+        .catch((error) => {});
     },
+
+    async send_verification_code() {},
   },
   created() {},
   mounted() {
