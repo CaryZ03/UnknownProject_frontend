@@ -11,7 +11,10 @@ export default {
     HelloWorld,
   },
   mounted() {
-    this.$api.user.get_check_token().then((res) => {
+    const data = {
+      "token_key": localStorage.getItem("token")
+    }
+    this.$api.user.get_check_token(data).then((res) => {
       if (res.data["errno"] == 0) {
         this.$router.push({
           path: `/WorkSpace`,

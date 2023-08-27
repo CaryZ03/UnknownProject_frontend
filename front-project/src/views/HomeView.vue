@@ -16,7 +16,7 @@
 
       <div class="form-box login">
         <h2>Login</h2>
-        <form action="">
+        <form  @submit.prevent="">
           <div class="input-box">
             <span class="icon"><i class="el-icon-edit"></i></span>
             <input type="text" v-model="user.email" required />
@@ -48,7 +48,7 @@
 
       <div class="form-box register">
         <h2>Registeration</h2>
-        <form action="#">
+        <form  @submit.prevent="">
           <div class="input-box">
             <span class="icon"><i class="el-icon-edit"></i></span>
             <input type="text" v-model="userR.email" required />
@@ -136,7 +136,7 @@ export default {
         .post_user_login(data)
         .then((response) => {
           if (response.data["errno"] == 0) {
-            
+            alert("1")
             console.log(response.data["token_key"]);
             this.$router.push({
               path: `/WorkSpace`,
