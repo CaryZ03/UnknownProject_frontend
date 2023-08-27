@@ -28,7 +28,7 @@
   <div class="menu-right-top">
     <el-menu-item index="5" class="menu-avatar"><el-avatar size="small" :src="circleUrl"></el-avatar>
         <el-divider direction="vertical"></el-divider>
-        用户名</el-menu-item>
+        {{ this.uname }}</el-menu-item>
     <router-link to="/Chat">
       <el-menu-item index="6" class="menu-bell">
         <el-badge class="item" :value="12" :max="99">
@@ -47,6 +47,7 @@
     data() {
         return {
             circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
+            uname: this.$store.state.curUserName
         };
     }
   }

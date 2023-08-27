@@ -5,9 +5,9 @@
         <el-aside class="el-aside">
           <div class="department-container">
             <div
-            class="department" :class="{ 'department-hovered': hoverList[1].hover }"
-            @mouseover="hoverList[1].hover = true"
-            @mouseout="hoverList[1].hover = false"
+            class="department" :class="{ 'department-hovered': hoverList[0].hover }"
+            @mouseover="hoverList[0].hover = true"
+            @mouseout="hoverList[0].hover = false"
             >
               <el-row>
                 <el-col :span="6">
@@ -47,20 +47,7 @@
                 </el-col>
               </el-row>
             </div>
-            
-            <div class="department">
-              <el-row>
-                <el-col :span="6">
-                  <el-avatar shape="square" :size="70" :src="circleUrl" class="department-avatar"></el-avatar>
-                </el-col>
-                <el-col :span="18">
-                  <div class="department-name">花季猫狗猪猪兔兔牛马丁真收容中心</div>
-                  <div class="depertment-latest-message">
-                    Xenon: 收到的消息
-                  </div>
-                </el-col>
-              </el-row>
-            </div>
+        
           </div>
       
         </el-aside>
