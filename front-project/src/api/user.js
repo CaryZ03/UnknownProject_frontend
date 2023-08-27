@@ -129,7 +129,7 @@ export async function post_upload_avatar(data) {
     })
 }
 //check_token
-export async function get_check_token() {
+export function get_check_token() {
     return request({
         method: 'GET',
         url:  '/user/check_token'
