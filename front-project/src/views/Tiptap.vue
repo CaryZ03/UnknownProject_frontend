@@ -1,12 +1,13 @@
 <template>
   <div class="container" v-if="editor">
 
+    
     <t-button @click="editor.chain().focus().toggleBold().run()" :disabled="!editor.can().chain().focus().toggleBold().run()" variant="text" ghost>幽灵按钮</t-button>
-    <t-button variant="text" ghost>幽灵按钮</t-button>
-    <t-button variant="text" ghost>幽灵按钮</t-button>
-    <t-button variant="text" ghost>幽灵按钮</t-button>
-    <t-button variant="text" ghost>幽灵按钮</t-button>
-    <t-button variant="text" ghost>幽灵按钮</t-button>
+    <t-button variant="text" @click="saveHTML" ghost>幽灵按钮</t-button>
+    <t-button variant="text" @click="saveMD" ghost>幽灵按钮</t-button>
+    <t-button variant="text" @click="saveText" ghost>幽灵按钮</t-button>
+    <t-button variant="text" @click="saveText" ghost>幽灵按钮</t-button>
+    <t-button variant="text" @click="downPDF" ghost>幽灵按钮</t-button>
     <t-button variant="text" ghost>幽灵按钮</t-button>
     <t-button variant="text" ghost>幽灵按钮</t-button>
     <t-button variant="text" ghost>幽灵按钮</t-button>
