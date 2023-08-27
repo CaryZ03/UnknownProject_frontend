@@ -196,16 +196,16 @@ import Navbar from '@/components/Navbar.vue';
             circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
             sys_message_url: "https://bpic.51yuansu.com/pic3/cover/03/59/43/5bd10c8228793_610.jpg?x-oss-process=image/sharpen,100",
             chatMessages: [
-              { id: 1, content: "Hello", isSentByCurrentUser: true, user_name: 'Xenon' },
-              { id: 2, content: "Hi there", isSentByCurrentUser: false, user_name: 'sbWei' },
-              { id: 3, content: "How are you?", isSentByCurrentUser: true, user_name: 'Xenon' },
-              { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false, user_name: 'sbWei' },
-              { id: 3, content: "How are you?", isSentByCurrentUser: true, user_name: 'Xenon' },
-              { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false, user_name: 'sbWei' },
-              { id: 3, content: "How are you?", isSentByCurrentUser: true, user_name: 'Xenon' },
-              { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false, user_name: 'sbWei' },
-              { id: 3, content: "How are you?", isSentByCurrentUser: true, user_name: 'Xenon' },
-              { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false, user_name: 'sbWei' },
+              { id: 1, content: "Hello", isSentByCurrentUser: true, user_name: 'Xenon' ,type: "message" },
+              { id: 2, content: "Hi there", isSentByCurrentUser: false, user_name: 'sbWei' ,type: "message" },
+              { id: 3, content: "How are you?", isSentByCurrentUser: true, user_name: 'Xenon' ,type: "message" },
+              { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false, user_name: 'sbWei' ,type: "message" },
+              { id: 3, content: "How are you?", isSentByCurrentUser: true, user_name: 'Xenon' ,type: "message" },
+              { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false, user_name: 'sbWei' ,type: "message" },
+              { id: 3, content: "How are you?", isSentByCurrentUser: true, user_name: 'Xenon' ,type: "message" },
+              { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false, user_name: 'sbWei' ,type: "message" },
+              { id: 3, content: "How are you?", isSentByCurrentUser: true, user_name: 'Xenon' ,type: "message" },
+              { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false, user_name: 'sbWei' ,type: "message" },
             ],
             memberList: [
               {uid: 123, name: "Xenon" },
@@ -241,23 +241,13 @@ import Navbar from '@/components/Navbar.vue';
           //接口取企业
           const self = this;
           const dataObject = {
-            team_id: 1,
-            tm_user_id: 1
+            tm_user_id: self.uid
           };
           const jsonString = JSON.stringify(dataObject);
-          this.$api.chat.post_get_team_members_and_permissions(jsonString)
+          this.$api.chat.post_get_teams_for_user(jsonString)
             .then(function (response) {
                 console.log(response);
-                self.memberList.splice(0, self.memberList.length);
-                console.log(response.data.members);
-                response.data.members.forEach(element => {
-                  const mem = {
-                    uid: element.tm_user_id,
-                    name: element.tm_user_nickname
-                  }
-                  console.log(mem);
-                  self.memberList.push(mem);
-                });
+                self.memberList.splice(0, self.departmentList.length);
                 console.log(this.memberList);
             })
             .catch(function (error) {
@@ -283,11 +273,17 @@ import Navbar from '@/components/Navbar.vue';
 
         },
         handleAt(data) {
-          console(data);
+          // console.log(data);
           if(data.is_at_all === true || data.array_data.includes(this.uid))
           {
-            console("你被@啦");
+            console.log("你被@啦");
+            
+            const h = this.$createElement;
 
+            this.$notify({
+              title: '提醒',
+              message: h('i', { style: 'color: teal'}, '你被@啦')
+            });
           }
         },
         handleMessage(event) {  
@@ -297,7 +293,7 @@ import Navbar from '@/components/Navbar.vue';
             isSentByCurrentUser: false,
             user_name: data.user_name
           }
-          handleAt(data);
+          this.handleAt(data);
           // if(this.uid === data.user_id)
           // {
           //   return;
@@ -309,12 +305,23 @@ import Navbar from '@/components/Navbar.vue';
           else {
             const receivedArrayBuffer = data.message;
             
-            const uint8Array = new Uint8Array(receivedArrayBuffer);
-            console.log(typeof uint8Array)
-            const file = new Blob([uint8Array]);
+            console.log("1111")
+            console.log(receivedArrayBuffer)
+            const blob = new Blob([receivedArrayBuffer]);
+            const file1 = new File([blob], 'aaa.py', { type: blob.type });
 
             // 在这里可以处理接收到的文件，例如保存到本地等
-            console.log('接收到的文件:', file);
+            console.log('接收到的文件:', file1);
+            // 创建指向文件保存位置的链接
+            const downloadLink = document.createElement('a');
+            downloadLink.href = URL.createObjectURL(file1);
+            downloadLink.download = 'aaa.py';
+
+            // 触发文件下载和保存
+            downloadLink.click();
+
+            // 释放临时 URL
+            URL.revokeObjectURL(downloadLink.href);
           }
         },
 
@@ -329,10 +336,11 @@ import Navbar from '@/components/Navbar.vue';
             }
             const send_message = JSON.stringify({
                 'message': this.messageInput,
-                'user_id': '123',
+                'user_id': this.uid,
                 'user_name': this.uname,
                 'is_at_all': this.isAtAll,
-                'array_data': this.atList
+                'array_data': this.atList,
+                'type': "message"
             })
             let send_message_used = {
               content: this.messageInput,
@@ -342,10 +350,11 @@ import Navbar from '@/components/Navbar.vue';
             // 将消息存至数据库
 
             this.chatMessages.push(send_message_used);
-
             this.chatSocket.send(send_message);
             this.messageInput = '';
-            // console.log(send_message)
+            this.atList.splice(0, this.atList.length);
+            this.isAtAll = false;
+            
             // console.log(this.chatMessages)
             console.log("send success")
             },
@@ -353,35 +362,34 @@ import Navbar from '@/components/Navbar.vue';
             openFileManager() {
               this.$refs.fileInput.click();
             },
-            send_file() {
+              send_file() {
 
-              const selectedFile = event.target.files[0];
+                const selectedFile = event.target.files[0];
               // 在这里可以处理选中的文件，例如发送到服务器等
               console.log('选中的文件:', selectedFile);
-
+              
               const reader = new FileReader();
+              
+              reader.onload = () => {
+              const arrayBuffer = event.target.result; // 读取到的文件内容为 ArrayBuffer
+              console.log(arrayBuffer);
 
-                          reader.onload = () => {
-                // 获取二进制数据
-                const binaryData = reader.result;
-                // 将 ArrayBuffer 转换为 Uint8Array
-                const uint8Array = new Uint8Array(binaryData);
-
-                const send_message = JSON.stringify({
-                    'message': uint8Array,
-                    'user-id': '123',
-                    'user-name': this.uname
+              const send_message = JSON.stringify({
+                    'message': binaryData,
+                    'user_id': this.uid,
+                    'user_name': this.uname,
+                    'is_at_all': false,
+                    'array_data': []
                 })
-                // 发送二进制数据到服务器
+              // WebSocket 成功连接后的回调函数
                 this.chatSocket.send(send_message);
-              };
-              // 开始读取文件
-              reader.readAsArrayBuffer(selectedFile);
+                console.log(send_message);
+              }
 
               const h = this.$createElement;
 
               this.$notify({
-                title: '发送问卷',
+                title: '发送文件',
                 message: h('i', { style: 'color: teal'}, '文件已发送')
               });
             },
