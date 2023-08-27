@@ -4,6 +4,27 @@
     <el-container>
         <el-aside class="el-aside">
           <div class="department-container">
+            <div
+            class="department" :class="{ 'department-hovered': hoverList[1].hover }"
+            @mouseover="hoverList[1].hover = true"
+            @mouseout="hoverList[1].hover = false"
+            >
+              <el-row>
+                <el-col :span="6">
+                  <el-badge :value="this.redDotNum" class="red_dot" v-if="this.redDotNum > 0">
+                    <el-avatar shape="square" :size="70" :src="sys_message_url" class="department-avatar-red" v-if="this.redDotNum > 0"></el-avatar>
+                  </el-badge>
+                  <el-avatar shape="square" :size="70" :src="sys_message_url" class="department-avatar-red" v-else></el-avatar>
+                </el-col>
+                <el-col :span="18">
+                  <div class="department-name">系统消息</div>
+                  <div class="depertment-latest-message">
+                    Xenon: 收到的消息
+                  </div>
+                </el-col>
+              </el-row>
+            </div>
+
             <div 
             class="department" :class="{ 'department-hovered': hoverList[0].hover }"
             @mouseover="hoverList[0].hover = true"
@@ -26,26 +47,7 @@
                 </el-col>
               </el-row>
             </div>
-            <div
-            class="department" :class="{ 'department-hovered': hoverList[1].hover }"
-            @mouseover="hoverList[1].hover = true"
-            @mouseout="hoverList[1].hover = false"
-            >
-              <el-row>
-                <el-col :span="6">
-                  <el-badge :value="this.redDotNum" class="red_dot" v-if="this.redDotNum > 0">
-                    <el-avatar shape="square" :size="70" :src="sys_message_url" class="department-avatar-red" v-if="this.redDotNum > 0"></el-avatar>
-                  </el-badge>
-                  <el-avatar shape="square" :size="70" :src="sys_message_url" class="department-avatar-red" v-else></el-avatar>
-                </el-col>
-                <el-col :span="18">
-                  <div class="department-name">系统消息</div>
-                  <div class="depertment-latest-message">
-                    Xenon: 收到的消息
-                  </div>
-                </el-col>
-              </el-row>
-            </div>
+            
             <div class="department">
               <el-row>
                 <el-col :span="6">
@@ -64,35 +66,9 @@
         </el-aside>
 
         <el-container>
-            <el-header>花季猫狗猪猪兔兔牛马丁真收容中心(6)</el-header>
+            <el-header>{{ this.curDepartment }}({{ this.memberList.length }})</el-header>
             <el-main id="scrollContainer" class="scrollContainer">
               <div>
-              <div class="recv-message">
-                  <el-row>
-                        <el-col :span="1">
-                          <el-avatar :src="circleUrl"></el-avatar>
-                        </el-col>
-                        <el-col :span="23">
-                          <div>Xenon</div>
-                          <div class="chat-bubble received">
-                            收到的消息
-                          </div>
-                        </el-col>
-                  </el-row>
-                </div>
-                <div class="send-message">
-                  <el-row>
-                        <el-col :span="23">
-                          <div class="send-member">Xenon</div>
-                          <div class="chat-bubble sent">
-                            收到的消息
-                          </div>
-                        </el-col>
-                        <el-col :span="1">
-                          <el-avatar :src="circleUrl"></el-avatar>
-                        </el-col>
-                  </el-row>
-                </div>
               <div v-for="message in chatMessages">
                 <div class="recv-message" v-if="message.isSentByCurrentUser === false">
                   <el-row>
@@ -100,8 +76,11 @@
                           <el-avatar :src="circleUrl"></el-avatar>
                         </el-col>
                         <el-col :span="23">
-                          <div>Xenon</div>
-                          <div class="chat-bubble received">
+                          <div>{{ message.user_name }}</div>
+                          <div v-if="isImageMessage(message)" class="chat-bubble received">
+                          <img :src="message.content" alt="接收的图片">
+                          </div>
+                          <div v-else class="chat-bubble received">
                             {{ message.content }}
                           </div>
                         </el-col>
@@ -110,8 +89,11 @@
                 <div class="send-message" v-else>
                   <el-row>
                         <el-col :span="23">
-                          <div class="send-member">Xenon</div>
-                          <div class="chat-bubble sent">
+                          <div class="send-member">{{ uname }}</div>
+                          <div v-if="isImageMessage(message)" class="chat-bubble sent">
+                            <img :src="message.content" alt="发送的图片">
+                          </div>
+                          <div v-else class="chat-bubble sent">
                             {{ message.content }}
                           </div>
                         </el-col>
@@ -125,7 +107,7 @@
 
             <!-- 文件框 -->
             <div>
-                    <input type="file" ref="fileInput" style="display: none" @change="send_file">
+              <input type="file" ref="fileInput" style="display: none" @change="send_file">
             </div>
 
             <!-- 历史记录对话框 -->
@@ -157,14 +139,15 @@
                     width="160"
                     v-model="atVisible" id="atPop">
                     <p>@成员</p>
-                    <div class="department-member" @click="atMember">Xenon</div>
-                    <div class="department-member" @click="atMember">猪</div>
-                    <div class="department-member" @click="atMember">丁真纯一郎</div>
+                    <div class="department-member" @click="atAll">所有人</div>
+                    <div v-for="(member, index) in memberList" :key="index" :id="'generated-div-' + index" class="department-member" @click="atMember(index)">
+                      {{ member.name }}
+                    </div>
                     <div style="text-align: right; margin: 0">
                       <el-button size="mini" type="text" @click="atVisible = false">取消</el-button>
                       <el-button type="primary" size="mini" @click="atVisible = false">确定</el-button>
                     </div>
-                  <div class="at" slot="reference">@</div>
+                  <div class="at" slot="reference" @click="openAtMenu">@</div>
                 </el-popover>
                 </el-col>
                 <el-col :span="20">
@@ -202,22 +185,34 @@ import Navbar from '@/components/Navbar.vue';
 },
     data() {
         return {
+            uid: this.$store.state.curUserID,
+            uname: this.$store.state.curUserName,
+            curDepartment: '花季猫狗猪猪兔兔牛马丁真收容中心',
+            curDepartmentId: '1',
+            departmentList: [],
             chatLog: '',
             messageInput: '',
             chatSocket: null,
             circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
             sys_message_url: "https://bpic.51yuansu.com/pic3/cover/03/59/43/5bd10c8228793_610.jpg?x-oss-process=image/sharpen,100",
             chatMessages: [
-              { id: 1, content: "Hello", isSentByCurrentUser: true },
-              { id: 2, content: "Hi there", isSentByCurrentUser: false },
-              { id: 3, content: "How are you?", isSentByCurrentUser: true },
-              { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false },
-              { id: 3, content: "How are you?", isSentByCurrentUser: true },
-              { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false },
-              { id: 3, content: "How are you?", isSentByCurrentUser: true },
-              { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false },
-              { id: 3, content: "How are you?", isSentByCurrentUser: true },
-              { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false },
+              { id: 1, content: "Hello", isSentByCurrentUser: true, user_name: 'Xenon' },
+              { id: 2, content: "Hi there", isSentByCurrentUser: false, user_name: 'sbWei' },
+              { id: 3, content: "How are you?", isSentByCurrentUser: true, user_name: 'Xenon' },
+              { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false, user_name: 'sbWei' },
+              { id: 3, content: "How are you?", isSentByCurrentUser: true, user_name: 'Xenon' },
+              { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false, user_name: 'sbWei' },
+              { id: 3, content: "How are you?", isSentByCurrentUser: true, user_name: 'Xenon' },
+              { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false, user_name: 'sbWei' },
+              { id: 3, content: "How are you?", isSentByCurrentUser: true, user_name: 'Xenon' },
+              { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false, user_name: 'sbWei' },
+            ],
+            memberList: [
+              {uid: 123, name: "Xenon" },
+              {uid: 114, name: "wei" },
+              {uid: 514, name: "Ding Zhen" },
+              {uid: 12345, name: "Cary Zi" },
+              {uid: 222222, name: "Pencil" },
             ],
             redDotNum: 10,
             hoverList: [
@@ -226,17 +221,50 @@ import Navbar from '@/components/Navbar.vue';
             ],
             historyVisible: false,
             atVisible: false,
+            isAtAll: false,
+            atList: [],
+
         };
     },
     mounted() {
         this.chatSocket = new WebSocket('ws://182.92.86.71:4514/ws/chat/1145/');
         this.chatSocket.onmessage = this.handleMessage;
         this.scrollToBottom();
+        this.getDepartments();
     },
     updated() {
         this.scrollToBottom();
     },
     methods: {
+
+        getDepartments(){
+          //接口取企业
+          const self = this;
+          const dataObject = {
+            team_id: 1,
+            tm_user_id: 1
+          };
+          const jsonString = JSON.stringify(dataObject);
+          this.$api.chat.post_get_team_members_and_permissions(jsonString)
+            .then(function (response) {
+                console.log(response);
+                self.memberList.splice(0, self.memberList.length);
+                console.log(response.data.members);
+                response.data.members.forEach(element => {
+                  const mem = {
+                    uid: element.tm_user_id,
+                    name: element.tm_user_nickname
+                  }
+                  console.log(mem);
+                  self.memberList.push(mem);
+                });
+                console.log(this.memberList);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+        },
 
         handleClose(done) {
           this.$confirm('确认关闭？')
@@ -254,15 +282,42 @@ import Navbar from '@/components/Navbar.vue';
           });
 
         },
-      
+        handleAt(data) {
+          console(data);
+          if(data.is_at_all === true || data.array_data.includes(this.uid))
+          {
+            console("你被@啦");
+
+          }
+        },
         handleMessage(event) {  
-            const data = JSON.parse(event.data);
-            let recv_message_used = {
-              content: data.message,
-              isSentByCurrentUser: false 
-            }
+          const data = JSON.parse(event.data);
+          let recv_message_used = {
+            content: data.message,
+            isSentByCurrentUser: false,
+            user_name: data.user_name
+          }
+          handleAt(data);
+          // if(this.uid === data.user_id)
+          // {
+          //   return;
+          // }
+
+          if(typeof data.message === 'string') {
             this.chatMessages.push(recv_message_used);
-            },
+          }
+          else {
+            const receivedArrayBuffer = data.message;
+            
+            const uint8Array = new Uint8Array(receivedArrayBuffer);
+            console.log(typeof uint8Array)
+            const file = new Blob([uint8Array]);
+
+            // 在这里可以处理接收到的文件，例如保存到本地等
+            console.log('接收到的文件:', file);
+          }
+        },
+
         handleEnter() {
           console.log('回车键被按下');
           this.sendMessage();
@@ -274,8 +329,10 @@ import Navbar from '@/components/Navbar.vue';
             }
             const send_message = JSON.stringify({
                 'message': this.messageInput,
-                'user-id': '1234567',
-                'user-name': 'Xenon'
+                'user_id': '123',
+                'user_name': this.uname,
+                'is_at_all': this.isAtAll,
+                'array_data': this.atList
             })
             let send_message_used = {
               content: this.messageInput,
@@ -302,6 +359,25 @@ import Navbar from '@/components/Navbar.vue';
               // 在这里可以处理选中的文件，例如发送到服务器等
               console.log('选中的文件:', selectedFile);
 
+              const reader = new FileReader();
+
+                          reader.onload = () => {
+                // 获取二进制数据
+                const binaryData = reader.result;
+                // 将 ArrayBuffer 转换为 Uint8Array
+                const uint8Array = new Uint8Array(binaryData);
+
+                const send_message = JSON.stringify({
+                    'message': uint8Array,
+                    'user-id': '123',
+                    'user-name': this.uname
+                })
+                // 发送二进制数据到服务器
+                this.chatSocket.send(send_message);
+              };
+              // 开始读取文件
+              reader.readAsArrayBuffer(selectedFile);
+
               const h = this.$createElement;
 
               this.$notify({
@@ -309,9 +385,46 @@ import Navbar from '@/components/Navbar.vue';
                 message: h('i', { style: 'color: teal'}, '文件已发送')
               });
             },
-            atMember() {
+            isImageMessage(message) {
+              // 假设图片消息的格式是以 "image:" 开头的字符串
+              return message.content.startsWith("image:");
+            },
+            atMember(index) {
               // 传后端内容
-              this.messageInput += '@Xenon ';
+              this.messageInput += `@${this.memberList[index].name} `;
+              this.atList.push(this.memberList[index].uid);
+              console.log(this.atList);
+            },
+            atAll() {
+              this.isAtAll = true;
+              this.messageInput += '@所有人 ';
+            },
+            openAtMenu() {
+              const self = this;
+              const dataObject = {
+                team_id: 1,
+                tm_user_id: 1
+              };
+              const jsonString = JSON.stringify(dataObject);
+              this.$api.chat.post_get_team_members_and_permissions(jsonString)
+                .then(function (response) {
+                    console.log(response);
+                    self.memberList.splice(0, self.memberList.length);
+                    console.log(response.data.members);
+                    response.data.members.forEach(element => {
+                      const mem = {
+                        uid: element.tm_user_id,
+                        name: element.tm_user_nickname
+                      }
+                      console.log(mem);
+                      self.memberList.push(mem);
+                    });
+                    console.log(this.memberList);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+              // 调用接口更新memberList
             },
         }
     }
@@ -462,6 +575,7 @@ import Navbar from '@/components/Navbar.vue';
   .department-container {
     margin-left: 35px;
     margin-top: 35px;
+    overflow: auto;
   }
   .department {
     box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
