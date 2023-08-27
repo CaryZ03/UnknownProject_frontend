@@ -8,11 +8,12 @@
             class="department" :class="{ 'department-hovered': hoverList[0].hover }"
             @mouseover="hoverList[0].hover = true"
             @mouseout="hoverList[0].hover = false"
+            @click="checkSystemMessage"
             >
               <el-row>
                 <el-col :span="6">
-                  <el-badge :value="this.redDotNum" class="red_dot" v-if="this.redDotNum > 0">
-                    <el-avatar shape="square" :size="70" :src="sys_message_url" class="department-avatar-red" v-if="this.redDotNum > 0"></el-avatar>
+                  <el-badge :value="redDotNum[0]" class="red_dot" v-if="redDotNum[0] > 0">
+                    <el-avatar shape="square" :size="70" :src="sys_message_url" class="department-avatar-red" v-if="this.redDotNum[0] > 0"></el-avatar>
                   </el-badge>
                   <el-avatar shape="square" :size="70" :src="sys_message_url" class="department-avatar-red" v-else></el-avatar>
                 </el-col>
@@ -26,21 +27,22 @@
             </div>
 
             <div 
-            class="department" :class="{ 'department-hovered': hoverList[0].hover }"
-            @mouseover="hoverList[0].hover = true"
-            @mouseout="hoverList[0].hover = false"
-            @click=""
+            v-for="(team, index) in departmentList" :key="index" :id="'generated-div-' + index"
+            class="department" :class="{ 'department-hovered': hoverList[index + 1].hover }"
+            @mouseover="hoverList[index + 1].hover = true"
+            @mouseout="hoverList[index + 1].hover = false"
+            @click="checkTeamMessage(index)"
             >
               <el-row>
                 <el-col :span="6">
-                  <el-badge :value="this.redDotNum" class="red_dot" v-if="this.redDotNum > 0">
-                    <el-avatar shape="square" :size="70" :src="circleUrl" class="department-avatar-red" v-if="this.redDotNum > 0"></el-avatar>
+                  <el-badge :value="redDotNum[index + 1]" class="red_dot" v-if="redDotNum[index + 1] > 0">
+                    <el-avatar shape="square" :size="70" :src="circleUrl" class="department-avatar-red" v-if="redDotNum[index + 1] > 0"></el-avatar>
                   </el-badge>
                   <el-avatar shape="square" :size="70" :src="circleUrl" class="department-avatar" v-else></el-avatar>
 
                 </el-col>
                 <el-col :span="18">
-                  <div class="department-name">花季猫狗猪猪兔兔牛马丁真收容中心</div>
+                  <div class="department-name">{{ team.team_name }}</div>
                   <div class="depertment-latest-message">
                     Xenon: 收到的消息
                   </div>
@@ -183,16 +185,16 @@ import Navbar from '@/components/Navbar.vue';
             circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
             sys_message_url: "https://bpic.51yuansu.com/pic3/cover/03/59/43/5bd10c8228793_610.jpg?x-oss-process=image/sharpen,100",
             chatMessages: [
-              { id: 1, content: "Hello", isSentByCurrentUser: true, user_name: 'Xenon' ,type: "message" },
-              { id: 2, content: "Hi there", isSentByCurrentUser: false, user_name: 'sbWei' ,type: "message" },
-              { id: 3, content: "How are you?", isSentByCurrentUser: true, user_name: 'Xenon' ,type: "message" },
-              { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false, user_name: 'sbWei' ,type: "message" },
-              { id: 3, content: "How are you?", isSentByCurrentUser: true, user_name: 'Xenon' ,type: "message" },
-              { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false, user_name: 'sbWei' ,type: "message" },
-              { id: 3, content: "How are you?", isSentByCurrentUser: true, user_name: 'Xenon' ,type: "message" },
-              { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false, user_name: 'sbWei' ,type: "message" },
-              { id: 3, content: "How are you?", isSentByCurrentUser: true, user_name: 'Xenon' ,type: "message" },
-              { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false, user_name: 'sbWei' ,type: "message" },
+              { id: 1, content: "Hello", isSentByCurrentUser: true, user_name: 'Xenon' ,message_type: "message" },
+              { id: 2, content: "Hi there", isSentByCurrentUser: false, user_name: 'sbWei' ,message_type: "message" },
+              { id: 3, content: "How are you?", isSentByCurrentUser: true, user_name: 'Xenon' ,message_type: "message" },
+              { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false, user_name: 'sbWei' ,message_type: "message" },
+              { id: 3, content: "How are you?", isSentByCurrentUser: true, user_name: 'Xenon' ,message_type: "message" },
+              { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false, user_name: 'sbWei' ,message_type: "message" },
+              { id: 3, content: "How are you?", isSentByCurrentUser: true, user_name: 'Xenon' ,message_type: "message" },
+              { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false, user_name: 'sbWei' ,message_type: "message" },
+              { id: 3, content: "How are you?", isSentByCurrentUser: true, user_name: 'Xenon' ,message_type: "message" },
+              { id: 4, content: "I'm good, thanks!", isSentByCurrentUser: false, user_name: 'sbWei' ,message_type: "message" },
             ],
             memberList: [
               {uid: 123, name: "Xenon" },
@@ -201,10 +203,20 @@ import Navbar from '@/components/Navbar.vue';
               {uid: 12345, name: "Cary Zi" },
               {uid: 222222, name: "Pencil" },
             ],
-            redDotNum: 10,
+            redDotNum: [1,2,3,4,5,6,7,8,9,10],
             hoverList: [
               { id: 1, hover: false },
               { id: 2, hover: false },
+              { id: 3, hover: false },
+              { id: 4, hover: false },
+              { id: 5, hover: false },
+              { id: 6, hover: false },
+              { id: 7, hover: false },
+              { id: 8, hover: false },
+              { id: 9, hover: false },
+              { id: 10, hover: false },
+              { id: 11, hover: false },
+              { id: 12, hover: false },
             ],
             historyVisible: false,
             atVisible: false,
@@ -227,19 +239,33 @@ import Navbar from '@/components/Navbar.vue';
         getDepartments(){
           //接口取企业
           const self = this;
+          console.log(self.uid);
           const dataObject = {
             tm_user_id: self.uid
           };
           const jsonString = JSON.stringify(dataObject);
           this.$api.chat.post_get_teams_for_user(jsonString)
             .then(function (response) {
-                console.log(response);
-                self.memberList.splice(0, self.departmentList.length);
-                console.log(this.memberList);
+                self.departmentList.splice(0, self.departmentList.length);
+                response.data.teams.forEach(element => {
+                const team = {
+                  team_id: element.team_id,
+                  team_name: element.team_name
+                }
+                self.departmentList.push(team);
+              });
             })
             .catch(function (error) {
                 console.log(error);
             });
+
+        },
+        
+        checkSystemMessage() {
+          
+        },
+
+        checkTeamMessage(index) {
 
         },
 
@@ -327,7 +353,7 @@ import Navbar from '@/components/Navbar.vue';
                 'user_name': this.uname,
                 'is_at_all': this.isAtAll,
                 'array_data': this.atList,
-                'type': "message"
+                'message_type': "message"
             })
             let send_message_used = {
               content: this.messageInput,
@@ -366,7 +392,8 @@ import Navbar from '@/components/Navbar.vue';
                     'user_id': this.uid,
                     'user_name': this.uname,
                     'is_at_all': false,
-                    'array_data': []
+                    'array_data': [],
+                    'message_type': 'file'
                 })
               // WebSocket 成功连接后的回调函数
                 this.chatSocket.send(send_message);
