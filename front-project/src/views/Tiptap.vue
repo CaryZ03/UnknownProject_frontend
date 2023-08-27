@@ -261,13 +261,27 @@ import StarterKit from "@tiptap/starter-kit";
 import { Editor, EditorContent, FloatingMenu } from "@tiptap/vue-2";
 import * as Y from "yjs";
 import MenuBar from "./MenuBar.vue";
+
+import { saveAs } from 'file-saver'
 // import htmlDocx from 'html-docx-js/dist/html-docx';
 // import saveAs from 'file-saver';
+import TurndownService from 'turndown';
 
 
 const getRandomElement = (list) => {
   return list[Math.floor(Math.random() * list.length)];
 };
+//获取文档ID
+const getDocuID = () => {
+  return utils.getCookie('editDocID');
+}
+//获取用户姓名
+const UserName = () =>{
+  return utils.getCookie("UserName");
+}
+
+
+
 
 export default {
   components: {
@@ -323,6 +337,9 @@ export default {
     });
 
     localStorage.setItem("currentUser", JSON.stringify(this.currentUser));
+
+
+    
   },
 
   methods: {
@@ -384,6 +401,114 @@ export default {
         "Lisa Bonet",
       ]);
     },
+
+
+    // -------------------------------关于导出----------------------------------
+    toHTML(){
+      console.log(this.editor.getHTML());
+    },
+
+    toJSON(){
+      console.log(this.editor.getJSON());
+    },
+
+    toMD(){
+      const turndown = new TurndownService({
+        emDelimiter: '_',
+        linkStyle: 'inlined',
+        headingStyle: 'atx'
+      })
+
+      const markdown = turndown.turndown(this.editor.getHTML());
+      console.log(markdown);
+    },
+
+    toText(){
+      console.log(this.editor.getText());
+    },
+
+    downPDF(){
+      let iframe = document.getElementById("pdfDom");
+
+      const el=document.getElementById("pdfDom");
+      iframe=document.createElement('IFRAME');
+      iframe.setAttribute("id", "print-iframe");
+      iframe.setAttribute('style', 'position:absolute;width:0px;height:0px;left:-999em;top:-500px;');
+      document.body.appendChild(iframe);
+      let doc = iframe.contentWindow.document;
+      doc.write("<LINK rel=\"stylesheet\" type=\"text/css\" href=\"css/print.css\">");
+      doc.write('<div>' + el.innerHTML + '</div>');
+      doc.close();
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+
+      if (navigator.userAgent.indexOf("MSIE") > 0){
+        document.body.removeChild(iframe);
+      }
+/*
+      async function back() {
+        return 1;
+      }
+      back().then(result => {
+        router.go(0);
+      })
+      console.log('虽然在后面，但是我先执行');
+
+      const previewEl = document.querySelector("#pdfDom").innerHTML;
+      window.document.body.innerHTML=previewEl;
+      window.print();
+
+ */
+    },
+
+    saveWord(){
+      let htmlStr = document.querySelector("#pdfDom").innerHTML;
+      let page = `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>${htmlStr}
+        </body></html>`
+      // console.log(page);return
+      saveAs(
+          htmlDocx.asBlob(page, {
+            orientation: "landscape"//跨域设置
+          }),
+          //文件名
+          this.title+".doc"
+      )
+    },
+
+    saveMD(){
+
+      const turndown = new TurndownService({
+        emDelimiter: '_',
+        linkStyle: 'inlined',
+        headingStyle: 'atx'
+      })
+
+      const markdown = turndown.turndown(this.editor.getHTML());
+
+      var file = new File([markdown], this.title+".md", {type: "text/plain;charset=utf-8"});
+      saveAs(file);
+    },
+
+    saveHTML(){
+
+      var file = new File([this.editor.getHTML()], this.title+".html", {type: "text/plain;charset=utf-8"});
+      saveAs(file);
+    },
+
+    saveJSON(){
+
+      var file = new File([this.editor.getJSON()], this.title+".json", {type: "text/plain;charset=utf-8"});
+      saveAs(file);
+    },
+
+    saveText(){
+
+      var file = new File([this.editor.getText()], this.title+".txt", {type: "text/plain;charset=utf-8"});
+      saveAs(file);
+    },
+    // -----------------------关于导出----------------------------------------
+
+    
   },
 
   beforeUnmount() {
