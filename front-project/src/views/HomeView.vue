@@ -148,6 +148,7 @@ export default {
             localStorage.setItem("curUserID", this.$store.state.curUserID);
             localStorage.setItem("curUserMail", this.$store.state.curUserMail);
             localStorage.setItem("token", response.data["token_key"]);
+            alert("登录成功")
           } else {
             console.log(response.data);
           }
@@ -155,6 +156,7 @@ export default {
         .catch((error) => {
           // Message.error("登录失败");
           console.log("登录失败");
+          console.log(error)
           // alert("wa")
         });
     },
@@ -307,6 +309,7 @@ export default {
               .post_user_register(this.userR)
               .then((res4) => {
                 if (res4.data["errno"] == 0) {
+                  console.log(res4.data)
                   alert("注册成功");
                   // todo:跳转到登录
                 } else {

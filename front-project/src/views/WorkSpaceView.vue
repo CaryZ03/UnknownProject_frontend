@@ -9,7 +9,7 @@
     <div class="aside-top">
       <i class="el-icon-user"></i>
       <span style="padding-left: 8px;
-padding-right: 7px;">{{ teamCreater }}的团队</span>
+padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
       
       <el-popover
   placement="right"
@@ -20,7 +20,7 @@ padding-right: 7px;">{{ teamCreater }}的团队</span>
           
           <!-- 用户姓名栏 -->
           <div class="flex-shrink-0 p-2 text-ellipsis h-9 text-grey3">
-            {{ teamCreater }}
+            {{ this.personInform.nickname }}
           </div>
           
           <!-- 团队空间列表 -->
@@ -683,10 +683,10 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
               
               <el-card shadow="hover" style="width: 500px;">
                 <div style="display: flex; align-items: center;">
-                  <el-avatar :size="80" :round="true">{{ getInitials(personInform.realname) }}</el-avatar>
+                  <el-avatar :size="80" :round="true">{{ getInitials(personInform.nickname) }}</el-avatar>
                   <div style="margin-left: 20px;">
-                    <h3>{{ personInform.realname }}</h3>
-                    <p>Nickname: {{ personInform.nickname }}</p>
+                    <h3>{{ personInform.nickname }}</h3>
+                    <p>Realname: {{ personInform.realname }}</p>
                     <p>Email: {{ personInform.address }}</p>
                     <p>Identity: {{ personInform.identity }}</p>
                   </div>
@@ -1560,10 +1560,21 @@ export default {
 
         //teamlist
         teamList:[],
-        currentTeam:{},
+        // "{\"team_id\": 10, \"team_name\": \"name\",
+        //  \"team_description\": null, 
+        //  \"team_tel\": null, \"team_create_time\": \"2023-08-25 12:38:41\",
+        //   \"team_creator\": \"Vioriey\"}"
+
+        //用show_team接口实现
+        currentTeam:{
+          team_id: 1,
+          team_name: 'niumo',
+          team_creator: 'pencil',
+
+        },
 
         //aside-top
-        teamCreater: 'pencil',
+        // teamCreater: 'pencil',
 
         personInform: {
           nickname: "morty",
@@ -2246,15 +2257,38 @@ export default {
 
   mounted: function (){
 
-    const tmp = {
-      'tm_list_type': 'joined',
-      'uid': this.$store.state.curUserID,
+    
+
+    //获取当前团队信息
+    const data = {
+      "team_id": this.$store.state.curTeamID,
     }
+    this.$api.team.post_show_team(data).then((response) => {
+      // console.log(data)
+      // console.log(response.data)
+      if (response.data.errno == 0) {
+        console.log("获取当前团队信息成功")
+        console.log(response.data.msg)
+        const tmObj = JSON.parse(response.data.team_info);
+        console.log(tmObj);
+
+        //赋值
+        this.currentTeam = tmObj;
+        
+      }
+    }).catch(error => {
+      alert("获取当前团队信息失败")
+      console.log("获取当前团队信息error：\n");
+      console.log(error);
+    })
+
+
+
 
     //获取用户的基本信息
     this.$api.user.post_check_profile_self().then((response) => {
       // console.log(tmp)
-      console.log(response.data)
+      // console.log(response.data)
       if (response.data.errno == 0) {
         console.log("获取用户信息成功")
         console.log(response.data.user_info)
@@ -2262,7 +2296,10 @@ export default {
         console.log(tmObj);
 
         //赋值
-        this.personInform = tmObj;
+        this.personInform.nickname = tmObj.user_name;
+        this.personInform.realname = tmObj.user_real_name;
+        this.personInform.address = tmObj.user_email;
+        // this.personInform.identity = tmObj;
         
       }
     }).catch(error => {
@@ -2271,12 +2308,46 @@ export default {
       console.log(error);
     })
 
-    //获取用户加入的 团队列表
-    this.$api.user.get_check_team_list(tmp).then((response) => {
-      console.log(tmp)
+    //获取用户identity : 输入 id ，teamid
+    const data1 = {
+      "team_id": this.$store.state.curTeamID,
+      "user_id": this.$store.state.curUserID,
+    }
+
+    this.$api.team.post_member_role(data1).then((response) => {
+      // console.log(tmp)
       console.log(response.data)
       if (response.data.errno == 0) {
-        console.log("获取用户信息成功")
+        console.log("获取用户identity信息成功")
+        console.log(response.data.msg)
+       
+        //赋值
+        if(response.data.role === 'creator')
+          this.personInform.identity = "团队创建者";
+        else if( response.data.role === 'member')
+          this.personInform.identity = "普通成员";
+        else if(response.data.role === 'manager')
+          this.personInform.identity ="管理员";
+      }
+    }).catch(error => {
+      alert("获取用户identity失败")
+      console.log("获取用户identity error：\n");
+      console.log(error);
+    })
+
+
+
+
+    //获取用户加入的 团队列表
+    const tmp = {
+      'tm_list_type': 'joined',
+      'uid': this.$store.state.curUserID,
+    }
+    this.$api.user.get_check_team_list(tmp).then((response) => {
+      // console.log(tmp)
+      // console.log(response.data)
+      if (response.data.errno == 0) {
+        console.log("获取团队列表成功")
         console.log(response.data.tm_info)
         const tmObj = JSON.parse(response.data.tm_info);
         console.log(tmObj);
@@ -2292,6 +2363,8 @@ export default {
     })
 
     //获取团队的人员列表
+    
+
 
     //获取团队的项目列表
   }
