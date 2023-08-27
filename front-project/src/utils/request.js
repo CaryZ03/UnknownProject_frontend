@@ -11,7 +11,7 @@ axios.defaults.withCredentials = true;
 
 const request = axios.create({
   baseURL: 'http://182.92.86.71:4514/api',
-  timeout: 10000,
+  timeout: 50000,
   headers: {
     'Content-Type': 'application/json',
   }

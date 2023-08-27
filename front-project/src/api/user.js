@@ -36,7 +36,7 @@ export function post_user_register(data) {
     })
 }
 //user_login
-export async function post_user_login(data) {
+export  function post_user_login(data) {
     return request({
         method: 'POST',
         url:  '/user/user_login',
@@ -121,7 +121,7 @@ export async function post_check_profile(data) {
 
 // upload_avatar
 
-export async function get_upload_avatar(data) {
+export async function post_upload_avatar(data) {
     return request({
         method: 'POST',
         url:  '/user/upload_avatar',
@@ -136,9 +136,9 @@ export async function get_check_token() {
     })
 }
 //
-export async function get_upload_email_check(data) {
+export async function post_upload_email_check(data) {
     return request({
-        method: 'GET',
+        method: 'POST',
         url:  '/user/upload_email_check',
         data: data
     })

@@ -7,7 +7,7 @@
         <a href=""><router-link to="">Community</router-link></a>
         <a href=""><router-link to="WorkSpace">WorkSpace</router-link></a>
         <a href=""><router-link to="UML">UML</router-link></a>
-        <button class="btnLogin-popup">Login</button>
+        <button v-show="!this.$store.state.isLogin" class="btnLogin-popup">Login</button>
       </nav>
     </header>
 
@@ -136,15 +136,17 @@ export default {
         .post_user_login(data)
         .then((response) => {
           if (response.data["errno"] == 0) {
-            console.log("11111");
-            // this.$router.push({
-            //   path: `/WorkSpace`,
-            // });
+            
+            console.log(response.data["token_key"]);
+            this.$router.push({
+              path: `/WorkSpace`,
+            });
+
             this.$store.state.isLogin = true;
-            this.$store.curUserMail = user.email;
+            this.$store.curUserMail = this.user.email;
             this.$store.curUserID = response.data["uid"];
             localStorage.setItem("curUserID", this.$store.state.curUserID);
-            localStorage.setItem("curUserName", this.$store.state.curUsername);
+            localStorage.setItem("curUserMail", this.$store.state.curUserMail);
             localStorage.setItem("token", response.data["token_key"]);
           } else {
             console.log(response.data);
@@ -326,15 +328,10 @@ export default {
       this.showVeriBox = false;
       // 发邮箱errno！=0
     },
-
-    async check_verification_code() {},
-
-    async user_register() {},
-
-    async user_login() {},
   },
   created() {},
   mounted() {
+
     const wrapper = document.querySelector(".wrapper");
     const loginLink = document.querySelector(".login-link");
     const registerLink = document.querySelector(".register-link");
