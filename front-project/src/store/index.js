@@ -10,6 +10,8 @@ export default new Vuex.Store({
     curUserID: 1,
     curTeamID: 1,
     curTeam: '',
+    curUserID: '1',
+    curUserName: '帅轩哥',
   },
   getters: {
   },

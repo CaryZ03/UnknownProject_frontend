@@ -10,6 +10,7 @@ export default {
   components: {
     HelloWorld,
   },
+  
   mounted() {
     this.$api.user
       .get_check_token()

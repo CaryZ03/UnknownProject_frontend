@@ -160,6 +160,15 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
       
       <span style="margin: 28px 0 0;margin-left: auto; " >
         {{this.personInform.nickname}}
+
+        <router-link to="/Chat" class="menu-bell-router">
+          <div class="menu-bell">
+            <el-badge class="item" :value="12" :max="99">
+                <i class="el-icon-message-solid" size="large"></i>
+            </el-badge>
+          </div>
+        </router-link>
+
       <el-dropdown >
         <i class="el-icon-setting" style="margin-right: 15px"></i>
         <el-dropdown-menu slot="dropdown">
@@ -2982,5 +2991,14 @@ padding-left: 25px;
   line-height: 64px;
   tab-size: 4;
   word-break: break-word;
+}
+.menu-bell {
+  margin: 0 0 0 -49px;
+  font-size: 20px;
+  position: absolute !important;
+  top: 28px;
+}
+.menu-bell-router {
+  color: inherit;
 }
 </style>

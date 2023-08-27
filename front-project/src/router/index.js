@@ -10,6 +10,7 @@ const WorkSpace = () => import('../views/WorkSpaceView.vue')
 const Chat = () => import('../views/ChatView.vue')
 // const Author = () =>import('../views/')
 const Login = () => import('../views/LoginView.vue')
+const TiptapView = () => import('../views/Tiptap.vue') 
 
 Vue.use(VueRouter)
 
@@ -29,6 +30,11 @@ const routes = [
     path: '/Text',
     name: 'Text',
     component: Text
+  },
+  {
+    path: '/Tiptap',
+    name: 'Tiptap',
+    component: TiptapView
   },
   {
     path: '/about',
