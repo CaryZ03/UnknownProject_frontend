@@ -167,8 +167,7 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
         <el-menu-item-group>
           <template slot="title">分组一</template>
           <el-menu-item index="5-1" @click="changeContent(2)"><i class="el-icon-user"></i>人员管理</el-menu-item>
-          <el-menu-item index="5-2" @click="changeContent(2.1)"><i class="
-el-icon-chat-line-round"></i>团队群聊</el-menu-item>
+          <el-menu-item index="5-2" @click="changeContent(2.1)"><i class="el-icon-chat-line-round"></i>团队群聊</el-menu-item>
         </el-menu-item-group>
         
       </el-submenu>
@@ -1479,8 +1478,7 @@ export default {
         search: '' ,
         isMainVisible: true, // 控制 <el-main> 的可见性
 
-        //aside-top
-        teamCreater: 'pencil',
+        
 
         //new project
         newProjectDialogVisible: false,
@@ -1519,12 +1517,7 @@ export default {
 
         displayMode: 'list', // 初始展示模式为列表模式
 
-        personInform: {
-          nickname: "morty",
-          realname: "刘兆丰",
-          address: "326855092@qq.com",
-          identity: "团队创建者",
-        },
+        
 
         TeamPersonInform:[{
           nickname: "pencil",
@@ -1562,8 +1555,22 @@ export default {
         uniqueIdentities: [], // 不重复的身份列表
 
 
+        
+        //mounted
+
         //teamlist
         teamList:[],
+        currentTeam:{},
+
+        //aside-top
+        teamCreater: 'pencil',
+
+        personInform: {
+          nickname: "morty",
+          realname: "刘兆丰",
+          address: "326855092@qq.com",
+          identity: "团队创建者",
+        },
 
       }
     },
@@ -2244,6 +2251,27 @@ export default {
       'uid': this.$store.state.curUserID,
     }
 
+    //获取用户的基本信息
+    this.$api.user.post_check_profile_self().then((response) => {
+      // console.log(tmp)
+      console.log(response.data)
+      if (response.data.errno == 0) {
+        console.log("获取用户信息成功")
+        console.log(response.data.user_info)
+        const tmObj = JSON.parse(response.data.user_info);
+        console.log(tmObj);
+
+        //赋值
+        this.personInform = tmObj;
+        
+      }
+    }).catch(error => {
+      alert("获取用户信息失败")
+      console.log("用户基本信息error：\n");
+      console.log(error);
+    })
+
+    //获取用户加入的 团队列表
     this.$api.user.get_check_team_list(tmp).then((response) => {
       console.log(tmp)
       console.log(response.data)
@@ -2253,12 +2281,19 @@ export default {
         const tmObj = JSON.parse(response.data.tm_info);
         console.log(tmObj);
 
+        //赋值
+        this.teamList = tmObj;
         
       }
     }).catch(error => {
-      alert("获取用户信息失败")
+      alert("获取团队列表失败")
+      console.log("团队列表error：\n");
       console.log(error)
     })
+
+    //获取团队的人员列表
+
+    //获取团队的项目列表
   }
     
 }
