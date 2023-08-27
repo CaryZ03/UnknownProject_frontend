@@ -59,7 +59,7 @@ const routes = [
 
   },
   {
-    path: '/Design/:dishgnCode',
+    path: '/Design',
     name: 'design',
     component: Design,
 
