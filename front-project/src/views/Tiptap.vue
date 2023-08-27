@@ -1,226 +1,176 @@
 <template>
   <div class="container" v-if="editor">
-
-    
-    <t-button @click="editor.chain().focus().toggleBold().run()" :disabled="!editor.can().chain().focus().toggleBold().run()" variant="text" ghost>幽灵按钮</t-button>
-    <t-button variant="text" @click="saveHTML" ghost>saveHTML</t-button>
-    <t-button variant="text" @click="saveMD" ghost>saveMD</t-button>
-    <t-button variant="text" @click="saveWord" ghost>saveWord</t-button>
-    <t-button variant="text" @click="saveText" ghost>saveText</t-button>
-    <t-button variant="text" @click="downPDF" ghost>downPDF</t-button>
-    <t-button variant="text" ghost>幽灵按钮</t-button>
-    <t-button variant="text" ghost>幽灵按钮</t-button>
-    <t-button variant="text" ghost>幽灵按钮</t-button>
-    <t-button variant="text" ghost>幽灵按钮</t-button>
-    <t-button variant="text" ghost>幽灵按钮</t-button>
-    <t-button variant="text" ghost>幽灵按钮</t-button>
-    <t-button variant="text" ghost>幽灵按钮</t-button>
-    <t-button variant="text" ghost>幽灵按钮</t-button>
-    <t-button variant="text" ghost>幽灵按钮</t-button>
-    <t-button variant="text" ghost>幽灵按钮</t-button>
-    
-
-    
-
-    <button @click="editor.chain().focus().toggleBold().run()" :disabled="!editor.can().chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
-      bold
-    </button>
-
-    <CodeIcon  @click="editor.chain().focus().toggleBold().run()" :disabled="!editor.can().chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }"></CodeIcon>
-    <button @click="editor.chain().focus().toggleItalic().run()" :disabled="!editor.can().chain().focus().toggleItalic().run()" :class="{ 'is-active': editor.isActive('italic') }">
-      italic
-    </button>
-    <button @click="editor.chain().focus().toggleStrike().run()" :disabled="!editor.can().chain().focus().toggleStrike().run()" :class="{ 'is-active': editor.isActive('strike') }">
-      strike
-    </button>
-    <button @click="editor.chain().focus().toggleCode().run()" :disabled="!editor.can().chain().focus().toggleCode().run()" :class="{ 'is-active': editor.isActive('code') }">
-      code
-    </button>
-
-    <button @click="editor.chain().focus().unsetAllMarks().run()">
-      clear marks
-    </button>
-    <button @click="editor.chain().focus().clearNodes().run()">
-      clear nodes
-    </button>
-    <button @click="editor.chain().focus().setParagraph().run()" :class="{ 'is-active': editor.isActive('paragraph') }">
-      paragraph
-    </button>
-    <button @click="editor.chain().focus().toggleHeading({ level: 1 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }">
-      h1
-    </button>
-    <button @click="editor.chain().focus().toggleHeading({ level: 2 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }">
-      h2
-    </button>
-    <button @click="editor.chain().focus().toggleHeading({ level: 3 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }">
-      h3
-    </button>
-    <button @click="editor.chain().focus().toggleHeading({ level: 4 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 4 }) }">
-      h4
-    </button>
-    <button @click="editor.chain().focus().toggleHeading({ level: 5 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 5 }) }">
-      h5
-    </button>
-    <button @click="editor.chain().focus().toggleHeading({ level: 6 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 6 }) }">
-      h6
-    </button>
-    <button @click="editor.chain().focus().toggleBulletList().run()" :class="{ 'is-active': editor.isActive('bulletList') }">
-      bullet list
-    </button>
-    <button @click="editor.chain().focus().toggleOrderedList().run()" :class="{ 'is-active': editor.isActive('orderedList') }">
-      ordered list
-    </button>
-    <button @click="editor.chain().focus().toggleCodeBlock().run()" :class="{ 'is-active': editor.isActive('codeBlock') }">
-      code block
-    </button>
-    <button @click="editor.chain().focus().toggleBlockquote().run()" :class="{ 'is-active': editor.isActive('blockquote') }">
-      blockquote
-    </button>
-    <button @click="editor.chain().focus().setHorizontalRule().run()">
-      horizontal rule
-    </button>
-    <button @click="editor.chain().focus().setHardBreak().run()">
-      hard break
-    </button>
-    <button @click="editor.chain().focus().undo().run()" :disabled="!editor.can().chain().focus().undo().run()">
-      undo
-    </button>
-    <button @click="editor.chain().focus().redo().run()" :disabled="!editor.can().chain().focus().redo().run()">
-      redo
-    </button>
-
-
-    <button
-      @click="editor.chain().focus().toggleBold().run()"
-      :disabled="!editor.can().chain().focus().toggleBold().run()"
-      :class="{ 'is-active': editor.isActive('bold') }"
-    >
-      bold
-    </button>
-    <button
-      @click="editor.chain().focus().toggleItalic().run()"
-      :disabled="!editor.can().chain().focus().toggleItalic().run()"
-      :class="{ 'is-active': editor.isActive('italic') }"
-    >
-      italic
-    </button>
-    <button
-      @click="editor.chain().focus().toggleStrike().run()"
-      :disabled="!editor.can().chain().focus().toggleStrike().run()"
-      :class="{ 'is-active': editor.isActive('strike') }"
-    >
-      strike
-    </button>
-    <button
-      @click="editor.chain().focus().toggleCode().run()"
-      :disabled="!editor.can().chain().focus().toggleCode().run()"
-      :class="{ 'is-active': editor.isActive('code') }"
-    >
-      code
-    </button>
-    <button @click="editor.chain().focus().unsetAllMarks().run()">
-      clear marks
-    </button>
-    <button @click="editor.chain().focus().clearNodes().run()">
-      clear nodes
-    </button>
-    <button
-      @click="editor.chain().focus().setParagraph().run()"
-      :class="{ 'is-active': editor.isActive('paragraph') }"
-    >
-      paragraph
-    </button>
-    <button
-      @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
-      :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }"
-    >
-      h1
-    </button>
-    <button
-      @click="editor.chain().focus().toggleHeading({ level: 2 }).run()"
-      :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }"
-    >
-      h2
-    </button>
-    <button
-      @click="editor.chain().focus().toggleHeading({ level: 3 }).run()"
-      :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }"
-    >
-      h3
-    </button>
-    <button
-      @click="editor.chain().focus().toggleHeading({ level: 4 }).run()"
-      :class="{ 'is-active': editor.isActive('heading', { level: 4 }) }"
-    >
-      h4
-    </button>
-    <button
-      @click="editor.chain().focus().toggleHeading({ level: 5 }).run()"
-      :class="{ 'is-active': editor.isActive('heading', { level: 5 }) }"
-    >
-      h5
-    </button>
-    <button
-      @click="editor.chain().focus().toggleHeading({ level: 6 }).run()"
-      :class="{ 'is-active': editor.isActive('heading', { level: 6 }) }"
-    >
-      h6
-    </button>
-    <button
-      @click="editor.chain().focus().toggleBulletList().run()"
-      :class="{ 'is-active': editor.isActive('bulletList') }"
-    >
-      bullet list
-    </button>
-    <button
-      @click="editor.chain().focus().toggleOrderedList().run()"
-      :class="{ 'is-active': editor.isActive('orderedList') }"
-    >
-      ordered list
-    </button>
-    <button
-      @click="editor.chain().focus().toggleCodeBlock().run()"
-      :class="{ 'is-active': editor.isActive('codeBlock') }"
-    >
-      code block
-    </button>
-    <button
-      @click="editor.chain().focus().toggleBlockquote().run()"
-      :class="{ 'is-active': editor.isActive('blockquote') }"
-    >
-      blockquote
-    </button>
-    <button @click="editor.chain().focus().setHorizontalRule().run()">
-      horizontal rule
-    </button>
-    <button @click="editor.chain().focus().setHardBreak().run()">
-      hard break
-    </button>
-    <button
-      @click="editor.chain().focus().undo().run()"
-      :disabled="!editor.can().chain().focus().undo().run()"
-    >
-      undo
-    </button>
-    <button
-      @click="editor.chain().focus().redo().run()"
-      :disabled="!editor.can().chain().focus().redo().run()"
-    >
-      redo
-    </button>
+    <div class="header">
+      <!-- <t-button @click="editor.chain().focus().toggleBold().run()" :disabled="!editor.can().chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }" variant="text" ghost>幽灵按钮</t-button> -->
+      <t-button variant="text" @click="saveHTML" ghost>saveHTML</t-button>
+      <t-button variant="text" @click="saveMD" ghost>saveMD</t-button>
+      <t-button variant="text" @click="saveWord" ghost>saveWord</t-button>
+      <t-button variant="text" @click="saveText" ghost>saveText</t-button>
+      <t-button variant="text" @click="downPDF" ghost>downPDF</t-button>
+      <t-button
+        variant="text"
+        @click="editor.chain().focus().toggleBold().run()"
+        :disabled="!editor.can().chain().focus().toggleBold().run()"
+        :class="{ 'is-active': editor.isActive('bold') }"
+        ghost
+        >B</t-button
+      >
+      <t-button
+        variant="text"
+        @click="editor.chain().focus().toggleItalic().run()"
+        :disabled="!editor.can().chain().focus().toggleItalic().run()"
+        :class="{ 'is-active': editor.isActive('italic') }"
+        ghost
+        >Italic</t-button
+      >
+      <t-button
+        variant="text"
+        @click="editor.chain().focus().toggleStrike().run()"
+        :disabled="!editor.can().chain().focus().toggleStrike().run()"
+        :class="{ 'is-active': editor.isActive('strike') }"
+        ghost
+        >Strike</t-button
+      >
+      <t-button
+        variant="text"
+        @click="editor.chain().focus().toggleCode().run()"
+        :disabled="!editor.can().chain().focus().toggleCode().run()"
+        :class="{ 'is-active': editor.isActive('code') }"
+        ghost
+        >code</t-button
+      >
+      <t-button
+        variant="text"
+        @click="editor.chain().focus().unsetAllMarks().run()"
+        ghost
+        >UnsetMK</t-button
+      >
+      <t-button
+        variant="text"
+        @click="editor.chain().focus().clearNodes().run()"
+        ghost
+        >clearNode</t-button
+      >
+      <t-button
+        variant="text"
+        @click="editor.chain().focus().setParagraph().run()"
+        :class="{ 'is-active': editor.isActive('paragraph') }"
+        ghost
+        >Para</t-button
+      >
+      <t-button
+        variant="text"
+        @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
+        :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }"
+        ghost
+        >h1</t-button
+      >
+      <t-button
+        variant="text"
+        @click="editor.chain().focus().toggleHeading({ level: 2 }).run()"
+        :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }"
+        ghost
+        >h2</t-button
+      >
+      <t-button
+        variant="text"
+        @click="editor.chain().focus().toggleHeading({ level: 3 }).run()"
+        :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }"
+        ghost
+        >h3</t-button
+      >
+      <t-button
+        variant="text"
+        @click="editor.chain().focus().toggleHeading({ level: 4 }).run()"
+        :class="{ 'is-active': editor.isActive('heading', { level: 4 }) }"
+        ghost
+        >h4</t-button
+      >
+      <t-button
+        variant="text"
+        @click="editor.chain().focus().toggleHeading({ level: 5 }).run()"
+        :class="{ 'is-active': editor.isActive('heading', { level: 5 }) }"
+        ghost
+        >h5</t-button
+      >
+      <t-button
+        variant="text"
+        @click="editor.chain().focus().toggleHeading({ level: 6 }).run()"
+        :class="{ 'is-active': editor.isActive('heading', { level: 6 }) }"
+        ghost
+        >h6</t-button
+      >
+      <t-button
+        variant="text"
+        @click="editor.chain().focus().toggleBulletList().run()"
+        :class="{ 'is-active': editor.isActive('bulletList') }"
+        ghost
+        >Bull</t-button
+      >
+      <t-button
+        variant="text"
+        @click="editor.chain().focus().toggleOrderedList().run()"
+        :class="{ 'is-active': editor.isActive('orderedList') }"
+        ghost
+        >Ord</t-button
+      >
+      <t-button
+        variant="text"
+        @click="editor.chain().focus().toggleCodeBlock().run()"
+        :class="{ 'is-active': editor.isActive('codeBlock') }"
+        ghost
+        >CodeBlock</t-button
+      >
+      <t-button
+        variant="text"
+        @click="editor.chain().focus().setHorizontalRule().run()"
+        ghost
+        >H</t-button
+      >
+      <t-button
+        variant="text"
+        @click="editor.chain().focus().setHardBreak().run()"
+        ghost
+        >HdBrk</t-button
+      >
+      <t-button
+        variant="text"
+        @click="editor.chain().focus().undo().run()"
+        :disabled="!editor.can().chain().focus().undo().run()"
+        ghost
+        >Undo</t-button
+      >
+      <t-button
+        variant="text"
+        @click="editor.chain().focus().redo().run()"
+        :disabled="!editor.can().chain().focus().redo().run()"
+        ghost
+        >Redo</t-button
+      >
+      <!-- <t-button variant="text" ghost>幽灵按钮</t-button> -->
+    </div>
 
     <floating-menu
       class="floating-menu"
       :tippy-options="{ duration: 100 }"
       :editor="editor"
     >
-      <button @click="editor.chain().focus().toggleHeading({ level: 1 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }">
+      <button
+        @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
+        :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }"
+      >
         H1
       </button>
-      <button @click="editor.chain().focus().toggleHeading({ level: 2 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }">
+      <button
+        @click="editor.chain().focus().toggleHeading({ level: 2 }).run()"
+        :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }"
+      >
         H2
       </button>
-      <button @click="editor.chain().focus().toggleBulletList().run()" :class="{ 'is-active': editor.isActive('bulletList') }">
+      <button
+        @click="editor.chain().focus().toggleBulletList().run()"
+        :class="{ 'is-active': editor.isActive('bulletList') }"
+      >
         Bullet List
       </button>
     </floating-menu>
@@ -231,7 +181,7 @@
   
   <script>
 import {
-    CodeIcon,
+  CodeIcon,
   LettersDIcon,
   LettersSIcon,
   LettersEIcon,
@@ -245,11 +195,7 @@ import {
   ComponentDropdownIcon,
   ComponentRadioIcon,
   ComponentStepsIcon,
-} from 'tdesign-icons-vue';
-
-
-
-
+} from "tdesign-icons-vue";
 
 import { TiptapCollabProvider } from "@hocuspocus/provider";
 import CharacterCount from "@tiptap/extension-character-count";
@@ -260,34 +206,34 @@ import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import StarterKit from "@tiptap/starter-kit";
 import { Editor, EditorContent, FloatingMenu } from "@tiptap/vue-2";
+import Mention from '@tiptap/extension-mention'
 import * as Y from "yjs";
 import MenuBar from "./MenuBar.vue";
 
-import { saveAs } from 'file-saver'
-import htmlDocx from 'html-docx-js/dist/html-docx';
-import TurndownService from 'turndown';
-
+import { saveAs } from "file-saver";
+import htmlDocx from "html-docx-js/dist/html-docx";
+import TurndownService from "turndown";
 
 const getRandomElement = (list) => {
   return list[Math.floor(Math.random() * list.length)];
 };
 //获取文档ID
 const getDocuID = () => {
-  return utils.getCookie('editDocID');
-}
+  return utils.getCookie("editDocID");
+};
 //获取用户姓名
-const UserName = () =>{
+const UserName = () => {
   return utils.getCookie("UserName");
-}
+};
 
-
-
+import suggestion from './suggestion.js'
+import tippy from 'tippy.js'
 
 export default {
   components: {
     EditorContent,
     MenuBar,
-    FloatingMenu
+    FloatingMenu,
   },
 
   data() {
@@ -300,6 +246,9 @@ export default {
       editor: null,
       status: "connecting",
       room: "room1",
+
+      
+      
     };
   },
 
@@ -320,6 +269,11 @@ export default {
         StarterKit.configure({
           history: false,
         }),
+        Mention.configure({
+
+        }),
+        
+        
         Highlight,
         TaskList,
         TaskItem,
@@ -337,9 +291,6 @@ export default {
     });
 
     localStorage.setItem("currentUser", JSON.stringify(this.currentUser));
-
-
-    
   },
 
   methods: {
@@ -402,98 +353,102 @@ export default {
       ]);
     },
 
-
     // -------------------------------关于导出----------------------------------
-    toHTML(){
+    toHTML() {
       console.log(this.editor.getHTML());
     },
 
-    toJSON(){
+    toJSON() {
       console.log(this.editor.getJSON());
     },
 
-    toMD(){
+    toMD() {
       const turndown = new TurndownService({
-        emDelimiter: '_',
-        linkStyle: 'inlined',
-        headingStyle: 'atx'
-      })
+        emDelimiter: "_",
+        linkStyle: "inlined",
+        headingStyle: "atx",
+      });
 
       const markdown = turndown.turndown(this.editor.getHTML());
       console.log(markdown);
     },
 
-    toText(){
+    toText() {
       console.log(this.editor.getText());
     },
 
-    downPDF(){
+    downPDF() {
       let iframe = document.getElementById("pdfDom");
 
-      const el=document.getElementById("pdfDom");
-      iframe=document.createElement('IFRAME');
+      const el = document.getElementById("pdfDom");
+      iframe = document.createElement("IFRAME");
       iframe.setAttribute("id", "print-iframe");
-      iframe.setAttribute('style', 'position:absolute;width:0px;height:0px;left:-999em;top:-500px;');
+      iframe.setAttribute(
+        "style",
+        "position:absolute;width:0px;height:0px;left:-999em;top:-500px;"
+      );
       document.body.appendChild(iframe);
       let doc = iframe.contentWindow.document;
-      doc.write("<LINK rel=\"stylesheet\" type=\"text/css\" href=\"css/print.css\">");
-      doc.write('<div>' + el.innerHTML + '</div>');
+      doc.write('<LINK rel="stylesheet" type="text/css" href="css/print.css">');
+      doc.write("<div>" + el.innerHTML + "</div>");
       doc.close();
       iframe.contentWindow.focus();
       iframe.contentWindow.print();
 
-      if (navigator.userAgent.indexOf("MSIE") > 0){
+      if (navigator.userAgent.indexOf("MSIE") > 0) {
         document.body.removeChild(iframe);
       }
     },
 
-    saveWord(){
+    saveWord() {
       let htmlStr = document.querySelector("#pdfDom").innerHTML;
       let page = `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>${htmlStr}
-        </body></html>`
+        </body></html>`;
 
       saveAs(
-          htmlDocx.asBlob(page, {
-            orientation: "landscape"//跨域设置
-          }),
-          this.title+".doc"
-      )
+        htmlDocx.asBlob(page, {
+          orientation: "landscape", //跨域设置
+        }),
+        this.title + ".doc"
+      );
     },
 
-    saveMD(){
-
+    saveMD() {
       const turndown = new TurndownService({
-        emDelimiter: '_',
-        linkStyle: 'inlined',
-        headingStyle: 'atx'
-      })
+        emDelimiter: "_",
+        linkStyle: "inlined",
+        headingStyle: "atx",
+      });
 
       const markdown = turndown.turndown(this.editor.getHTML());
 
-      var file = new File([markdown], this.title+".md", {type: "text/plain;charset=utf-8"});
+      var file = new File([markdown], this.title + ".md", {
+        type: "text/plain;charset=utf-8",
+      });
       saveAs(file);
     },
 
-    saveHTML(){
-
-      var file = new File([this.editor.getHTML()], this.title+".html", {type: "text/plain;charset=utf-8"});
+    saveHTML() {
+      var file = new File([this.editor.getHTML()], this.title + ".html", {
+        type: "text/plain;charset=utf-8",
+      });
       saveAs(file);
     },
 
-    saveJSON(){
-
-      var file = new File([this.editor.getJSON()], this.title+".json", {type: "text/plain;charset=utf-8"});
+    saveJSON() {
+      var file = new File([this.editor.getJSON()], this.title + ".json", {
+        type: "text/plain;charset=utf-8",
+      });
       saveAs(file);
     },
 
-    saveText(){
-
-      var file = new File([this.editor.getText()], this.title+".txt", {type: "text/plain;charset=utf-8"});
+    saveText() {
+      var file = new File([this.editor.getText()], this.title + ".txt", {
+        type: "text/plain;charset=utf-8",
+      });
       saveAs(file);
     },
     // -----------------------关于导出----------------------------------------
-
-    
   },
 
   beforeUnmount() {
@@ -503,19 +458,37 @@ export default {
 };
 </script>
 <style lang="scss">
-.container{
-    position: fixed;
+.container {
+  position: fixed;
   top: 0;
   left: 0;
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
-  background-color: #000000;
+  background-color: #56564d;
 }
-
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 0;
+  /* background: red; */
+  background-color: #616161;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 99;
+}
+.mention {
+  border: 1px solid #000;
+  border-radius: 0.4rem;
+  padding: 0.1rem 0.3rem;
+  box-decoration-break: clone;
+}
 .editor {
-  background-color: #000000;
+  background-color: #fff;
   border: 3px solid #0d0d0d;
   border-radius: 0.75rem;
   color: #0d0d0d;
@@ -712,85 +685,5 @@ export default {
       }
     }
   }
-}
-</style>
-  <style lang="scss">
-/* Basic editor styles */
-.tiptap {
-  > * + * {
-    margin-top: 0.75em;
-  }
-
-  ul,
-  ol {
-    padding: 0 1rem;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    line-height: 1.1;
-  }
-
-  code {
-    background-color: rgba(#616161, 0.1);
-    color: #616161;
-  }
-
-  pre {
-    background: #0d0d0d;
-    color: #fff;
-    font-family: "JetBrainsMono", monospace;
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-
-    code {
-      color: inherit;
-      padding: 0;
-      background: none;
-      font-size: 0.8rem;
-    }
-  }
-
-  img {
-    max-width: 100%;
-    height: auto;
-  }
-
-  blockquote {
-    padding-left: 1rem;
-    border-left: 2px solid rgba(#0d0d0d, 0.1);
-  }
-
-  hr {
-    border: none;
-    border-top: 2px solid rgba(#0d0d0d, 0.1);
-    margin: 2rem 0;
-  }
-
-  
-.floating-menu {
-  display: flex;
-  background-color: #0D0D0D10;
-  padding: 0.2rem;
-  border-radius: 0.5rem;
-
-  button {
-    border: none;
-    background: none;
-    font-size: 0.85rem;
-    font-weight: 500;
-    padding: 0 0.2rem;
-    opacity: 0.6;
-
-    &:hover,
-    &.is-active {
-      opacity: 1;
-    }
-  }
-}
 }
 </style>

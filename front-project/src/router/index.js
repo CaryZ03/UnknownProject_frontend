@@ -32,7 +32,7 @@ const routes = [
     component: Text
   },
   {
-    path: '/Tiptap',
+    path: '/Tiptap/:appID/:room',
     name: 'Tiptap',
     component: TiptapView
   },
