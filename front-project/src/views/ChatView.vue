@@ -240,6 +240,7 @@ import Navbar from '@/components/Navbar.vue';
           //接口取企业
           const self = this;
           console.log(self.uid);
+          console.log(self.uname);
           const dataObject = {
             tm_user_id: self.uid
           };
@@ -266,7 +267,7 @@ import Navbar from '@/components/Navbar.vue';
         },
 
         checkTeamMessage(index) {
-
+          
         },
 
         handleClose(done) {
