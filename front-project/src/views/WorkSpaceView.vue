@@ -335,9 +335,9 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
                     <el-form-item label="项目名称" required>
                       <el-input v-model="newProject.name" placeholder="请输入项目名称"></el-input>
                     </el-form-item>
-                    <el-form-item label="负责人" required>
+                    <!-- <el-form-item label="负责人" required>
                       <el-input v-model="newProject.person" placeholder="请输入负责人"></el-input>
-                    </el-form-item>
+                    </el-form-item> -->
                   </el-form>
 
                   <span slot="footer" class="dialog-footer">
@@ -872,6 +872,8 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
                   </template>
                   {{currentProgram.name}}
                 </el-descriptions-item>
+
+
                 <el-descriptions-item>
                   <template slot="label">
                     <i class="el-icon-location-outline"></i>
@@ -879,6 +881,16 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
                   </template>
                   {{currentProgram.person}}
                 </el-descriptions-item>
+
+                <el-descriptions-item>
+                  <template slot="label">
+                    <i class="el-icon-location-outline"></i>
+                    描述
+                  </template>
+                  {{currentProgram.project_description}}
+                </el-descriptions-item>
+
+              
                 
 
               </el-descriptions>
@@ -895,6 +907,9 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
                 </el-form-item>
                 <el-form-item label="负责人">
                   <el-input v-model="currentProgram.person" ></el-input>
+                </el-form-item>
+                <el-form-item label="描述">
+                  <el-input v-model="currentProgram.project_description" ></el-input>
                 </el-form-item>
               </el-form>
               
@@ -1812,6 +1827,77 @@ export default {
 
 
           //获取团队的项目列表
+          //check_project_list_team
+          const tmp2 = {
+            "team_id": this.currentTeam.team_id,
+            "recycle": "False"
+          }
+          console.log("获取项目列表输入：",tmp2)
+          this.$api.project.post_check_project_list_team(tmp2).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取团队项目列表成功")
+              console.log(response.data.p_info)
+
+              if(response.data.p_info.length === 0){
+                    this.tableData = []
+                  }
+              else{
+                  const tmInfoArray = response.data.p_info.map((item) => JSON.parse(item.replace(/\\/g, '')));
+                  console.log(tmInfoArray);
+                    //赋值
+                  this.tableData = tmInfoArray;
+                  this.tableData.forEach(program=>{
+                    program.editable = false;
+                  })
+                  // tmInfoArray.forEach(program =>{
+
+                  // });
+                }
+              
+            }
+          }).catch(error => {
+            alert("获取团队项目列表失败")
+            console.log("团队项目列表error：\n");
+            console.log(error)
+          })
+
+
+          //获取团队的项目回收站列表
+          const tmp3 = {
+            "team_id": this.currentTeam.team_id,
+            "recycle": "True"
+          }
+          console.log("获取项目回收站列表输入：",tmp3)
+          this.$api.project.post_check_project_list_team(tmp3).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取团队项目回收站列表成功")
+              console.log(response.data.p_info)
+
+              if(response.data.p_info.length === 0){
+                    this.ProgRecycleTable = []
+                  }
+              else{
+                  const tmInfoArray = response.data.p_info.map((item) => JSON.parse(item.replace(/\\/g, '')));
+                  console.log(tmInfoArray);
+                    //赋值
+                  // this.tableData = tmInfoArray;
+                  this.ProgRecycleTable = tmInfoArray;
+                  this.ProgRecycleTable.forEach(program=>{
+                    program.editable = false;
+                  })
+                }
+              
+            }
+          }).catch(error => {
+            alert("获取团队项目回收站列表失败")
+            console.log("团队项目回收站列表error：\n");
+            console.log(error)
+          })
+
     },
 
 
@@ -1823,6 +1909,7 @@ export default {
     saveProInfo(){
       //303 change_profile 接口
       //.....
+      
       this.isProgInfoEditting = false;
     },
 
@@ -1950,11 +2037,32 @@ export default {
         }).then(() => {
 
           // 在这里执行具体的删除逻辑
-          const index = this.tableData.indexOf(row);
-          if (index !== -1) {
-            this.tableData.splice(index, 1);
-            this.ProgRecycleTable.push(row);
+          // const index = this.tableData.indexOf(row);
+          // if (index !== -1) {
+          //   this.tableData.splice(index, 1);
+          //   this.ProgRecycleTable.push(row);
+          // }
+
+          const tmp = {
+            "team_id": this.currentTeam.team_id,
+            "project_id": row.project_id,
           }
+          this.$api.project.post_delete_project(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取成功")
+              console.log(response.data.msg)
+
+              this.loadInfo();
+              
+            }
+          }).catch(error => {
+            alert("获取失败")
+            console.log("error：\n");
+            console.log(error)
+          })
+
           this.$message({
             type: 'success',
             message: '删除成功!'
@@ -2191,18 +2299,38 @@ export default {
         this.$refs.newProjectForm.validate(valid => {
           if (valid) {
             // 将新项目添加到 tableData 数组中
-            this.tableData.push({
-              date: moment(this.newProject.date).format('YYYY-MM-DD'),
-              name: this.newProject.name,
-              person: this.newProject.person,
-              address: '' , // 根据需求添加其他属性
-              editable: false,
+            // this.tableData.push({
+            //   date: moment(this.newProject.date).format('YYYY-MM-DD'),
+            //   name: this.newProject.name,
+            //   person: this.newProject.person,
+            //   address: '' , // 根据需求添加其他属性
+            //   editable: false,
               
-              documentList: [],
-            protoList: [],
-            demandList: [],
+            //   documentList: [],
+            // protoList: [],
+            // demandList: [],
 
-            });
+            // });
+
+            //create_project
+            const tmp = {
+              "team_id": this.currentTeam.team_id,
+              "name": this.newProject.name,
+          }
+          console.log("新建项目input：",tmp)
+          this.$api.project.post_create_project(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取成功")
+              console.log(response.data.msg)
+
+            }
+          }).catch(error => {
+            alert("获取失败")
+            console.log("error：\n");
+            console.log(error)
+          })
 
             this.newProjectDialogVisible = false;  // 关闭对话框
 
@@ -2212,6 +2340,8 @@ export default {
         });
         },
       resetNewProject() {
+
+          this.loadInfo();
           this.$refs.newProjectForm.resetFields();  // 重置表单数据
           this.newProjectDialogVisible = false;  // 关闭对话框
         },
