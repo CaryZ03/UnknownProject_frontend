@@ -7,7 +7,12 @@
         <a href=""><router-link to="">Community</router-link></a>
         <a href=""><router-link to="WorkSpace">WorkSpace</router-link></a>
         <a href=""><router-link to="UML">UML</router-link></a>
-        <button v-show="!this.$store.state.isLogin" class="btnLogin-popup">Login</button>
+        <button v-if="!this.$store.state.isLogin" class="btnLogin-popup">
+          Login
+        </button>
+        <button v-else @click.="logout" class="btnLogout-popup">
+          Logout
+        </button>
       </nav>
     </header>
 
@@ -16,7 +21,7 @@
 
       <div class="form-box login">
         <h2>Login</h2>
-        <form  @submit.prevent="">
+        <form @submit.prevent="">
           <div class="input-box">
             <span class="icon"><i class="el-icon-edit"></i></span>
             <input type="text" v-model="user.email" required />
@@ -48,7 +53,7 @@
 
       <div class="form-box register">
         <h2>Registeration</h2>
-        <form  @submit.prevent="">
+        <form @submit.prevent="">
           <div class="input-box">
             <span class="icon"><i class="el-icon-edit"></i></span>
             <input type="text" v-model="userR.email" required />
@@ -136,7 +141,7 @@ export default {
         .post_user_login(data)
         .then((response) => {
           if (response.data["errno"] == 0) {
-            alert("1")
+            alert("1");
             console.log(response.data["token_key"]);
             this.$router.push({
               path: `/WorkSpace`,
@@ -149,7 +154,7 @@ export default {
             localStorage.setItem("curUserID", this.$store.state.curUserID);
             localStorage.setItem("curUserMail", this.$store.state.curUserMail);
             localStorage.setItem("token", response.data["token_key"]);
-            alert("登录成功")
+            alert("登录成功");
           } else {
             console.log(response.data);
           }
@@ -157,7 +162,7 @@ export default {
         .catch((error) => {
           // Message.error("登录失败");
           console.log("登录失败");
-          console.log(error)
+          console.log(error);
           // alert("wa")
         });
     },
@@ -310,7 +315,7 @@ export default {
               .post_user_register(this.userR)
               .then((res4) => {
                 if (res4.data["errno"] == 0) {
-                  console.log(res4.data)
+                  console.log(res4.data);
                   alert("注册成功");
                   // todo:跳转到登录
                 } else {
@@ -332,10 +337,28 @@ export default {
       this.showVeriBox = false;
       // 发邮箱errno！=0
     },
+
+    logout() {
+      this.$api.user
+        .post_logout()
+        .then((res) => {
+          this.isLogin = false;
+          this.$store.state.curUserID = -1;
+          this.$store.state.curUserName = "";
+          this.$store.state.token_key = "";
+          this.$store.state.curUserMail= "";
+          localStorage.removeItem("isLogin");
+          localStorage.removeItem("curUserID");
+          localStorage.removeItem("curUserMail");
+          localStorage.removeItem("token");
+        })
+        .catch((err) => {
+          alert("logout failed");
+        });
+    },
   },
   created() {},
   mounted() {
-
     const wrapper = document.querySelector(".wrapper");
     const loginLink = document.querySelector(".login-link");
     const registerLink = document.querySelector(".register-link");
@@ -440,7 +463,20 @@ header {
   margin-left: 40px;
   transition: 0.3s;
 }
-
+.navigation .btnLogout-popup {
+  width: 130px;
+  height: 50px;
+  background: transparent;
+  border: 2px solid #fff;
+  outline: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.1em;
+  color: #fff;
+  font-weight: 500;
+  margin-left: 40px;
+  transition: 0.3s;
+}
 .navigation a {
   position: relative;
   font-size: 1.1em;
