@@ -12,19 +12,19 @@
     </header>
 
     <div class="wrapper">
-      <span class="icon-close"><ion-icon name="close-outline"></ion-icon></span>
+      <span class="icon-close"><i class="el-icon-close"></i></span>
 
       <div class="form-box login">
         <h2>Login</h2>
         <form action="">
           <div class="input-box">
-            <span class="icon"><ion-icon name="mail-unread"></ion-icon></span>
+            <span class="icon"><i class="el-icon-edit"></i></span>
             <input type="text" v-model="user.email" required />
             <label>Email</label>
           </div>
 
           <div class="input-box">
-            <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+            <span class="icon"><i class="el-icon-lock"></i></span>
             <input type="password" v-model="user.password" required />
             <label>password</label>
           </div>
@@ -50,25 +50,25 @@
         <h2>Registeration</h2>
         <form action="#">
           <div class="input-box">
-            <span class="icon"><ion-icon name="person"></ion-icon></span>
+            <span class="icon"><i class="el-icon-edit"></i></span>
             <input type="text" v-model="userR.email" required />
             <label>Email</label>
           </div>
 
           <div class="input-box">
-            <span class="icon"><ion-icon name="mail-unread"></ion-icon></span>
+            <span class="icon"><i class="el-icon-lock"></i></span>
             <input type="text" v-model="userR.password1" required />
             <label>password</label>
           </div>
 
           <div class="input-box">
-            <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+            <span class="icon"><i class="el-icon-lock"></i></span>
             <input type="password" v-model="userR.password2" required />
             <label>repeat password</label>
           </div>
 
           <div v-show="showVeriBox" class="input-box">
-            <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+            <span class="icon"><i class="el-icon-lock"></i></span>
             <input type="password" v-model="vericode" required />
             <label>Vericode</label>
           </div>
@@ -79,7 +79,9 @@
             >
           </div>
 
-          <button v-if="!showVeriBox" @click="register" class="btn">Register</button>
+          <button v-if="!showVeriBox" @click="register" class="btn">
+            Register
+          </button>
           <button v-else @click="ensureVericodeReg" class="btn">Ensure</button>
 
           <div class="login-register">
@@ -126,25 +128,31 @@ export default {
   watch: {},
   computed: {},
   methods: {
-    async login() {
+    login() {
       const data = JSON.stringify(this.user);
       console.log(data);
 
-      await this.$api.user
+      this.$api.user
         .post_user_login(data)
         .then((response) => {
           if (response.data["errno"] == 0) {
             console.log("11111");
-            this.$router.push({
-              path: `/WorsSpace`,
-            });
+            // this.$router.push({
+            //   path: `/WorkSpace`,
+            // });
+            this.$store.state.isLogin = true;
+            this.$store.curUserMail = user.email;
+            this.$store.curUserID = response.data["uid"];
+            localStorage.setItem("curUserID", this.$store.state.curUserID);
+            localStorage.setItem("curUserName", this.$store.state.curUsername);
+            localStorage.setItem("token", response.data["token_key"]);
           } else {
             console.log(response.data);
           }
         })
         .catch((error) => {
-          Message.error("登录失败");
-          console.log("!!!!!!!!!!!!!");
+          // Message.error("登录失败");
+          console.log("登录失败");
           // alert("wa")
         });
     },
@@ -237,7 +245,7 @@ export default {
       });
     },
 
-    async register() {
+    register() {
       //检测注册邮箱合理性
       this.$api.user
         .post_user_register_check(this.userR)
@@ -283,8 +291,8 @@ export default {
 
     ensureVericodeReg() {
       const tdata = {
-        "email": this.userR.email,
-        "verification_code": this.vericode,
+        email: this.userR.email,
+        verification_code: this.vericode,
       };
       //检测验证码
       this.$api.user
@@ -298,6 +306,7 @@ export default {
               .then((res4) => {
                 if (res4.data["errno"] == 0) {
                   alert("注册成功");
+                  // todo:跳转到登录
                 } else {
                   alert("注册失败");
                 }
@@ -313,8 +322,8 @@ export default {
         .catch((error) => {
           // 上传验证码错误
         });
-        // 暂时给一次机会
-        this.showVeriBox=false
+      // 暂时给一次机会
+      this.showVeriBox = false;
       // 发邮箱errno！=0
     },
 
