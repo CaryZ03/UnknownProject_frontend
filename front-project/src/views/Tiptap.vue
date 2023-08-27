@@ -3,11 +3,11 @@
 
     
     <t-button @click="editor.chain().focus().toggleBold().run()" :disabled="!editor.can().chain().focus().toggleBold().run()" variant="text" ghost>幽灵按钮</t-button>
-    <t-button variant="text" @click="saveHTML" ghost>幽灵按钮</t-button>
-    <t-button variant="text" @click="saveMD" ghost>幽灵按钮</t-button>
-    <t-button variant="text" @click="saveText" ghost>幽灵按钮</t-button>
-    <t-button variant="text" @click="saveText" ghost>幽灵按钮</t-button>
-    <t-button variant="text" @click="downPDF" ghost>幽灵按钮</t-button>
+    <t-button variant="text" @click="saveHTML" ghost>saveHTML</t-button>
+    <t-button variant="text" @click="saveMD" ghost>saveMD</t-button>
+    <t-button variant="text" @click="saveWord" ghost>saveWord</t-button>
+    <t-button variant="text" @click="saveText" ghost>saveText</t-button>
+    <t-button variant="text" @click="downPDF" ghost>downPDF</t-button>
     <t-button variant="text" ghost>幽灵按钮</t-button>
     <t-button variant="text" ghost>幽灵按钮</t-button>
     <t-button variant="text" ghost>幽灵按钮</t-button>
@@ -225,7 +225,7 @@
       </button>
     </floating-menu>
 
-    <editor-content :editor="editor" />
+    <editor-content id="pdfDom" class="editor__content" :editor="editor" />
   </div>
 </template>
   
@@ -264,8 +264,7 @@ import * as Y from "yjs";
 import MenuBar from "./MenuBar.vue";
 
 import { saveAs } from 'file-saver'
-// import htmlDocx from 'html-docx-js/dist/html-docx';
-// import saveAs from 'file-saver';
+import htmlDocx from 'html-docx-js/dist/html-docx';
 import TurndownService from 'turndown';
 
 
@@ -294,8 +293,8 @@ export default {
   data() {
     return {
       currentUser: JSON.parse(localStorage.getItem("currentUser")) || {
-        name: "pencil",
-        color: "#958DF1",
+        name: this.$store.state.curUserName,
+        color: this.getRandomColor(),
       },
       provider: null,
       editor: null,
@@ -446,32 +445,17 @@ export default {
       if (navigator.userAgent.indexOf("MSIE") > 0){
         document.body.removeChild(iframe);
       }
-/*
-      async function back() {
-        return 1;
-      }
-      back().then(result => {
-        router.go(0);
-      })
-      console.log('虽然在后面，但是我先执行');
-
-      const previewEl = document.querySelector("#pdfDom").innerHTML;
-      window.document.body.innerHTML=previewEl;
-      window.print();
-
- */
     },
 
     saveWord(){
       let htmlStr = document.querySelector("#pdfDom").innerHTML;
       let page = `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>${htmlStr}
         </body></html>`
-      // console.log(page);return
+
       saveAs(
           htmlDocx.asBlob(page, {
             orientation: "landscape"//跨域设置
           }),
-          //文件名
           this.title+".doc"
       )
     },
