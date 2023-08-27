@@ -66,8 +66,11 @@
                         </el-col>
                         <el-col :span="23">
                           <div>{{ message.user_name }}</div>
-                          <div v-if="isImageMessage(message)" class="chat-bubble received">
+                          <div v-if="message.message_type === 'image'" class="chat-bubble received">
                           <img :src="message.content" alt="接收的图片">
+                          </div>
+                          <div v-else-if="message.message_type === 'file'" class="chat-bubble received">
+                            {{ message.content }}111
                           </div>
                           <div v-else class="chat-bubble received">
                             {{ message.content }}
@@ -79,8 +82,11 @@
                   <el-row>
                         <el-col :span="23">
                           <div class="send-member">{{ uname }}</div>
-                          <div v-if="isImageMessage(message)" class="chat-bubble sent">
+                          <div v-if="message.message_type === 'image'" class="chat-bubble sent">
                             <img :src="message.content" alt="发送的图片">
+                          </div>
+                          <div v-else-if="message.message_type === 'file'" class="chat-bubble sent">
+                            {{ message.content }}111
                           </div>
                           <div v-else class="chat-bubble sent">
                             {{ message.content }}
@@ -312,7 +318,8 @@ import Navbar from '@/components/Navbar.vue';
                   content: element.message,
                   isSentByCurrentUser: isSentByCurrentUser_1,
                   user_name: element.user_name,
-                  message_type: element.message_type
+                  message_type: element.message_type,
+                  file_id: element.file_id
                 }
                 console.log(message);
                 self.chatMessages.push(message);
@@ -360,7 +367,9 @@ import Navbar from '@/components/Navbar.vue';
           let recv_message_used = {
             content: data.message,
             isSentByCurrentUser: false,
-            user_name: data.user_name
+            user_name: data.user_name,
+            message_type: data.message_type,
+            file_id: data.file_id
           }
           
           if(this.uid === data.user_id)
@@ -369,30 +378,7 @@ import Navbar from '@/components/Navbar.vue';
           }
           this.handleAt(data);
 
-          if(typeof data.message === 'string') {
-            this.chatMessages.push(recv_message_used);
-          }
-          else {
-            const receivedArrayBuffer = data.message;
-            
-            console.log("1111")
-            console.log(receivedArrayBuffer)
-            const blob = new Blob([receivedArrayBuffer]);
-            const file1 = new File([blob], 'aaa.py', { type: blob.type });
-
-            // 在这里可以处理接收到的文件，例如保存到本地等
-            console.log('接收到的文件:', file1);
-            // 创建指向文件保存位置的链接
-            const downloadLink = document.createElement('a');
-            downloadLink.href = URL.createObjectURL(file1);
-            downloadLink.download = 'aaa.py';
-
-            // 触发文件下载和保存
-            downloadLink.click();
-
-            // 释放临时 URL
-            URL.revokeObjectURL(downloadLink.href);
-          }
+          this.chatMessages.push(recv_message_used);
         },
 
         handleEnter() {
@@ -410,11 +396,15 @@ import Navbar from '@/components/Navbar.vue';
                 'user_name': this.uname,
                 'is_at_all': this.isAtAll,
                 'array_data': this.atList,
-                'message_type': "message"
+                'message_type': "message",
+                'file_id': 0
             })
             let send_message_used = {
               content: this.messageInput,
-              isSentByCurrentUser: true 
+              isSentByCurrentUser: true,
+              user_name: this.uname,
+              message_type: "message",
+              file_id: 0
             }
 
             // 将消息存至数据库
@@ -451,31 +441,67 @@ import Navbar from '@/components/Navbar.vue';
             openFileManager() {
               this.$refs.fileInput.click();
             },
-              send_file() {
+            sleep(ms) {
+              console.log("sleep");
+              return new Promise(resolve => setTimeout(resolve, ms));
+            },
 
-                const selectedFile = event.target.files[0];
-              // 在这里可以处理选中的文件，例如发送到服务器等
-              console.log('选中的文件:', selectedFile);
-              
-              const reader = new FileReader();
-              
-              reader.onload = () => {
-              const arrayBuffer = event.target.result; // 读取到的文件内容为 ArrayBuffer
-              console.log(arrayBuffer);
+            async send_file(event) {
+            const self = this;
+            let file_id;
+            const selectedFile = event.target.files[0];
+            // 在这里可以处理选中的文件，例如发送到服务器等
+            console.log('选中的文件:', selectedFile);
+            const formData = new FormData();
+            formData.append('file', selectedFile);
 
-              const send_message = JSON.stringify({
-                    'message': binaryData,
-                    'user_id': this.uid,
-                    'user_name': this.uname,
-                    'is_at_all': false,
-                    'array_data': [],
-                    'message_type': 'file'
+            this.$api.document.post_upload_file(formData)
+              .then(function (response) {
+                file_id = response.data.file_id;
+                const send_message_file = JSON.stringify({
+                  'message': selectedFile.name,
+                  'user_id': self.uid,
+                  'user_name': self.uname,
+                  'is_at_all': self.isAtAll,
+                  'array_data': self.atList,
+                  'message_type': "file",
+                  'file_id': file_id
                 })
-              // WebSocket 成功连接后的回调函数
-                this.chatSocket.send(send_message);
-                console.log(send_message);
-              }
 
+
+                let send_message_file_used = {
+                  content: selectedFile.name,
+                  isSentByCurrentUser: true,
+                  user_name: self.uname,
+                  message_type: "file",
+                  file_id: file_id
+                }
+
+                self.chatMessages.push(send_message_file_used);
+                self.chatSocket.send(send_message_file);
+              })
+
+              .catch(function (error) {
+                console.log(error);
+              });    
+              await self.sleep(500);
+              const send_message_to_backend = JSON.stringify({
+                  'message': selectedFile.name,
+                  'user_id': self.uid,
+                  'team_id': self.curDepartmentId,
+                  'is_at_all': self.isAtAll,
+                  'array_data': self.atList,
+                  'message_type': "file",
+                  'file_id': file_id
+              })
+              console.log(send_message_to_backend);
+              this.$api.chat.post_store_message(send_message_to_backend)
+              .then(function (response) {
+                console.log(response);
+              })
+              .catch(function (error) {
+                  console.log(error);
+              });
               const h = this.$createElement;
 
               this.$notify({
@@ -483,7 +509,7 @@ import Navbar from '@/components/Navbar.vue';
                 message: h('i', { style: 'color: teal'}, '文件已发送')
               });
             },
-            isImageMessage(message) {
+              isImageMessage(message) {
               // 假设图片消息的格式是以 "image:" 开头的字符串
               return message.content.startsWith("image:");
             },
