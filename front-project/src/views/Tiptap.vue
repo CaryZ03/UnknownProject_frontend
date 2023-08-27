@@ -1,5 +1,94 @@
 <template>
-  <div v-if="editor">
+  <div class="container" v-if="editor">
+
+    <t-button @click="editor.chain().focus().toggleBold().run()" :disabled="!editor.can().chain().focus().toggleBold().run()" variant="text" ghost>幽灵按钮</t-button>
+    <t-button variant="text" ghost>幽灵按钮</t-button>
+    <t-button variant="text" ghost>幽灵按钮</t-button>
+    <t-button variant="text" ghost>幽灵按钮</t-button>
+    <t-button variant="text" ghost>幽灵按钮</t-button>
+    <t-button variant="text" ghost>幽灵按钮</t-button>
+    <t-button variant="text" ghost>幽灵按钮</t-button>
+    <t-button variant="text" ghost>幽灵按钮</t-button>
+    <t-button variant="text" ghost>幽灵按钮</t-button>
+    <t-button variant="text" ghost>幽灵按钮</t-button>
+    <t-button variant="text" ghost>幽灵按钮</t-button>
+    <t-button variant="text" ghost>幽灵按钮</t-button>
+    <t-button variant="text" ghost>幽灵按钮</t-button>
+    <t-button variant="text" ghost>幽灵按钮</t-button>
+    <t-button variant="text" ghost>幽灵按钮</t-button>
+    <t-button variant="text" ghost>幽灵按钮</t-button>
+    
+
+    
+
+    <button @click="editor.chain().focus().toggleBold().run()" :disabled="!editor.can().chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
+      bold
+    </button>
+
+    <CodeIcon  @click="editor.chain().focus().toggleBold().run()" :disabled="!editor.can().chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }"></CodeIcon>
+    <button @click="editor.chain().focus().toggleItalic().run()" :disabled="!editor.can().chain().focus().toggleItalic().run()" :class="{ 'is-active': editor.isActive('italic') }">
+      italic
+    </button>
+    <button @click="editor.chain().focus().toggleStrike().run()" :disabled="!editor.can().chain().focus().toggleStrike().run()" :class="{ 'is-active': editor.isActive('strike') }">
+      strike
+    </button>
+    <button @click="editor.chain().focus().toggleCode().run()" :disabled="!editor.can().chain().focus().toggleCode().run()" :class="{ 'is-active': editor.isActive('code') }">
+      code
+    </button>
+
+    <button @click="editor.chain().focus().unsetAllMarks().run()">
+      clear marks
+    </button>
+    <button @click="editor.chain().focus().clearNodes().run()">
+      clear nodes
+    </button>
+    <button @click="editor.chain().focus().setParagraph().run()" :class="{ 'is-active': editor.isActive('paragraph') }">
+      paragraph
+    </button>
+    <button @click="editor.chain().focus().toggleHeading({ level: 1 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }">
+      h1
+    </button>
+    <button @click="editor.chain().focus().toggleHeading({ level: 2 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }">
+      h2
+    </button>
+    <button @click="editor.chain().focus().toggleHeading({ level: 3 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }">
+      h3
+    </button>
+    <button @click="editor.chain().focus().toggleHeading({ level: 4 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 4 }) }">
+      h4
+    </button>
+    <button @click="editor.chain().focus().toggleHeading({ level: 5 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 5 }) }">
+      h5
+    </button>
+    <button @click="editor.chain().focus().toggleHeading({ level: 6 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 6 }) }">
+      h6
+    </button>
+    <button @click="editor.chain().focus().toggleBulletList().run()" :class="{ 'is-active': editor.isActive('bulletList') }">
+      bullet list
+    </button>
+    <button @click="editor.chain().focus().toggleOrderedList().run()" :class="{ 'is-active': editor.isActive('orderedList') }">
+      ordered list
+    </button>
+    <button @click="editor.chain().focus().toggleCodeBlock().run()" :class="{ 'is-active': editor.isActive('codeBlock') }">
+      code block
+    </button>
+    <button @click="editor.chain().focus().toggleBlockquote().run()" :class="{ 'is-active': editor.isActive('blockquote') }">
+      blockquote
+    </button>
+    <button @click="editor.chain().focus().setHorizontalRule().run()">
+      horizontal rule
+    </button>
+    <button @click="editor.chain().focus().setHardBreak().run()">
+      hard break
+    </button>
+    <button @click="editor.chain().focus().undo().run()" :disabled="!editor.can().chain().focus().undo().run()">
+      undo
+    </button>
+    <button @click="editor.chain().focus().redo().run()" :disabled="!editor.can().chain().focus().redo().run()">
+      redo
+    </button>
+
+
     <button
       @click="editor.chain().focus().toggleBold().run()"
       :disabled="!editor.can().chain().focus().toggleBold().run()"
@@ -118,11 +207,49 @@
     >
       redo
     </button>
+
+    <floating-menu
+      class="floating-menu"
+      :tippy-options="{ duration: 100 }"
+      :editor="editor"
+    >
+      <button @click="editor.chain().focus().toggleHeading({ level: 1 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }">
+        H1
+      </button>
+      <button @click="editor.chain().focus().toggleHeading({ level: 2 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }">
+        H2
+      </button>
+      <button @click="editor.chain().focus().toggleBulletList().run()" :class="{ 'is-active': editor.isActive('bulletList') }">
+        Bullet List
+      </button>
+    </floating-menu>
+
     <editor-content :editor="editor" />
   </div>
 </template>
   
   <script>
+import {
+    CodeIcon,
+  LettersDIcon,
+  LettersSIcon,
+  LettersEIcon,
+  LettersIIcon,
+  LettersNIcon,
+  LettersGIcon,
+  ComponentCheckboxIcon,
+  ComponentInputIcon,
+  ComponentSwitchIcon,
+  ComponentBreadcrumbIcon,
+  ComponentDropdownIcon,
+  ComponentRadioIcon,
+  ComponentStepsIcon,
+} from 'tdesign-icons-vue';
+
+
+
+
+
 import { TiptapCollabProvider } from "@hocuspocus/provider";
 import CharacterCount from "@tiptap/extension-character-count";
 import Collaboration from "@tiptap/extension-collaboration";
@@ -131,9 +258,12 @@ import Highlight from "@tiptap/extension-highlight";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import StarterKit from "@tiptap/starter-kit";
-import { Editor, EditorContent } from "@tiptap/vue-2";
+import { Editor, EditorContent, FloatingMenu } from "@tiptap/vue-2";
 import * as Y from "yjs";
 import MenuBar from "./MenuBar.vue";
+// import htmlDocx from 'html-docx-js/dist/html-docx';
+// import saveAs from 'file-saver';
+
 
 const getRandomElement = (list) => {
   return list[Math.floor(Math.random() * list.length)];
@@ -143,6 +273,7 @@ export default {
   components: {
     EditorContent,
     MenuBar,
+    FloatingMenu
   },
 
   data() {
@@ -262,8 +393,19 @@ export default {
 };
 </script>
 <style lang="scss">
+.container{
+    position: fixed;
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000000;
+}
+
 .editor {
-  background-color: #fff;
+  background-color: #000000;
   border: 3px solid #0d0d0d;
   border-radius: 0.75rem;
   color: #0d0d0d;
@@ -518,5 +660,27 @@ export default {
     border-top: 2px solid rgba(#0d0d0d, 0.1);
     margin: 2rem 0;
   }
+
+  
+.floating-menu {
+  display: flex;
+  background-color: #0D0D0D10;
+  padding: 0.2rem;
+  border-radius: 0.5rem;
+
+  button {
+    border: none;
+    background: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0 0.2rem;
+    opacity: 0.6;
+
+    &:hover,
+    &.is-active {
+      opacity: 1;
+    }
+  }
+}
 }
 </style>
