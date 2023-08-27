@@ -2316,7 +2316,7 @@ export default {
 
     this.$api.team.post_member_role(data1).then((response) => {
       // console.log(tmp)
-      console.log(response.data)
+
       if (response.data.errno == 0) {
         console.log("获取用户identity信息成功")
         console.log(response.data.msg)
@@ -2328,6 +2328,10 @@ export default {
           this.personInform.identity = "普通成员";
         else if(response.data.role === 'manager')
           this.personInform.identity ="管理员";
+      }
+      else{
+        console.log("获取用户identity失败")
+        console.log(response.data)
       }
     }).catch(error => {
       alert("获取用户identity失败")
@@ -2363,7 +2367,32 @@ export default {
     })
 
     //获取团队的人员列表
-    
+    const tmp1 = {
+      "team_id": 5,
+      "type": "all",
+    }
+    this.$api.team.post_show_member(tmp1).then((response) => {
+      // console.log(tmp)
+      // console.log(response.data)
+      if (response.data.errno == 0) {
+        console.log("获取团队人员列表成功")
+        console.log(response.data.data.members)
+        // const tmObj = JSON.parse(response.data.tm_info);
+        // console.log(tmObj);
+
+        // //赋值
+        // this.teamList = tmObj;
+        
+      }
+      else{
+        console.log("获取团队人员列表失败")
+        console.log(response.data)
+      }
+    }).catch(error => {
+      alert("获取团队人员列表失败")
+      console.log("团队人员列表error：\n");
+      console.log(error)
+    })
 
 
     //获取团队的项目列表
