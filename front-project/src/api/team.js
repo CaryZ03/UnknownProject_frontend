@@ -103,3 +103,12 @@ export async function post_check_member(data) {
         data: data
     })
 }
+
+// member_role
+export async function post_member_role(data) {
+    return request({
+        method: 'POST',
+        url:  `/team/member_role`,
+        data: data
+    })
+}

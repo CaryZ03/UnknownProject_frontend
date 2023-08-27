@@ -119,6 +119,12 @@ export async function post_check_profile(data) {
     })
 }
 
+
+
+
+
+
+
 // upload_avatar
 
 export async function get_upload_avatar(data) {
