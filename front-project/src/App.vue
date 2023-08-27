@@ -20,9 +20,9 @@ export default {
           localStorage.setItem("isLogin", true);
           this.$store.state.curUserMail = localStorage.getItem("curUserMail");
           this.$store.state.curUserID = localStorage.getItem("isLogin");
-          this.$router.push({
-            path: `/WorkSpace`,
-          });
+          // this.$router.push({
+          //   path: `/WorkSpace`,
+          // });
         } else {
           alert(res.data["errno"]);
           this.$store.state.isLogin = false;
