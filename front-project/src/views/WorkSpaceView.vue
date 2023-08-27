@@ -26,39 +26,9 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
           <!-- 团队空间列表 -->
           <div class="overflow-y-auto pb-1 select-none">
             <div>
-              <!-- 空间列表item 1 -->
-              <div style="opacity: 1;">
-                <div data-test-id="aside-space-item" class="flex relative items-center justify-between cursor-pointer px-2 rounded text-black animate-hover h-[58px]">
-                  <div class="flex items-center w-10/12">
-                    <span class="mr-2 flex items-center">
-                      
-                        <div class="flex items-center">
-                      
-                          <div class="relative">
-                            <span class="text-h4 flex flex-shrink-0 
-                            select-none items-center justify-center rounded 
-                            uppercase leading-none text-black2 
-                            w-[34px] h-[34px]" 
-                            style="font-size: 20px; 
-                            background-color: rgb(250, 225, 67);">
-                            m
-                            </span>
-                          </div>
 
-                        </div>
-                    </span>
-
-                    <div class="w-full text-ellipsis">
-                      <div data-no-cancel-selected="true" class="text-ellipsis w-full block">morty的空间</div>
-                      <div class="text-ellipsis text-grey3 text-t4 mt-px w-full">个人版</div>
-                    </div>
-
-                  </div>
-                </div>
-              </div>
-
-              <!-- 空间列表item 2 -->
-              <div style="opacity: 1;">
+              <!-- <el-col v-for="document in documentTable" :key="document.id" :span="6"></el-col> -->
+              <div style="opacity: 1;" v-for="team in teamList" :key="team.team_id" :span="6" @click="changeCurTeam(team)" >
                 <div data-test-id="aside-space-item" class="flex relative items-center justify-between cursor-pointer px-2 rounded text-black animate-hover h-[58px]">
                   <div class="flex items-center w-10/12">
                     <span class="mr-2 flex items-center">
@@ -70,20 +40,22 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
                             leading-none text-black2 w-[34px] h-[34px]" 
                             style="font-size: 20px; 
                             background-color: rgb(62, 193, 250);">
-                            P
+                            {{getInitials(team.team_creator)}}
                             </span>
                         </div>
                       </div>
                     </span>
                     <div class="w-full text-ellipsis">
-                      <div data-no-cancel-selected="true" class="text-ellipsis w-full block">Pencil的团队空间</div>
-                      <div class="text-ellipsis text-grey3 text-t4 mt-px w-full">小组试用版</div>
+                      <div data-no-cancel-selected="true" class="text-ellipsis w-full block">{{team.team_creator}}的团队空间</div>
+                      <div class="text-ellipsis text-grey3 text-t4 mt-px w-full">{{team.team_name}}</div>
                     </div>
 
-                    <i class="el-icon-check"></i>
+                    <i class="el-icon-check" v-if="team.team_id === currentTeam.team_id"></i>
                   </div>
                 </div>
               </div>
+
+
 
             </div>
           </div>
@@ -168,6 +140,7 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
           <template slot="title">分组一</template>
           <el-menu-item index="5-1" @click="changeContent(2)"><i class="el-icon-user"></i>人员管理</el-menu-item>
           <el-menu-item index="5-2" @click="changeContent(2.1)"><i class="el-icon-chat-line-round"></i>团队群聊</el-menu-item>
+          <el-menu-item index="5-3" @click="changeContent(2.2)"><i class="el-icon-info"></i>团队信息</el-menu-item>
         </el-menu-item-group>
         
       </el-submenu>
@@ -722,10 +695,10 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
                  <!-- column 4 -->
                  <el-table-column
                   label="身份" sortable
-                  prop="identity" >
+                  prop="permission" >
 
                   <template slot-scope="{ row }">
-                      <el-tag :type="getTagType(row.identity)">{{ row.identity }}</el-tag>
+                      <el-tag :type="getTagType(row.permission)">{{ row.permission }}</el-tag>
                     </template>
                     <!-- <template slot="header" slot-scope="scope">身份
                       <el-select v-model="selectedIdentity" placeholder="请选择身份">
@@ -738,8 +711,14 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
                       </el-select>
                     </template> -->
                 </el-table-column>
+
+                 <!-- column 5 -->
+                 <el-table-column
+                  label="加入时间" sortable
+                  prop="join_time">
+                </el-table-column>
           
-                <!-- column 5 -->
+                <!-- column 6 -->
                 <el-table-column
                   align="right">
                   <template slot="header" slot-scope="scope">
@@ -812,6 +791,54 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
               
           </transition>
 
+          <!-- 按钮3.2 -->
+          <transition name="el-fade-in-linear">  
+            <div v-if="activeIndex === 2.2">
+
+              <span  class="inherited-styles-for-exported-element">团队信息</span>
+
+              <el-card shadow="hover" style="width: 800px; background-color:#eee ;">
+                <el-form :model="currentTeam" label-width="100px">
+                <el-form-item label="团队名称" class="item">
+                  <template v-if="!isTeamInfoEditing"><el-tag type="info" :disable-transitions="true">{{ currentTeam.team_name }}</el-tag></template>
+                  <template v-else>
+                    <el-input v-model="currentTeam.team_name"></el-input>
+            
+                  </template>
+                </el-form-item>
+                <el-form-item label="团队描述" class="item">
+                  <template v-if="!isTeamInfoEditing"><el-tag type="info" :disable-transitions="true">{{ currentTeam.team_description }}</el-tag></template>
+                  <template v-else>
+                    <el-input v-model="currentTeam.team_description"></el-input>
+                  </template>
+                </el-form-item>
+                <el-form-item label="团队电话" class="item">
+                  <template v-if="!isTeamInfoEditing"><el-tag type="info" :disable-transitions="true">{{ currentTeam.team_tel }}</el-tag></template>
+                  <template v-else>
+                    <el-input v-model="currentTeam.team_tel"></el-input>
+                  </template>
+                </el-form-item>
+                <el-form-item label="团队创建时间" class="item">
+                  <template ><el-tag type="info" :disable-transitions="true">{{ currentTeam.team_create_time }}</el-tag></template>
+                  
+                </el-form-item>
+                <el-form-item label="团队创建人" class="item">
+                  <template ><el-tag type="info" :disable-transitions="true">{{ currentTeam.team_creator }}</el-tag></template>
+                  
+                </el-form-item>
+              </el-form>
+
+              <el-button v-if="!isTeamInfoEditing" type="primary" icon="el-icon-edit" @click="startEditing" size="mini" style="float:right"></el-button>
+              <el-button v-else type="success" icon="el-icon-check" @click="saveChanges" size="mini" style="float:right"></el-button>
+              </el-card>
+              
+
+             
+            </div>
+              
+          </transition>
+
+
 
 
           <!-- 按钮4 -->
@@ -820,17 +847,53 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
 
               <span  class="inherited-styles-for-exported-element">项目信息</span>
               
-              <el-form :model="currentProgram" label-width="100px">
+              <el-descriptions class="margin-top"  :column="1" :size="size" v-if="!isProgInfoEditting" border>
+                
+                <el-descriptions-item>
+                  <template slot="label">
+                    <i class="el-icon-user"></i>
+                    开始日期
+                  </template>
+                  {{currentProgram.date}}
+                </el-descriptions-item>
+                <el-descriptions-item>
+                  <template slot="label">
+                    <i class="el-icon-mobile-phone"></i>
+                    项目名称
+                  </template>
+                  {{currentProgram.name}}
+                </el-descriptions-item>
+                <el-descriptions-item>
+                  <template slot="label">
+                    <i class="el-icon-location-outline"></i>
+                    负责人
+                  </template>
+                  {{currentProgram.person}}
+                </el-descriptions-item>
+                
+
+              </el-descriptions>
+              
+              
+
+              
+              <el-form :model="currentProgram" label-width="100px" v-if="isProgInfoEditting">
                 <el-form-item label="日期">
-                  <el-input v-model="currentProgram.date" readonly></el-input>
+                  <el-input v-model="currentProgram.date" ></el-input>
                 </el-form-item>
                 <el-form-item label="名称">
-                  <el-input v-model="currentProgram.name" readonly></el-input>
+                  <el-input v-model="currentProgram.name" ></el-input>
                 </el-form-item>
                 <el-form-item label="负责人">
-                  <el-input v-model="currentProgram.person" readonly></el-input>
+                  <el-input v-model="currentProgram.person" ></el-input>
                 </el-form-item>
               </el-form>
+              
+              <span  class="inherited-styles-for-exported-element">
+                <el-button type="primary" size="mini" @click="isProgInfoEditting =true" icon="el-icon-edit" v-if="!isProgInfoEditting"  round></el-button>
+                <el-button type="success" size="mini" @click="saveProInfo()" icon="el-icon-success" v-if="isProgInfoEditting"  round></el-button>
+              </span>
+              
 
             </div>
               
@@ -1326,7 +1389,11 @@ export default {
   data() {
       
       return {
+        isTeamInfoEditing :false,
+
+        isProgInfoEditting : false,
         
+
         isProgramChosen: false, //是否进入项目详情页
         currentProgram: {
           date: '2016-05-02',
@@ -1523,22 +1590,26 @@ export default {
           nickname: "pencil",
           realname: "铅笔",
           address: "323412132@qq.com",
-          identity: "管理员",
+          permission: "管理员",
+          join_time: "2023-08-27T21:01:05.607"
         },{
           nickname: "niumo",
           realname: "煞笔",
           address: "326853442@qq.com",
-          identity: "普通成员",
+          permission: "普通成员",
+          join_time: "2023-08-27T21:01:05.607"
         },{
           nickname: "dick",
           realname: "迪肯",
           address: "326123092@qq.com",
-          identity: "团队创建者",
+          permission: "团队创建者",
+          join_time: "2023-08-27T21:01:05.607"
         },{
           nickname: "morty",
           realname: "刘兆丰",
           address: "326855092@qq.com",
-          identity: "团队创建者",
+          permission: "团队创建者",
+          join_time: "2023-08-27T21:01:05.607"
         }],
 
         //changeIdentity
@@ -1559,7 +1630,13 @@ export default {
         //mounted
 
         //teamlist
-        teamList:[],
+        teamList:[{
+          team_id: 10,
+          team_name: '牛魔成本',
+          team_description: 'nmsl',
+          team_tel: '1111112323',
+          team_creator: 'ddadadad'
+        }],
         // "{\"team_id\": 10, \"team_name\": \"name\",
         //  \"team_description\": null, 
         //  \"team_tel\": null, \"team_create_time\": \"2023-08-25 12:38:41\",
@@ -1587,6 +1664,204 @@ export default {
     },
   
     methods: {
+
+    loadInfo(){
+          //获取当前团队信息
+          this.currentTeam = this.$store.state.curTeam;
+
+
+
+          //获取用户的基本信息
+          this.$api.user.post_check_profile_self().then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取用户信息成功")
+              console.log(response.data.user_info)
+              const tmObj = JSON.parse(response.data.user_info);
+              console.log(tmObj);
+
+              //赋值
+              this.personInform.nickname = tmObj.user_name;
+              this.personInform.realname = tmObj.user_real_name;
+              this.personInform.address = tmObj.user_email;
+              // this.personInform.identity = tmObj;
+              
+            }
+          }).catch(error => {
+            alert("获取用户信息失败")
+            console.log("用户基本信息error：\n");
+            console.log(error);
+          })
+
+          //获取用户identity : 输入 id ，teamid
+          const data1 = {
+            "team_id": this.currentTeam.team_id,
+            "user_id": this.$store.state.curUserID,
+          }
+          // console.log("identity input:",data1)
+          // console.log(data1)
+
+          this.$api.team.post_member_role(data1).then((response) => {
+            // console.log(tmp)
+
+            if (response.data.errno == 0) {
+              console.log("获取用户identity信息成功")
+              console.log(response.data.msg)
+            
+              //赋值
+              if(response.data.role === 'creator')
+                this.personInform.identity = "团队创建者";
+              else if( response.data.role === 'member')
+                this.personInform.identity = "普通成员";
+              else if(response.data.role === 'manager')
+                this.personInform.identity ="管理员";
+            }
+            else{
+              console.log("获取用户identity失败")
+              console.log(response.data)
+            }
+          }).catch(error => {
+            alert("获取用户identity失败")
+            console.log("获取用户identity error：\n");
+            console.log(error);
+          })
+
+
+
+
+          //获取用户加入的 团队列表
+          const tmp = {
+            "choose": "all",
+          }
+          this.$api.user.post_check_team_list(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取团队列表成功")
+              console.log(response.data.tm_info)
+
+              if(response.data.tm_info.length === 0){
+                    this.teamList = []
+                  }
+              else{
+                  const tmInfoArray = response.data.tm_info.map((item) => JSON.parse(item.replace(/\\/g, '')));
+                  console.log(tmInfoArray);
+                    //赋值
+                  this.teamList = tmInfoArray;
+                }
+              
+            }
+          }).catch(error => {
+            alert("获取团队列表失败")
+            console.log("团队列表error：\n");
+            console.log(error)
+          })
+
+          //获取团队的人员列表
+          const tmp1 = {
+            "team_id": this.currentTeam.team_id,
+            "type": "all",
+          }
+          this.$api.team.post_show_member(tmp1).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取团队人员列表成功",response.data.data.members)
+              this.TeamPersonInform = response.data.data.members;
+              
+              this.TeamPersonInform.forEach(person => {
+                // 修改每个成员的permission属性
+                if(person.permission === 'creator')
+                  person.permission = "团队创建者";
+                else if(person.permission === 'manager')
+                  person.permission = "管理员";
+                else if(person.permission === 'member')
+                  person.permission = "普通成员";
+
+              });
+              console.log(this.TeamPersonInform)
+
+
+              
+              // const tmInfoArray = response.data.data.members.map((item) => JSON.parse(item.replace(/\\/g, '')));
+              // console.log(tmInfoArray);
+              //   //赋值
+              // this.TeamPersonInform = tmInfoArray;
+
+              
+            }
+            else{
+              console.log("获取团队人员列表失败")
+              console.log(response.data)
+            }
+          }).catch(error => {
+            alert("获取团队人员列表失败")
+            console.log("团队人员列表error：\n");
+            console.log(error)
+          })
+
+
+          //获取团队的项目列表
+    },
+
+
+    changeCurTeam(team){
+        this.$store.state.curTeam = team;
+        this.loadInfo();
+    },
+
+    saveProInfo(){
+      //303 change_profile 接口
+      //.....
+      this.isProgInfoEditting = false;
+    },
+
+    startEditing() {
+      this.isTeamInfoEditing = true;
+    },
+    saveChanges() {
+      // 保存团队信息的逻辑
+      // 根据需要进行相应的操作，比如发送请求保存数据，切换为非编辑状态等
+      // this.$api.team.post_change_team_profile(tmp)
+
+      console.log("saving ....")
+      const tmp={
+        "team_id": this.currentTeam.team_id,
+        "name": this.currentTeam.team_name,
+        "description": this.currentTeam.team_description,
+        "tel": this.currentTeam.team_tel
+      }
+      console.log(tmp)
+      console.log(this.$store.state.curUserID)
+      this.$api.team.post_change_team_profile(tmp).then((response) => {
+      // console.log(tmp)
+      // console.log(response.data)
+      if (response.data.errno == 0) {
+        console.log("修改团队信息成功")
+        console.log(response.data.msg)
+
+      }
+      else{
+        console.log(response.data)
+      }
+    }).catch(error => {
+      alert("修改团队信息失败")
+      console.log("修改团队信息error：\n");
+      console.log(error);
+    })
+      
+
+      this.isTeamInfoEditing = false;
+    },
+
+
+
+      editItem(field) {
+    // 在这里处理编辑逻辑，可以根据field参数来确定要编辑的表单项
+    // 例如，可以将相应的输入框设置为可编辑状态
+    this.$refs[field].readonly = false;
+  },
 
       generateLink(){
         const link='wnacudamdawdacdna';
@@ -2133,8 +2408,33 @@ export default {
     },
 
     setIdentity(index , row){
-      if( row.identity === '普通成员'){
-        row.identity = '管理员';
+      if( row.permission === '普通成员'){
+        row.permission = '管理员';
+
+        // this.$api.team.post_add_manager(tmp).then(response)=>
+        const tmp ={
+          "user_id": row.user_id,
+          "team_id": this.currentTeam.team_id
+        }
+        this.$api.team.post_add_manager(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取团队人员列表成功",response.data.msg)
+            
+            }
+            else{
+              console.log("add manager失败")
+              console.log(response.data)
+            }
+          }).catch(error => {
+            alert("失败")
+            console.log("error：\n");
+            console.log(error)
+          })
+    
+
+        
         this.$message({
             type: 'success',
             message: '设置管理员成功'
@@ -2155,7 +2455,7 @@ export default {
     },
 
     removePerson(index,row){
-      if(this.personInform.identity === '管理员' && row.identity !== '普通成员'){
+      if(this.personInform.identity === '管理员' && row.permission !== '普通成员'){
         this.$alert('您的权限不够，只能移除普通成员', '提示', {
           confirmButtonText: '确定',
           callback: action => {
@@ -2166,7 +2466,7 @@ export default {
           }
         });
       }
-      else if(this.personInform.identity === '团队创建者' && row.realname === this.personInform.realname){
+      else if(this.personInform.identity === '团队创建者' && row.address === this.personInform.address){
         this.$alert('不能移除自己', '提示', {
           confirmButtonText: '确定',
           callback: action => {
@@ -2201,7 +2501,7 @@ export default {
       },
 
     showEditIdentityDialog(index, row) {
-      if(row.identity === '团队创建者'){
+      if(row.permission === '团队创建者'){
         this.$alert('不能修改团队创建者身份', '提示', {
           confirmButtonText: '确定',
           callback: action => {
@@ -2214,7 +2514,7 @@ export default {
       }
       else{
         this.editIdentityForm.realname = row.realname;
-      this.editIdentityForm.identity = row.identity;
+      this.editIdentityForm.identity = row.permission;
       this.editIdentityDialogVisible = true;
       this.editIdentityForm.index = index;
       }
@@ -2252,155 +2552,23 @@ export default {
   },
 
   created(){
-    this.uniqueIdentities = Array.from(new Set(this.TeamPersonInform.map(item => item.identity)));
+    this.uniqueIdentities = Array.from(new Set(this.TeamPersonInform.map(item => item.permission)));
   },
 
   mounted: function (){
-
-    
-
-    //获取当前团队信息
-    const data = {
-      "team_id": this.$store.state.curTeamID,
-    }
-    this.$api.team.post_show_team(data).then((response) => {
-      // console.log(data)
-      // console.log(response.data)
-      if (response.data.errno == 0) {
-        console.log("获取当前团队信息成功")
-        console.log(response.data.msg)
-        const tmObj = JSON.parse(response.data.team_info);
-        console.log(tmObj);
-
-        //赋值
-        this.currentTeam = tmObj;
-        
-      }
-    }).catch(error => {
-      alert("获取当前团队信息失败")
-      console.log("获取当前团队信息error：\n");
-      console.log(error);
-    })
-
-
-
-
-    //获取用户的基本信息
-    this.$api.user.post_check_profile_self().then((response) => {
-      // console.log(tmp)
-      // console.log(response.data)
-      if (response.data.errno == 0) {
-        console.log("获取用户信息成功")
-        console.log(response.data.user_info)
-        const tmObj = JSON.parse(response.data.user_info);
-        console.log(tmObj);
-
-        //赋值
-        this.personInform.nickname = tmObj.user_name;
-        this.personInform.realname = tmObj.user_real_name;
-        this.personInform.address = tmObj.user_email;
-        // this.personInform.identity = tmObj;
-        
-      }
-    }).catch(error => {
-      alert("获取用户信息失败")
-      console.log("用户基本信息error：\n");
-      console.log(error);
-    })
-
-    //获取用户identity : 输入 id ，teamid
-    const data1 = {
-      "team_id": this.$store.state.curTeamID,
-      "user_id": this.$store.state.curUserID,
-    }
-
-    this.$api.team.post_member_role(data1).then((response) => {
-      // console.log(tmp)
-
-      if (response.data.errno == 0) {
-        console.log("获取用户identity信息成功")
-        console.log(response.data.msg)
-       
-        //赋值
-        if(response.data.role === 'creator')
-          this.personInform.identity = "团队创建者";
-        else if( response.data.role === 'member')
-          this.personInform.identity = "普通成员";
-        else if(response.data.role === 'manager')
-          this.personInform.identity ="管理员";
-      }
-      else{
-        console.log("获取用户identity失败")
-        console.log(response.data)
-      }
-    }).catch(error => {
-      alert("获取用户identity失败")
-      console.log("获取用户identity error：\n");
-      console.log(error);
-    })
-
-
-
-
-    //获取用户加入的 团队列表
-    const tmp = {
-      'tm_list_type': 'joined',
-      'uid': this.$store.state.curUserID,
-    }
-    this.$api.user.get_check_team_list(tmp).then((response) => {
-      // console.log(tmp)
-      // console.log(response.data)
-      if (response.data.errno == 0) {
-        console.log("获取团队列表成功")
-        console.log(response.data.tm_info)
-        const tmObj = JSON.parse(response.data.tm_info);
-        console.log(tmObj);
-
-        //赋值
-        this.teamList = tmObj;
-        
-      }
-    }).catch(error => {
-      alert("获取团队列表失败")
-      console.log("团队列表error：\n");
-      console.log(error)
-    })
-
-    //获取团队的人员列表
-    const tmp1 = {
-      "team_id": 5,
-      "type": "all",
-    }
-    this.$api.team.post_show_member(tmp1).then((response) => {
-      // console.log(tmp)
-      // console.log(response.data)
-      if (response.data.errno == 0) {
-        console.log("获取团队人员列表成功")
-        console.log(response.data.data.members)
-        // const tmObj = JSON.parse(response.data.tm_info);
-        // console.log(tmObj);
-
-        // //赋值
-        // this.teamList = tmObj;
-        
-      }
-      else{
-        console.log("获取团队人员列表失败")
-        console.log(response.data)
-      }
-    }).catch(error => {
-      alert("获取团队人员列表失败")
-      console.log("团队人员列表error：\n");
-      console.log(error)
-    })
-
-
-    //获取团队的项目列表
+      this.loadInfo();
   }
     
 }
 
 </script>
+<style >
+  /* .item ::v-deep .el-form-item__label {
+  font-size: 15px;
+  text-align: left;
+  color: #7BB5C6;
+} */
+</style>
 
 <style scoped>
 /* 上方展开栏的专属样式*/
@@ -2688,6 +2856,13 @@ html {
 </style>
 
 <style scoped>
+
+
+.item .el-form-item__label {
+  font-size: 15px;
+  text-align: left;
+  color: #7BB5C6;
+}
 
 .aside-top-below{
   font-size: 15px;
