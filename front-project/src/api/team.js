@@ -8,6 +8,15 @@ export async function post_change_team_profile(data) {
     })
 }
 
+export async function post_create_team(data) {
+    return request({
+        method: 'POST',
+        url: '/team/create_team',
+        data: data
+    })
+}
+
+
 export async function post_change_team_avatar(data) {
     return request({
         method: 'POST',

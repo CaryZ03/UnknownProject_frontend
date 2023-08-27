@@ -7,6 +7,9 @@ export default new Vuex.Store({
   state: {
     isLogin: false,
     curUserMail: '',
+    curUserID: 1,
+    curTeamID: 1,
+    curTeam: '',
     curUserID: '1',
     curUserName: '帅轩哥',
   },

@@ -99,14 +99,11 @@ export async function post_change_profile(data) {
 }
 
 // check_team_list
-export async function get_check_team_list(data) {
+export async function post_check_team_list(data) {
     return request({
-        method: 'GET',
-        url:  `/user/check_team_list/${data.tm_list_type}`,
-
-        params:{
-            uid: data.uid
-        }
+        method: 'POST',
+        url:  `/user/check_team_list`,
+        data: data
     })
 }
 

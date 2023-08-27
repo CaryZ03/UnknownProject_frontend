@@ -5,7 +5,8 @@
       <nav class="navigation">
         <a href=""><router-link to="">Home</router-link></a>
         <a href=""><router-link to="">Community</router-link></a>
-        <a href=""><router-link to="WorkSpace">WorkSpace</router-link></a>
+        <!-- <a href=""><router-link to="WorkSpace">WorkSpace</router-link></a> -->
+        <a href="" @click.prevent="showTeamDialog">WorkSpace</a>
         <a href=""><router-link to="UML">UML</router-link></a>
         <button v-if="!this.$store.state.isLogin" class="btnLogin-popup">
           Login
@@ -97,6 +98,39 @@
         </form>
       </div>
     </div>
+
+    <!-- 选择团队界面 -->
+    <el-dialog title="选择团队" :visible.sync="dialogVisible" width="50%" :modal-append-to-body="false" >
+    <el-table :data="teamList" style="width: 100%" @row-click="handleRowClick">
+      <el-table-column prop="team_id" label="团队ID"></el-table-column>
+      <el-table-column prop="team_name" label="团队名称"></el-table-column>
+      <el-table-column prop="team_description" label="团队描述"></el-table-column>
+      <el-table-column prop="team_tel" label="联系电话"></el-table-column>
+      <el-table-column prop="team_creator" label="创建者"></el-table-column>
+    </el-table>
+    <el-button type="primary" icon="el-icon-plus" @click="showCreateTeamDialog()">新建团队</el-button>
+  </el-dialog>
+
+    <!-- 新建团队界面 -->
+    <el-dialog :visible.sync="createTeamDialogVisible" title="新建团队" :modal-append-to-body="false">
+    <el-form label-width="100px">
+      <el-form-item label="团队名称">
+        <el-input v-model="newTeam.team_name" placeholder="请输入团队名称"></el-input>
+      </el-form-item>
+      <el-form-item label="团队描述">
+        <el-input v-model="newTeam.team_description" type="textarea" rows="3" placeholder="请输入团队描述"></el-input>
+      </el-form-item>
+      <el-form-item label="联系电话">
+        <el-input v-model="newTeam.team_tel" placeholder="请输入联系电话"></el-input>
+      </el-form-item>
+    </el-form>
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="cancelCreateTeam">取消</el-button>
+      <el-button type="primary" @click="submitCreateTeam">确定</el-button>
+    </span>
+  </el-dialog>
+
+
   </div>
 </template>
 
@@ -128,11 +162,32 @@ export default {
       isAgree: false,
       isRemember: false,
       showVeriBox: false,
+
+
+      //chooseTeam
+      teamList:[{
+        team_id: 10,
+          team_name: '牛魔成本',
+          team_description: 'nmsl',
+          team_tel: '1111112323',
+          team_creator: 'ddadadad'
+      },
+      ],
+      dialogVisible: false,
+      createTeamDialogVisible: false,
+      newTeam: {
+        team_name: '',
+        team_description: '',
+        team_tel: ''
+      },
+
     };
   },
   watch: {},
   computed: {},
   methods: {
+
+
     login() {
       const data = JSON.stringify(this.user);
       console.log(data);
@@ -143,9 +198,9 @@ export default {
           if (response.data["errno"] == 0) {
             alert("1");
             console.log(response.data["token_key"]);
-            this.$router.push({
-              path: `/WorkSpace`,
-            });
+            // this.$router.push({
+            //   path: `/WorkSpace`,
+            // });
 
             this.$store.state.isLogin = true;
             this.$store.state.curUserMail = this.user.email;
@@ -338,6 +393,106 @@ export default {
       // 发邮箱errno！=0
     },
 
+    handleRowClick(row) {
+      // 处理选择团队的逻辑，可以在这里跳转到对应团队的页面
+      console.log('选择了团队', row);
+  
+      this.dialogVisible = false; // 关闭弹窗
+      this.$store.state.curTeam = row;
+      this.$router.push('/WorkSpace'); // 进行页面跳转
+    },
+    
+    showTeamDialog() {
+      // 显示弹窗的逻辑
+      this.dialogVisible = true; // 假设弹窗组件的名称为Dialog
+    },
+
+
+    showCreateTeamDialog() {
+      // 显示新建团队的弹窗
+      this.createTeamDialogVisible = true;
+      // console.log('this.createTeamDialogVisible ='+this.createTeamDialogVisible)
+    },
+
+    cancelCreateTeam() {
+      // 取消新建团队
+      this.createTeamDialogVisible = false;
+      // 清空输入框
+      this.newTeam.team_name = '';
+      this.newTeam.team_description = '';
+      this.newTeam.team_tel = '';
+    },
+    submitCreateTeam() {
+      // 提交新建团队
+      // 在这里发送请求，将新建团队的信息提交至后端保存
+      // 假设发送请求的方法名为createTeam，接收一个team对象作为参数
+      // this.createTeam(this.newTeam);
+      console.log('submitting...')
+      console.log(this.newTeam)
+      this.createTeam();
+      
+    },
+
+    createTeam(){
+      const tmp={
+        "name": this.newTeam.team_name,
+        "description": this.newTeam.team_description,
+        "tel": this.newTeam.team_tel
+      }
+      this.$api.team.post_create_team(tmp).then((response) => {
+          // console.log(tmp)
+          // console.log(response.data)
+          if (response.data.errno == 0) {
+            console.log("新建团队成功")
+            console.log(response.data.msg)
+            // 隐藏新建团队的弹窗，并清空输入框
+            this.createTeamDialogVisible = false;
+            this.flashTeamList();
+          }
+        }).catch(error => {
+          alert("新建团队失败")
+          console.log("失败error：\n");
+          console.log(error)
+        });
+    
+      
+    },
+    //获取团队列表
+    flashTeamList(){
+      
+      const tmp1 = {
+          'choose': 'all',
+        }
+        console.log(tmp1)
+        this.$api.user.post_check_team_list(tmp1).then((response) => {
+          // console.log(tmp)
+          // console.log(response.data)
+          if (response.data.errno == 0) {
+            console.log("获取团队列表成功")
+            console.log(response.data.tm_info)
+
+            if(response.data.tm_info.length === 0){
+              this.teamList = []
+            }
+            else{
+              const tmInfoArray = response.data.tm_info.map((item) => JSON.parse(item.replace(/\\/g, '')));
+
+              console.log(tmInfoArray);
+              //赋值
+              this.teamList = tmInfoArray;
+            }
+            
+            
+          }
+        }).catch(error => {
+          alert("获取团队列表失败")
+          console.log("团队列表error：\n");
+          console.log(error)
+        })
+
+        
+    },
+
     logout() {
       this.$api.user
         .post_logout()
@@ -383,6 +538,11 @@ export default {
       wrapper.classList.remove("active-popup");
       this.showVeriBox = false;
     });
+
+    //获取用户的团队列表
+    // if(this.$store.state.isLogin){
+          this.flashTeamList();
+    // }
   },
 };
 </script>
