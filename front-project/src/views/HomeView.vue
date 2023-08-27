@@ -356,23 +356,6 @@ export default {
           alert("logout failed");
         });
     },
-
-    // handleRegisterLink(){
-
-    // },
-
-    // handleloginLink(){
-
-    // },
-
-    // btnLogin(){
-
-    // },
-
-    // iconClose(){
-      
-    // }
-
   },
   created() {},
   mounted() {
@@ -382,7 +365,6 @@ export default {
 
     const btnLogin = document.querySelector(".btnLogin-popup");
     const iconClose = document.querySelector(".icon-close");
-    registerLink.removeEventListener("");
 
     registerLink.addEventListener("click", () => {
       wrapper.classList.add("active");
