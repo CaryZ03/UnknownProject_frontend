@@ -11,13 +11,13 @@ export default {
     HelloWorld,
   },
   mounted() {
-    this.$api.user.get_check_token().then((res) => {
-      if (res.data["errno"] == 0) {
-        this.$router.push({
-          path: `/WorkSpace`,
-        });
-      }
-    });
+    // this.$api.user.get_check_token().then((res) => {
+    //   if (res.data["errno"] == 0) {
+    //     this.$router.push({
+    //       path: `/WorkSpace`,
+    //     });
+    //   }
+    // });
   },
 };
 </script>
