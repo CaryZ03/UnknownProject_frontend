@@ -1,22 +1,18 @@
 <template>
-    <router-view></router-view>
+  <router-view></router-view>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import HelloWorld from "./components/HelloWorld.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    HelloWorld
+    HelloWorld,
   },
   mounted() {
-    // 设置暗色模式
-document.documentElement.setAttribute('theme-mode', 'dark');
-// 重置为浅色模式
-document.documentElement.removeAttribute('theme-mode');
-  }
-}
+  },
+};
 </script>
 
 <style scoped>

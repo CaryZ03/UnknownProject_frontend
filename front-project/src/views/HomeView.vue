@@ -12,29 +12,29 @@
     </header>
 
     <div class="wrapper">
-      <span class="icon-close"><ion-icon name="close-outline"></ion-icon></span>
+      <span class="icon-close"><i class="el-icon-close"></i></span>
 
       <div class="form-box login">
         <h2>Login</h2>
-        <form action="#">
+        <form action="">
           <div class="input-box">
-            <span class="icon"><ion-icon name="mail-unread"></ion-icon></span>
-            <input type="text" required />
+            <span class="icon"><i class="el-icon-edit"></i></span>
+            <input type="text" v-model="user.email" required />
             <label>Email</label>
           </div>
 
           <div class="input-box">
-            <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
-            <input type="password" required />
+            <span class="icon"><i class="el-icon-lock"></i></span>
+            <input type="password" v-model="user.password" required />
             <label>password</label>
           </div>
 
           <div class="remember-forgot">
             <label><input type="checkbox" />Remember Me</label>
-            <a href="#">Forgot Password</a>
+            <a href="">Forgot Password</a>
           </div>
 
-          <button type="submit" class="btn">Login</button>
+          <button @click="login" class="btn">Login</button>
 
           <div class="login-register">
             <p>
@@ -50,21 +50,27 @@
         <h2>Registeration</h2>
         <form action="#">
           <div class="input-box">
-            <span class="icon"><ion-icon name="person"></ion-icon></span>
-            <input type="text" required />
+            <span class="icon"><i class="el-icon-edit"></i></span>
+            <input type="text" v-model="userR.email" required />
             <label>Email</label>
           </div>
 
           <div class="input-box">
-            <span class="icon"><ion-icon name="mail-unread"></ion-icon></span>
-            <input type="text" required />
-            <label>Username</label>
+            <span class="icon"><i class="el-icon-lock"></i></span>
+            <input type="text" v-model="userR.password1" required />
+            <label>password</label>
           </div>
 
           <div class="input-box">
-            <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
-            <input type="password" required />
-            <label>password</label>
+            <span class="icon"><i class="el-icon-lock"></i></span>
+            <input type="password" v-model="userR.password2" required />
+            <label>repeat password</label>
+          </div>
+
+          <div v-show="showVeriBox" class="input-box">
+            <span class="icon"><i class="el-icon-lock"></i></span>
+            <input type="password" v-model="vericode" required />
+            <label>Vericode</label>
           </div>
 
           <div class="remember-forgot">
@@ -73,7 +79,10 @@
             >
           </div>
 
-          <button type="submit" class="btn">Register</button>
+          <button v-if="!showVeriBox" @click="register" class="btn">
+            Register
+          </button>
+          <button v-else @click="ensureVericodeReg" class="btn">Ensure</button>
 
           <div class="login-register">
             <p>
@@ -86,10 +95,6 @@
   </div>
 </template>
 
-<script>
-// @ is an alias to /src
-// import HelloWorld from '@/components/HelloWorld.vue'
-</script>
 
 
 <script>
@@ -97,11 +102,237 @@ export default {
   components: {},
   props: {},
   data() {
-    return {};
+    return {
+      user: {
+        email: "",
+        password: "",
+      },
+
+      userR: {
+        email: "",
+        password1: "",
+        password2: "",
+      },
+      userChange: {
+        email: "",
+        password1: "",
+        password2: "",
+      },
+
+      vericode: "",
+      isAgree: false,
+      isRemember: false,
+      showVeriBox: false,
+    };
   },
   watch: {},
   computed: {},
-  methods: {},
+  methods: {
+    login() {
+      const data = JSON.stringify(this.user);
+      console.log(data);
+
+      this.$api.user
+        .post_user_login(data)
+        .then((response) => {
+          if (response.data["errno"] == 0) {
+            console.log("11111");
+            // this.$router.push({
+            //   path: `/WorkSpace`,
+            // });
+            this.$store.state.isLogin = true;
+            this.$store.curUserMail = user.email;
+            this.$store.curUserID = response.data["uid"];
+            localStorage.setItem("curUserID", this.$store.state.curUserID);
+            localStorage.setItem("curUserName", this.$store.state.curUsername);
+            localStorage.setItem("token", response.data["token_key"]);
+          } else {
+            console.log(response.data);
+          }
+        })
+        .catch((error) => {
+          // Message.error("登录失败");
+          console.log("登录失败");
+          // alert("wa")
+        });
+    },
+
+    forgetPass() {
+      // const
+      // this.$api.userInfo.postUserInfo_ChangeUserInfo(data)
+      const data = {
+        username: this.user.username,
+      };
+      console.log("data.username" + data.username);
+
+      this.$api.user.postUserInfo_SendVeri(data).then((res) => {
+        alert("what fuck");
+        if (res.data.errno == 0) {
+          //发送邮箱成功，等验证码
+
+          this.$prompt("请输入验证码", "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+          })
+            .then(({ value }) => {
+              console.log("value2:jsontring" + JSON.stringify(value));
+              // console.log("value2:jsontring"+JSON.stringify(value2))
+              console.log("value2:" + value);
+              console.log("res.data.code" + res.data.code);
+              var value1;
+              if (value == res.data.code) {
+                //改邮箱
+                this.$message({
+                  type: "success",
+                  message: "验证码验证成功",
+                });
+
+                this.$prompt("请输入新密码", "提示", {
+                  confirmButtonText: "确定",
+                  cancelButtonText: "取消",
+                })
+                  .then(({ value }) => {
+                    this.userChange.password1 = value;
+                    this.userChange.password2 = value;
+
+                    const tmp = {
+                      username: this.user.username,
+                      password1: value,
+                      password2: value,
+                    };
+                    this.$api.userInfo
+                      .postUserInfo_ResetPassword(tmp)
+                      .then((res1) => {
+                        if (res1.data.errno == 0) {
+                          this.$message({
+                            type: "success",
+                            message: "修改成功",
+                          });
+                        } else {
+                          this.$message({
+                            type: "error",
+                            message: "修改失敗",
+                          });
+                        }
+                      });
+                  })
+                  .catch(() => {
+                    this.$message({
+                      type: "info",
+                      message: "取消輸入",
+                    });
+                  });
+                // this.addressIsBind = true;
+              } else {
+                this.$message({
+                  type: "error",
+                  message: "验证码错误",
+                });
+              }
+            })
+            .catch(() => {
+              this.$message({
+                type: "info",
+                message: "取消输入",
+              });
+            });
+        } else {
+          this.$message({
+            type: "error",
+            message: "验证码发送失败",
+          });
+        }
+      });
+    },
+
+    register() {
+      //检测注册邮箱合理性
+      this.$api.user
+        .post_user_register_check(this.userR)
+        .then((res) => {
+          // 如果邮箱合理
+          if (res.data["errno"] == 0) {
+            // 发邮件
+            const emailJson = {
+              email: this.userR.email,
+            };
+            this.$api.user
+              .post_send_verification_code(emailJson)
+              .then((res2) => {
+                // 发邮箱成功
+                if (res2.data["errno"] == 0) {
+                  this.showVeriBox = true;
+                }
+              })
+              .catch((error) => {
+                // 发邮件错误
+              });
+          } else {
+            // 如果检测邮箱合理errno！=0
+            alert("wrong");
+          }
+        })
+        .catch((error) => {
+          // 检测邮箱合理error
+        });
+    },
+
+    send_verification_code() {
+      const data = {};
+      this.$api.user
+        .post_send_verification_code(data)
+        .then((res) => {
+          return res.data["errno"];
+        })
+        .catch((error) => {
+          return -1;
+        });
+    },
+
+    ensureVericodeReg() {
+      const tdata = {
+        email: this.userR.email,
+        verification_code: this.vericode,
+      };
+      //检测验证码
+      this.$api.user
+        .post_check_verification_code(tdata)
+        .then((res3) => {
+          // alert(res3.data["errno"])
+          // 验证码正确
+          if (res3.data["errno"] == 0) {
+            this.$api.user
+              .post_user_register(this.userR)
+              .then((res4) => {
+                if (res4.data["errno"] == 0) {
+                  alert("注册成功");
+                  // todo:跳转到登录
+                } else {
+                  alert("注册失败");
+                }
+              })
+              .catch((error) => {
+                // 注册失败
+              });
+          }
+          // 验证码输入错误
+          else {
+          }
+        })
+        .catch((error) => {
+          // 上传验证码错误
+        });
+      // 暂时给一次机会
+      this.showVeriBox = false;
+      // 发邮箱errno！=0
+    },
+
+    async check_verification_code() {},
+
+    async user_register() {},
+
+    async user_login() {},
+  },
   created() {},
   mounted() {
     const wrapper = document.querySelector(".wrapper");
@@ -113,6 +344,7 @@ export default {
 
     registerLink.addEventListener("click", () => {
       wrapper.classList.add("active");
+      this.showVeriBox = false;
     });
 
     loginLink.addEventListener("click", () => {
@@ -125,6 +357,7 @@ export default {
 
     iconClose.addEventListener("click", () => {
       wrapper.classList.remove("active-popup");
+      this.showVeriBox = false;
     });
   },
 };
@@ -389,7 +622,7 @@ header {
   width: 100%;
   height: 45px;
 
-  background: #fff;
+  background: #4e4d4d;
   border: none;
   outline: none;
   border-radius: 6px;
