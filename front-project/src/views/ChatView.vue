@@ -239,6 +239,7 @@ import Navbar from '@/components/Navbar.vue';
         getDepartments(){
           //接口取企业
           const self = this;
+          self.departmentList.splice(0, self.departmentList.length);
           console.log(self.uid);
           console.log(self.uname);
           const dataObject = {
@@ -267,8 +268,62 @@ import Navbar from '@/components/Navbar.vue';
         },
 
         checkTeamMessage(index) {
+          this.redDotNum[index + 1] = 0;
+
+          this.curDepartment = this.departmentList[index].team_name;
+          this.curDepartmentId = this.departmentList[index].team_id;
+          const self = this;
+          const dataObject = {
+            team_id: self.curDepartmentId,
+            tm_user_id: self.uid
+          };
+          const jsonString = JSON.stringify(dataObject);
+          // 加载企业成员
+          this.$api.chat.post_get_team_members_and_permissions(jsonString)
+          .then(function (response) {
+              self.memberList.splice(0, self.memberList.length);
+              response.data.members.forEach(element => {
+                const mem = {
+                  uid: element.tm_user_id,
+                  name: element.tm_user_nickname
+                }
+                self.memberList.push(mem);
+              });
+          })
+          .catch(function (error) {
+              console.log(error);
+          });
           
-        },
+          self.chatMessages.splice(0, self.chatMessages.length);
+          const dataObject1 = {
+            team_id: self.curDepartmentId,
+          };
+          const jsonString1 = JSON.stringify(dataObject1);
+          this.$api.chat.post_get_team_chat_history(jsonString1)
+          .then(function (response) {
+              response.data.chat_history.forEach(element => {
+                let isSentByCurrentUser_1 = false;
+                const num = parseInt(self.uid)
+                if(element.user_id === num)
+                {
+                  isSentByCurrentUser_1 = true;
+                }
+                const message = {
+                  content: element.message,
+                  isSentByCurrentUser: isSentByCurrentUser_1,
+                  user_name: element.user_name,
+                  message_type: element.message_type
+                }
+                console.log(message);
+                self.chatMessages.push(message);
+              });
+              console.log(this.chatMessages);
+          })
+          .catch(function (error) {
+              console.log(error);
+          });
+          console.log(self.curDepartmentId);
+        },  
 
         handleClose(done) {
           this.$confirm('确认关闭？')
@@ -307,11 +362,12 @@ import Navbar from '@/components/Navbar.vue';
             isSentByCurrentUser: false,
             user_name: data.user_name
           }
+          
+          if(this.uid === data.user_id)
+          {
+            return;
+          }
           this.handleAt(data);
-          // if(this.uid === data.user_id)
-          // {
-          //   return;
-          // }
 
           if(typeof data.message === 'string') {
             this.chatMessages.push(recv_message_used);
@@ -363,11 +419,30 @@ import Navbar from '@/components/Navbar.vue';
 
             // 将消息存至数据库
 
+            const send_message_to_backend = JSON.stringify({
+                'message': this.messageInput,
+                'user_id': this.uid,
+                'team_id': this.curDepartmentId,
+                'is_at_all': this.isAtAll,
+                'array_data': this.atList,
+                'message_type': "message"
+            })
+
             this.chatMessages.push(send_message_used);
             this.chatSocket.send(send_message);
             this.messageInput = '';
             this.atList.splice(0, this.atList.length);
             this.isAtAll = false;
+
+
+
+            this.$api.chat.post_store_message(send_message_to_backend)
+            .then(function (response) {
+              console.log(response);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
             
             // console.log(this.chatMessages)
             console.log("send success")
@@ -425,8 +500,8 @@ import Navbar from '@/components/Navbar.vue';
             openAtMenu() {
               const self = this;
               const dataObject = {
-                team_id: 1,
-                tm_user_id: 1
+                team_id: self.curDepartmentId,
+                tm_user_id: self.uid
               };
               const jsonString = JSON.stringify(dataObject);
               this.$api.chat.post_get_team_members_and_permissions(jsonString)
