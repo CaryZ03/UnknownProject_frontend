@@ -66,10 +66,12 @@
                         </el-col>
                         <el-col :span="23">
                           <div>{{ message.user_name }}</div>
-                          <div v-if="message" class="chat-bubble received">
+                          <div v-if="message.message_type === 'image'" class="chat-bubble received">
                           <img :src="message.content" alt="接收的图片">
                           </div>
-
+                          <div v-else-if="message.message_type === 'file'" class="chat-bubble received">
+                            {{ message.content }}111
+                          </div>
                           <div v-else class="chat-bubble received">
                             {{ message.content }}
                           </div>
@@ -80,8 +82,11 @@
                   <el-row>
                         <el-col :span="23">
                           <div class="send-member">{{ uname }}</div>
-                          <div v-if="isImageMessage(message)" class="chat-bubble sent">
+                          <div v-if="message.message_type === 'image'" class="chat-bubble sent">
                             <img :src="message.content" alt="发送的图片">
+                          </div>
+                          <div v-else-if="message.message_type === 'file'" class="chat-bubble sent">
+                            {{ message.content }}111
                           </div>
                           <div v-else class="chat-bubble sent">
                             {{ message.content }}
