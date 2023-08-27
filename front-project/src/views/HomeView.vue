@@ -143,8 +143,9 @@ export default {
             });
 
             this.$store.state.isLogin = true;
-            this.$store.curUserMail = this.user.email;
-            this.$store.curUserID = response.data["uid"];
+            this.$store.state.curUserMail = this.user.email;
+            this.$store.state.curUserID = response.data["uid"];
+            localStorage.setItem("isLogin", true);
             localStorage.setItem("curUserID", this.$store.state.curUserID);
             localStorage.setItem("curUserMail", this.$store.state.curUserMail);
             localStorage.setItem("token", response.data["token_key"]);

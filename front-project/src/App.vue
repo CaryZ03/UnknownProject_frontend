@@ -11,13 +11,27 @@ export default {
     HelloWorld,
   },
   mounted() {
-    this.$api.user.get_check_token().then((res) => {
-      if (res.data["errno"] == 0) {
-        this.$router.push({
-          path: `/WorkSpace`,
-        });
-      }
-    });
+    this.$api.user
+      .get_check_token()
+      .then((res) => {
+        if (res.data["errno"] == 0) {
+          // alert("0");
+          this.$store.state.isLogin = true;
+          localStorage.setItem("isLogin", true);
+          this.$store.state.curUserMail = localStorage.getItem("curUserMail");
+          this.$store.state.curUserID = localStorage.getItem("isLogin");
+          this.$router.push({
+            path: `/WorkSpace`,
+          });
+        } else {
+          alert(res.data["errno"]);
+          this.$store.state.isLogin = false;
+          localStorage.setItem("isLogin", false);
+        }
+      })
+      .catch((error) => {
+        alert("error");
+      });
   },
 };
 </script>
