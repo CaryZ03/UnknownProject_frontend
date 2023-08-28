@@ -1,5 +1,7 @@
 <template>
-  <span>hihihihi</span>
+  <div>
+    woshi b
+  </div>
 </template>
 
 <script>

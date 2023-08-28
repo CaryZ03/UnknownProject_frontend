@@ -11,7 +11,7 @@
         <button v-if="!this.$store.state.isLogin" class="btnLogin-popup">
           Login
         </button>
-        <button v-else @click="logout" class="btnLogout-popup">
+        <button v-else @click.prevent="logout" class="btnLogout-popup">
           Logout
         </button>
       </nav>
@@ -137,6 +137,7 @@
 
 
 <script>
+
 export default {
   components: {},
   props: {},
@@ -205,6 +206,7 @@ export default {
             this.$store.state.isLogin = true;
             this.$store.state.curUserMail = this.user.email;
             this.$store.state.curUserID = response.data["uid"];
+            this.$store.state.curUserName = response.data["user_name"];
             localStorage.setItem("isLogin", true);
             localStorage.setItem("curUserID", this.$store.state.curUserID);
             localStorage.setItem("curUserMail", this.$store.state.curUserMail);
@@ -503,15 +505,18 @@ export default {
           this.$store.state.curUserName = "";
           this.$store.state.token_key = "";
           this.$store.state.curUserMail= "";
+          this.$store.state.curUserName= "";
           localStorage.removeItem("isLogin");
           localStorage.removeItem("curUserID");
           localStorage.removeItem("curUserMail");
+          localStorage.removeItem("curUserName");
           localStorage.removeItem("token");
         })
         .catch((err) => {
           alert("logout failed");
         });
     },
+    
   },
   created() {},
   mounted() {
