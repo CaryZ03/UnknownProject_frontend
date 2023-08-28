@@ -28,6 +28,7 @@
     "@tiptap/vue-2": "^2.1.7",
     "axios": "^1.4.0",
     "core-js": "^3.8.3",
+    "dom-to-image": "^2.6.0",
     "element-ui": "^2.15.13",
     "file-saver": "^2.0.5",
     "html-docx-js": "^0.3.1",

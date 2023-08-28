@@ -1,51 +1,55 @@
 <template>
-  <div id="app">
-    <input type="file" ref="fileInput" @change="handleFileChange">
-    <button @click="uploadFile">Upload</button>
-    <button @click="downloadFile">Download</button>
+  <div>
+    <!-- 在这里添加你的 HTML 模板代码 -->
+
+    <!-- 示例: 显示接收到的通知消息 -->
+    <div v-for="notification in notifications" :key="notification.id">
+      {{ notification.message }}
+    </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
-  methods: {
-    handleFileChange(event) {
-      this.selectedFile = event.target.files[0];
-    },
-    async uploadFile() {
-      const formData = new FormData();
-      formData.append('file', this.selectedFile);
+  data() {
+    return {
+      notifications: [], // 存储接收到的通知消息
+      socket: null,
+    };
+  },
+  mounted() {
+    this.socket = new WebSocket('ws://182.92.86.71:4514/ws/notification/receiver/7/');
 
-      this.$api.document.post_upload_file(formData)
-          .then(function (response) {
-            console.log('File uploaded successfully.');
-          })
-          .catch(function (error) {
-            console.error('File upload failed.');
-          });
-    },
-    async downloadFile() {
-      const dataObject1 = {
-        file_id: 3,
-      };
-      const jsonString1 = JSON.stringify(dataObject1);
-      this.$api.document.post_download_file(jsonString1)
-          .then(function (response) {
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', '823.xlsx'); // Replace with the actual file name
-            document.body.appendChild(link);
-            link.click();
-            link.parentNode.removeChild(link);
+    this.socket.addEventListener('open', (event) => {
+      console.log('WebSocket connection opened:', event);
 
-          })
-          .catch(function (error) {
-            console.error('File download failed.');
-          });
-    },
+      // 在这里可以发送用户认证信息，如 token 或其他信息
+      // this.socket.send(JSON.stringify({ "auth": "your_auth_token" }));
+    });
+
+    this.socket.addEventListener('message', (event) => {
+      const notification = JSON.parse(event.data);
+      console.log('Received notification:', notification);
+
+      // 将接收到的通知消息添加到数组中
+      this.notifications.push(notification);
+      const h = this.$createElement;
+
+        this.$notify({
+          title: '通知',
+          message: h('i', { style: 'color: teal'}, "你收到了一条通知消息")
+        });
+    }); 
+
+    this.socket.addEventListener('close', (event) => {
+      console.log('WebSocket connection closed:', event);
+    });
+  },
+  beforeDestroy() {
+    // 在组件销毁之前，关闭 WebSocket 连接
+    if (this.socket !== null) {
+      this.socket.close();
+    }
   },
 };
 </script>
