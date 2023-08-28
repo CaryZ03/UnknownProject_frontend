@@ -148,7 +148,7 @@
               </el-popover>
             </el-col>
             <el-col :span="1">
-              <el-popover placement="top" width="160" v-model="atVisible" id="soloPop">
+              <!-- <el-popover placement="top" width="160" v-model="atVisible" id="soloPop">
                 <p>私聊成员</p>
                 <div v-for="(member, index) in memberList" :key="index" :id="'generated-div-' + index"
                   class="department-member" @click="atMember(index)">
@@ -158,10 +158,10 @@
                   <el-button size="mini" type="text" @click="atVisible = false">取消</el-button>
                   <el-button type="primary" size="mini" @click="atVisible = false">确定</el-button>
                 </div>
-                <div class="solo" slot="reference" @click="openAtMenu">
-                  <i class="el-icon-user-solid icon-set solo-chat" @click="openAtMenu"></i>
+                <div class="solo" slot="reference" @click="">
+                  <i class="el-icon-user-solid icon-set solo-chat" @click=""></i>
                 </div>
-              </el-popover>
+              </el-popover> -->   
             </el-col>
             <el-col :span="19">
 
@@ -434,7 +434,8 @@ export default {
         'is_at_all': this.isAtAll,
         'array_data': this.atList,
         'message_type': "message",
-        'file_id': 0
+        'file_id': 0,
+        'private_connect_id': 0
       })
       let send_message_used = {
         content: this.messageInput,
@@ -452,7 +453,8 @@ export default {
         'team_id': this.curDepartmentId,
         'is_at_all': this.isAtAll,
         'array_data': this.atList,
-        'message_type': "message"
+        'message_type': "message",
+        'private_connect_id': 0
       })
 
       this.chatMessages.push(send_message_used);
@@ -539,7 +541,8 @@ export default {
             'is_at_all': self.isAtAll,
             'array_data': self.atList,
             'message_type': "file",
-            'file_id': file_id
+            'file_id': file_id,
+            'private_connect_id': 0
           })
 
 
@@ -558,7 +561,7 @@ export default {
         .catch(function (error) {
           console.log(error);
         });
-      await self.sleep(500);
+      await self.sleep(4000);
       const send_message_to_backend = JSON.stringify({
         'message': selectedFile.name,
         'user_id': self.uid,
@@ -566,7 +569,8 @@ export default {
         'is_at_all': self.isAtAll,
         'array_data': self.atList,
         'message_type': "file",
-        'file_id': file_id
+        'file_id': file_id,
+        'private_connect_id': 0
       })
       console.log(send_message_to_backend);
       this.$api.chat.post_store_message(send_message_to_backend)
