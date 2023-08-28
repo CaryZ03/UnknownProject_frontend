@@ -692,7 +692,7 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
                 <!-- column 2 -->
                 <el-table-column
                   label="真实姓名" sortable
-                  prop="realname">
+                  prop="real_name">
                 </el-table-column>
 
                  <!-- column 3 -->
@@ -2945,7 +2945,7 @@ export default {
       // 在这里处理更新身份的逻辑，可以通过调用后端接口来实现更新
       // const { realname, newIdentity } = this.editIdentityForm;
       // 更新身份的代码...
-      this.TeamPersonInform[this.editIdentityForm.index].identity = this.editIdentityForm.newIdentity;
+      this.TeamPersonInform[this.editIdentityForm.index].permission = this.editIdentityForm.newIdentity;
 
       // 关闭对话框
       this.closeEditIdentityDialog();
