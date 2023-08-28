@@ -31,7 +31,7 @@
         {{ this.uname }}</el-menu-item>
     <router-link to="/Chat">
       <el-menu-item index="6" class="menu-bell">
-        <el-badge class="item" :value="12" :max="99">
+        <el-badge class="item" :value="this.$store.state.notificationRedNum" :max="99">
             <i class="el-icon-message-solid"></i>
         </el-badge>
     </el-menu-item>

@@ -12,6 +12,7 @@ export default new Vuex.Store({
     curTeam: '',
     curUserID: '1',
     curUserName: '帅轩哥',
+    notificationRedNum: 5,
   },
   getters: {
   },

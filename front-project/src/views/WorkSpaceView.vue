@@ -163,7 +163,7 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
 
         <router-link to="/Chat" class="menu-bell-router">
           <div class="menu-bell">
-            <el-badge class="item" :value="12" :max="99">
+            <el-badge class="item" :value="this.$store.state.notificationRedNum" :max="99">
                 <i class="el-icon-message-solid" size="large"></i>
             </el-badge>
           </div>

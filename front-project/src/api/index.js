@@ -3,11 +3,13 @@ import * as project from './project'
 import * as team from './team'
 import * as chat from './chat'
 import * as document from './document'
+import * as message from './message'
 
 export default{
     user,
     team,
     project,
     chat,
-    document
+    document,
+    message
 }
