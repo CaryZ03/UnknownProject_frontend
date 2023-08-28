@@ -32,7 +32,7 @@ const routes = [
     component: Text
   },
   {
-    path: '/Tiptap',
+    path: '/Tiptap/:appID/:room',
     name: 'Tiptap',
     component: TiptapView
   },
@@ -59,7 +59,7 @@ const routes = [
 
   },
   {
-    path: '/Design/:dishgnCode',
+    path: '/Design',
     name: 'design',
     component: Design,
 
