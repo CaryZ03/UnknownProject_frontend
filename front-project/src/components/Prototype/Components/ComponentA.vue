@@ -1,6 +1,6 @@
 <template>
   <div>
-    <t-button theme="default" variant="base">填充按钮</t-button>
+    hihihihihi
   </div>
 </template>
 

@@ -1,7 +1,50 @@
 <template>
-  <div class="container" ref="elementToCapture">
+  <div class="container" id="capture">
+    <div class="leftbar">
+      <t-space direction="vertical">
+        <t-button variant="outline" @click="cloneElement('mDropDown')" ghost
+          >DropDown</t-button
+        >
+        <t-button variant="outline" @click="cloneElement('mDivider')" ghost
+          >Divider</t-button
+        >
+        <t-button variant="outline" @click="cloneElement('mPagination')" ghost
+          >Pagination</t-button
+        >
+        <t-button
+          variant="outline"
+          @click="cloneElement('mLinkComponent')"
+          ghost
+          >LinkComponent</t-button
+        >
+        <t-button variant="outline" @click="cloneElement('mTabs')" ghost
+          >Tabs</t-button
+        >
+        <t-button variant="outline" @click="cloneElement('mToolBar')" ghost
+          >ToolBar</t-button
+        >
+        <t-button variant="outline" @click="cloneElement('mToolBar')" ghost
+          >幽灵按钮</t-button
+        >
+        <t-button variant="outline" @click="cloneElement('ComponentC')" ghost
+          >幽灵按钮</t-button
+        >
+        <t-button variant="outline" @click="cloneElement('ComponentC')" ghost
+          >幽灵按钮</t-button
+        >
+        <t-button variant="outline" @click="cloneElement('ComponentC')" ghost
+          >幽灵按钮</t-button
+        >
+        <t-button variant="outline" @click="cloneElement('Button')" ghost
+          >幽灵按钮</t-button
+        >
+        <t-button variant="outline" @click="captureAndSave" ghost
+          >导出图片</t-button
+        >
+      </t-space>
+    </div>
     <vue-draggable-resizable
-      style="border: 1px solid black"
+      style="border: 0"
       :min-width="100"
       :min-height="900"
       :resizable="false"
@@ -9,7 +52,7 @@
       :x="110"
       :y="200"
     >
-    <!--     DragItem,
+      <!--     DragItem,
     ComponentA,
     ComponentB,
     ComponentC,
@@ -19,57 +62,37 @@
     mPagination,
     mTabs,
     mToolBar -->
-      <div
-        @click="cloneElement('mDivider')"
-        style="background-color: black; width: 63px; height: 63px; border: 3px"
-      ></div>
-      <div
-        @click="cloneElement('mDropDown')"
-        style="background-color: black; width: 63px; height: 63px; border: 3px"
-      ></div>
-      <div
-        @click="cloneElement('mLinkComponent')"
-        style="background-color: black; width: 63px; height: 63px; border: 3px"
-      ></div>
-      <div
-        @click="cloneElement('mPagination')"
-        style="background-color: black; width: 63px; height: 63px; border: 3px"
-      ></div>
-      <div
-        @click="cloneElement('mTabs')"
-        style="background-color: black; width: 63px; height: 63px; border: 3px"
-      ></div>
-      <div
-        @click="cloneElement('mToolBar')"
-        style="background-color: black; width: 63px; height: 63px; border: 3px"
-      ></div>
-      <div
-        @click="cloneElement('ComponentC')"
-        style="background-color: black; width: 63px; height: 63px; border: 3px"
-      ></div>
-
-      <button @click="captureAndSave">Capture and Save</button>
     </vue-draggable-resizable>
 
-    <vue-draggable-resizable  class="outContain" @activated="outerActive"
-      :draggable=outDraggable
-      :resizable="true"
-      :w="200"
-      :h="200"
+    <div ref="result">
+      <img :src="imageUrl" v-if="imageUrl" alt="Captured Image" />
+    </div>
 
-      
-    >
-      <vue-draggable-resizable 
-        :parent="true"
-        v-for="(item, index) in clonedComponents"
-        :key="index"
-        :on-drag-start="innerDrag"
-        @dragstop="innerDragStop"
-        w="auto" h="auto"
+    <div ref="elementToCapture" style="background-color:blanchedalmond ">
+      <vue-draggable-resizable
+        class="outContain"
+        @activated="outerActive"
+        :draggable="outDraggable"
+        :resizable="true"
+        :w="200"
+        :h="200"
       >
-        <component-with-item :is="item"></component-with-item>
+        <vue-draggable-resizable
+          :parent="true"
+          v-for="(item, index) in clonedComponents"
+          :key="index"
+          :on-drag-start="innerDrag"
+          @dragstop="innerDragStop"
+          w="auto"
+          h="auto"
+        >
+          <component-with-item :is="item"></component-with-item>
+        </vue-draggable-resizable>
       </vue-draggable-resizable>
-    </vue-draggable-resizable>
+      <span>12313213213</span>
+      <span>12313213213</span>
+    </div>
+
     <div></div>
   </div>
 </template>
@@ -88,9 +111,7 @@ import mLinkComponent from "../components/Prototype/Components/mLinkComponent.vu
 import mPagination from "../components/Prototype/Components/mPagination.vue";
 import mTabs from "../components/Prototype/Components/mTabs.vue";
 import mToolBar from "../components/Prototype/Components/mToolBar.vue";
-import html2canvas from "html2canvas";
-
-
+import domToImage from "dom-to-image";
 
 export default {
   data() {
@@ -98,7 +119,8 @@ export default {
       currentComponent: "ComponentA", // 默认绑定 ComponentA 组件
       dynamicComponent: null,
       clonedComponents: [], // 存储克隆的组件数组
-      outDraggable: false
+      outDraggable: false,
+      imageUrl: "",
     };
   },
   components: {
@@ -111,25 +133,47 @@ export default {
     mLinkComponent,
     mPagination,
     mTabs,
-    mToolBar
+    mToolBar,
   },
   methods: {
-
     async captureAndSave() {
-      const element = this.$refs.elementToCapture;
+      // const element = this.$refs.elementToCapture;
+      // html2canvas(element,{ useCORS: true }).then((canvas) => {
+      //   alert(canvas)
+      //   this.imageUrl = canvas.toDataURL("image/png");
+      //   alert(this.imageUrl)
+      //   console.log(this.imageUrl)
+      // });
 
-      try {
-        const canvas = await html2canvas(element);
-        const imageDataURL = canvas.toDataURL('image/png');
-
-        // 此处你可以将 imageDataURL 用于显示或下载
-        alert(imageDataURL);
-      } catch (error) {
-        console.error('Error capturing element:', error);
-      }
+      // var node = document.getElementById("capture");
+      // // options 可不传
+      // var options = {};
+      // domtoimage
+      //   .toPng(node, options)
+      //   .then(function (dataUrl) {
+      //     var img = new Image();
+      //     img.src = dataUrl;
+      //     document.body.appendChild(img);
+      //   })
+      //   .catch(function (error) {
+      //     console.error("oops, something went wrong!", error);
+      //   });ref="elementToCapture"
+      const element = this.$refs.elementToCapture; // 替换为你的 DOM 元素的引用
+      alert(element);
+      this.imageUrl = await domToImage
+        .toPng(element)
+        .then((dataUrl) => {
+          const a = document.createElement("a");
+          a.setAttribute("download", "screenshot");
+          a.href = dataUrl;
+          a.click();
+        })
+        .catch((error) => {
+          console.error("oops, something went wrong!", error);
+        })
+        .finally(this.close);
     },
-
-    renderChatIcon() {
+    derChatIcon() {
       return <ChatIcon />;
     },
     renderAddIcon() {
@@ -166,27 +210,55 @@ export default {
       this.dynamicComponent = new DynamicComponent().$mount();
     },
 
-    innerDrag(){
-        this.outDraggable=false
-        console.log("drag")
+    innerDrag() {
+      this.outDraggable = false;
+      console.log("drag");
     },
-    innerDragStop(){
-        this.outDraggable=true
-        console.log("stop!!!")
-    },
-
-    outerActive(){
-        this.outDraggable=true
+    innerDragStop() {
+      this.outDraggable = true;
+      console.log("stop!!!");
     },
 
-
-    
-    
-    
+    outerActive() {
+      this.outDraggable = true;
+    },
   },
 };
 </script>
 
-  <style>
+<style>
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-image: linear-gradient(220.55deg, #565656 0%, #181818 100%);
+
+  display: flex; /* 添加 flex 布局 */
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+}
+
+.leftbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  /* width: 10%; */
+  height: 100%;
+  /* background-size: cover;
+  background-position: center; */
+  /* background-image: linear-gradient(220.55deg, #565656 0%, #181818 100%); */
+
+  display: flex; /* 添加 flex 布局 */
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+}
 </style>
   

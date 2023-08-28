@@ -147,6 +147,8 @@
         ghost
         >Redo</t-button
       >
+
+      <t-button @click="generateLink" variant="text" ghost>分享链接</t-button>
       <!-- <t-button variant="text" ghost>幽灵按钮</t-button> -->
     </div>
 
@@ -206,14 +208,14 @@ import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import StarterKit from "@tiptap/starter-kit";
 import { Editor, EditorContent, FloatingMenu } from "@tiptap/vue-2";
-import Mention from '@tiptap/extension-mention'
+import Mention from "@tiptap/extension-mention";
 import * as Y from "yjs";
 import MenuBar from "./MenuBar.vue";
 
 import { saveAs } from "file-saver";
 import htmlDocx from "html-docx-js/dist/html-docx";
 import TurndownService from "turndown";
-import suggestion from './suggestion.js'
+import suggestion from "./suggestion.js";
 
 const getRandomElement = (list) => {
   return list[Math.floor(Math.random() * list.length)];
@@ -226,7 +228,6 @@ const getDocuID = () => {
 const UserName = () => {
   return utils.getCookie("UserName");
 };
-
 
 export default {
   components: {
@@ -245,9 +246,6 @@ export default {
       editor: null,
       status: "connecting",
       room: "room1",
-
-      
-      
     };
   },
 
@@ -270,12 +268,11 @@ export default {
         }),
         Mention.configure({
           HTMLAttributes: {
-            class: 'mention',
+            class: "mention",
           },
           suggestion,
         }),
-        
-        
+
         Highlight,
         TaskList,
         TaskItem,
@@ -326,35 +323,8 @@ export default {
     },
 
     getRandomName() {
-      return getRandomElement([
-        "Lea Thompson",
-        "Cyndi Lauper",
-        "Tom Cruise",
-        "Madonna",
-        "Jerry Hall",
-        "Joan Collins",
-        "Winona Ryder",
-        "Christina Applegate",
-        "Alyssa Milano",
-        "Molly Ringwald",
-        "Ally Sheedy",
-        "Debbie Harry",
-        "Olivia Newton-John",
-        "Elton John",
-        "Michael J. Fox",
-        "Axl Rose",
-        "Emilio Estevez",
-        "Ralph Macchio",
-        "Rob Lowe",
-        "Jennifer Grey",
-        "Mickey Rourke",
-        "John Cusack",
-        "Matthew Broderick",
-        "Justine Bateman",
-        "Lisa Bonet",
-      ]);
+      return getRandomElement(["Pencil", "Pencil2", "Xeon", "WEI", "CR", "W"]);
     },
-
     // -------------------------------关于导出----------------------------------
     toHTML() {
       console.log(this.editor.getHTML());
@@ -450,8 +420,42 @@ export default {
       });
       saveAs(file);
     },
-    // -----------------------关于导出----------------------------------------
+
+
+    generateLink() {
+    const link = "http://localhost:8080/Tiptap/w9n1xdmo/1"; //link=..
+    const el = document.createElement("textarea");
+    el.value = link;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand("copy");
+    document.body.removeChild(el);
+    this.$message.success("链接已复制到剪贴板");
+
+    this.$alert("链接已生成:" + link, "提示", {
+      confirmButtonText: "确定",
+      dangerouslyUseHTMLString: true,
+      callback: (action) => {
+        // this.$message({
+        //   type: 'info',
+        //   message: `action: ${ action }`
+        // });
+      },
+    });
   },
+
+    // -----------------------关于导出----------------------------------------
+    // upload_saved_document(){
+    //   const data = {
+    //   }
+    //   this.$api.doc.post_upload_saved_document()
+    // },
+    // create_document(){
+    // },
+    // download_saved_document(){
+    // }
+  },
+
 
   beforeUnmount() {
     this.editor.destroy();
@@ -468,7 +472,7 @@ export default {
   padding: 0;
   width: 100%;
   height: 100%;
-  background-color: #56564d;
+  background-color: #dad5d5;
 }
 .header {
   position: fixed;
@@ -477,7 +481,7 @@ export default {
   width: 100%;
   padding: 0;
   /* background: red; */
-  background-color: #616161;
+  background-color: #1e1e1e;
   display: flex;
   justify-content: space-between;
   align-items: center;
