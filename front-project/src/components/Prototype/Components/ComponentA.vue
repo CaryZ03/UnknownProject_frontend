@@ -1,5 +1,7 @@
 <template>
-  <span>hihihihi</span>
+  <div>
+    hihihihihi
+  </div>
 </template>
 
 <script>

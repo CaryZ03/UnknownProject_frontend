@@ -4,6 +4,7 @@ import * as team from './team'
 import * as chat from './chat'
 import * as document from './document'
 import * as message from './message'
+import * as doc from './doc'
 
 export default{
     user,
@@ -11,5 +12,6 @@ export default{
     project,
     chat,
     document,
-    message
+    message,
+    doc
 }
