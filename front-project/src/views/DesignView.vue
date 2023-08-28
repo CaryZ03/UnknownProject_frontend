@@ -1,9 +1,9 @@
 <template>
-  <div class="container">
+  <div class="container" ref="elementToCapture">
     <vue-draggable-resizable
       style="border: 1px solid black"
-      :min-width="minWidth"
-      :min-height="minHeight"
+      :min-width="100"
+      :min-height="900"
       :resizable="false"
       :w="65"
       :x="110"
@@ -47,9 +47,11 @@
         @click="cloneElement('ComponentC')"
         style="background-color: black; width: 63px; height: 63px; border: 3px"
       ></div>
+
+      <button @click="captureAndSave">Capture and Save</button>
     </vue-draggable-resizable>
 
-    <vue-draggable-resizable class="outContain" @activated="outerActive"
+    <vue-draggable-resizable  class="outContain" @activated="outerActive"
       :draggable=outDraggable
       :resizable="true"
       :w="200"
@@ -86,6 +88,8 @@ import mLinkComponent from "../components/Prototype/Components/mLinkComponent.vu
 import mPagination from "../components/Prototype/Components/mPagination.vue";
 import mTabs from "../components/Prototype/Components/mTabs.vue";
 import mToolBar from "../components/Prototype/Components/mToolBar.vue";
+import html2canvas from "html2canvas";
+
 
 
 export default {
@@ -110,6 +114,21 @@ export default {
     mToolBar
   },
   methods: {
+
+    async captureAndSave() {
+      const element = this.$refs.elementToCapture;
+
+      try {
+        const canvas = await html2canvas(element);
+        const imageDataURL = canvas.toDataURL('image/png');
+
+        // 此处你可以将 imageDataURL 用于显示或下载
+        alert(imageDataURL);
+      } catch (error) {
+        console.error('Error capturing element:', error);
+      }
+    },
+
     renderChatIcon() {
       return <ChatIcon />;
     },

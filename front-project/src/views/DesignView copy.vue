@@ -1,4 +1,6 @@
 <template>
+
+
   <div class="container">
     <div ref="stageContainer" class="canvas-container"></div>
 
@@ -6,11 +8,32 @@
   </div>
 </template>
   
-<script>
+  <script>
+import DragItem from "@/components/Prototype/DragItem.vue";
+import { ChatIcon, AddIcon, QrcodeIcon } from "tdesign-icons-vue";
+
+import ComponentA from "../components/Prototype/Components/ComponentA.vue";
+import ComponentB from "../components/Prototype/Components/ComponentB.vue";
+import ComponentC from "../components/Prototype/Components/ComponentC.vue";
+
+import mDivider from "../components/Prototype/Components/mDivider.vue";
+import mDropDown from "../components/Prototype/Components/mDropDown.vue";
+import mLinkComponent from "../components/Prototype/Components/mLinkComponent.vue";
+import mPagination from "../components/Prototype/Components/mPagination.vue";
+import mTabs from "../components/Prototype/Components/mTabs.vue";
+import mToolBar from "../components/Prototype/Components/mToolBar.vue";
+
 import Konva from "konva";
+
 export default {
   data() {
     return {
+      currentComponent: "ComponentA", // 默认绑定 ComponentA 组件
+      dynamicComponent: null,
+      clonedComponents: [], // 存储克隆的组件数组
+      outDraggable: false,
+
+      // ***********************for konvas*********************//
       stage: null,
       layer: null,
       shapes: [],
@@ -22,8 +45,22 @@ export default {
       enterDraw: false,
       overShape: false,
       drawShape: "circle",
+      // ***********************for konvas*********************//
     };
   },
+  components: {
+    DragItem,
+    ComponentA,
+    ComponentB,
+    ComponentC,
+    mDivider,
+    mDropDown,
+    mLinkComponent,
+    mPagination,
+    mTabs,
+    mToolBar,
+  },
+
   mounted() {
     //检测鼠标状态
     // this.stage.on('mousedown',()=>{
@@ -52,87 +89,87 @@ export default {
       this.isDragging = false;
     });
 
-    // var startPos;
-    // this.stage.on("mousedown touchstart", (event) => {
-    //   if (!this.overShape) {
-    //     const { x, y } = event.target.getStage().getPointerPosition();
-    //     console.log("!!!!!!!!!!!!!!!!");
-    //     // startPos = {x,y}
-    //     if (this.isDragging) return;
-    //     this.isDrawing = true;
-    //     switch (this.drawShape) {
-    //       case "circle":
-    //         this.shape = new Konva.Circle({
-    //           x: x,
-    //           y: y,
-    //           radius: 0,
-    //           stroke: "black",
-    //           strokeWidth: 2,
-    //           fill: "red",
-    //           draggable: true,
-    //         });
-    //         console.log("draw circle");
-    //         break;
+    var startPos;
+    this.stage.on("mousedown touchstart", (event) => {
+      if (!this.overShape) {
+        const { x, y } = event.target.getStage().getPointerPosition();
+        console.log("!!!!!!!!!!!!!!!!");
+        // startPos = {x,y}
+        if (this.isDragging) return;
+        this.isDrawing = true;
+        switch (this.drawShape) {
+          case "circle":
+            this.shape = new Konva.Circle({
+              x: x,
+              y: y,
+              radius: 0,
+              stroke: "black",
+              strokeWidth: 2,
+              fill: "red",
+              draggable: true,
+            });
+            console.log("draw circle");
+            break;
 
-    //       case "rect":
-    //         this.shape = new Konva.Rect({
-    //           x: x,
-    //           y: y,
-    //           width: 0,
-    //           height: 0,
-    //           stroke: "black",
-    //           fill: "red",
-    //           draggable: true,
-    //         });
-    //         console.log("draw rect");
-    //         break;
+          case "rect":
+            this.shape = new Konva.Rect({
+              x: x,
+              y: y,
+              width: 0,
+              height: 0,
+              stroke: "black",
+              fill: "red",
+              draggable: true,
+            });
+            console.log("draw rect");
+            break;
 
-    //       default:
-    //         break;
-    //     }
+          default:
+            break;
+        }
 
-    //     this.shape.on("mouseover", () => {
-    //       this.overShape = true;
-    //     });
-    //     this.shape.on("mouseout", () => {
-    //       this.overShape = false;
-    //     });
+        this.shape.on("mouseover", () => {
+          this.overShape = true;
+        });
+        this.shape.on("mouseout", () => {
+          this.overShape = false;
+        });
 
-    //     console.log("break");
-    //     this.layer.add(this.shape);
-    //   }
-    // });
-    // this.stage.on("mousemove touchmove", (event) => {
-    //   if (!this.isDrawing) return;
-    //   if (this.isDragging) return;
-    //   console.log("break2");
-    //   const { x, y } = event.target.getStage().getPointerPosition();
-    //   switch (this.drawShape) {
-    //     case "circle":
-    //       const pos = this.stage.getPointerPosition();
-    //       const radius = Math.sqrt(
-    //         Math.pow(x - this.shape.x(), 2) + Math.pow(y - this.shape.y(), 2)
-    //       );
+        console.log("break");
+        this.layer.add(this.shape);
+      }
+    });
+    this.stage.on("mousemove touchmove", (event) => {
+      if (!this.isDrawing) return;
+      if (this.isDragging) return;
+      console.log("break2");
+      const { x, y } = event.target.getStage().getPointerPosition();
+      switch (this.drawShape) {
+        case "circle":
+          const pos = this.stage.getPointerPosition();
+          const radius = Math.sqrt(
+            Math.pow(x - this.shape.x(), 2) + Math.pow(y - this.shape.y(), 2)
+          );
 
-    //       console.log(radius);
-    //       this.shape.radius(radius);
-    //       this.layer.batchDraw();
-    //       // 更新圆形的半径和位置
-    //       // circle.radius(radius);
-    //       console.log("draw circle");
-    //       break;
+          console.log(radius);
+          this.shape.radius(radius);
+          this.layer.batchDraw();
+          // 更新圆形的半径和位置
+          // circle.radius(radius);
+          console.log("draw circle");
+          break;
 
-    //     case "rect":
-    //       const width = x - this.shape.x();
-    //       const height = y - this.shape.y();
-    //       this.shape.width(width);
-    //       this.shape.height(height);
-    //       this.layer.batchDraw();
-    //       break;
-    //     default:
-    //       break;
-    //   }
-    // });
+        case "rect":
+          const width = x - this.shape.x();
+          const height = y - this.shape.y();
+          this.shape.width(width);
+          this.shape.height(height);
+          this.layer.batchDraw();
+          break;
+        default:
+          break;
+      }
+    });
 
     this.stage.on("mouseup touchend", () => {
       this.isDrawing = false;
@@ -157,6 +194,60 @@ export default {
   },
 
   methods: {
+    // *********************************for moveable *************************************
+    renderChatIcon() {
+      return <ChatIcon />;
+    },
+    renderAddIcon() {
+      return <AddIcon />;
+    },
+    renderQrIcon() {
+      return <QrcodeIcon />;
+    },
+    renderPopup() {
+      return (
+        <img
+          alt="TDesign Logo"
+          width="120"
+          height="120"
+          src="https://tdesign.gtimg.com/site/site.jpg"
+        />
+      );
+    },
+    handleClick(context) {
+      console.log("click", context);
+    },
+    handleHover(context) {
+      console.log("hover", context);
+    },
+    cloneElement(ClonedComponent) {
+      this.clonedComponents.push(ClonedComponent); // 将克隆的组件添加到数组中
+    },
+
+    changeComponent(component) {
+      //   this.currentComponent = component; // 根据按钮点击选择要渲染的组件
+      const DynamicComponent = Vue.extend(this.dynamicComponent);
+
+      // 实例化动态组件
+      this.dynamicComponent = new DynamicComponent().$mount();
+    },
+
+    innerDrag() {
+      this.outDraggable = false;
+      console.log("drag");
+    },
+    innerDragStop() {
+      this.outDraggable = true;
+      console.log("stop!!!");
+    },
+
+    outerActive() {
+      this.outDraggable = true;
+    },
+
+    // *********************************for moveable *************************************
+
+    // *********************************for konvas *************************************
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
     },
@@ -207,39 +298,10 @@ export default {
       this.stage.position(newPos);
       this.stage.batchDraw();
     },
+    //* *********************************for konvas*******************************
   },
 };
 </script>
-  
-<style scoped>
-.container {
-  width: 100%;
-  height: 100%;
-}
-
-.canvas-container {
-  border: 0;
-  display: block;
-  height: 100%;
-  left: 0;
-  list-style: none;
-  padding: 0;
-  position: absolute;
-  text-decoration: none;
-  top: 0;
-  width: 100%;
-  /* margin: 163px 0 0 482px; */
-  background-color: initial;
-  background-image: linear-gradient(220.55deg, #fff6eb 0%, #dfd1c5 100%);
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-}
-
-.canvas-container {
-  height: 100%;
-  width: 100%;
-}
-</style>
-  
 
 
 <style scoped>
@@ -381,3 +443,5 @@ body {
   animation-timeline: auto;
 }
 </style>
+
+  

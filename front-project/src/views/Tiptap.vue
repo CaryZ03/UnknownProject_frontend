@@ -213,6 +213,7 @@ import MenuBar from "./MenuBar.vue";
 import { saveAs } from "file-saver";
 import htmlDocx from "html-docx-js/dist/html-docx";
 import TurndownService from "turndown";
+import suggestion from './suggestion.js'
 
 const getRandomElement = (list) => {
   return list[Math.floor(Math.random() * list.length)];
@@ -226,8 +227,6 @@ const UserName = () => {
   return utils.getCookie("UserName");
 };
 
-import suggestion from './suggestion.js'
-import tippy from 'tippy.js'
 
 export default {
   components: {
@@ -270,7 +269,10 @@ export default {
           history: false,
         }),
         Mention.configure({
-
+          HTMLAttributes: {
+            class: 'mention',
+          },
+          suggestion,
         }),
         
         
