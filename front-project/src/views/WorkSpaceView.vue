@@ -2167,10 +2167,10 @@ export default {
         
         //  前端
         //拷贝 documentTable
-        this.documentTable = row.documentList;
+        // this.documentTable = row.documentList;
         //获取protoTable
-        this.protoTable = row.protoList;
-        this.demandTable =  row.demandList;
+        // this.protoTable = row.protoList;
+        // this.demandTable =  row.demandList;
 
 
         //后端
