@@ -139,7 +139,7 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
         <el-menu-item-group>
           <template slot="title">分组一</template>
           <el-menu-item index="5-1" @click="changeContent(2)"><i class="el-icon-user"></i>人员管理</el-menu-item>
-          <el-menu-item index="5-2" @click="changeContent(2.1)"><i class="el-icon-chat-line-round"></i>团队群聊</el-menu-item>
+          <el-menu-item index="5-2" @click="changeRouter()"><i class="el-icon-chat-line-round"></i>团队群聊</el-menu-item>
           <el-menu-item index="5-3" @click="changeContent(2.2)"><i class="el-icon-info"></i>团队信息</el-menu-item>
         </el-menu-item-group>
         
@@ -1689,6 +1689,12 @@ export default {
     },
   
     methods: {
+
+    changeRouter(){
+       this.$router.push({
+              path: `/Chat`,
+        });
+    },
 
     saveData(row){
       console.log("row:",row)
