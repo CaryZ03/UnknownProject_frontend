@@ -76,12 +76,15 @@
         :resizable="true"
         :w="200"
         :h="200"
+        style="border: 1px solid red; background-color: antiquewhite; z-index: -1;"
+
       >
         <vue-draggable-resizable
           :parent="true"
           v-for="(item, index) in clonedComponents"
           :key="index"
           :on-drag-start="innerDrag"
+          :snap="true"
           @dragstop="innerDragStop"
           w="auto"
           h="auto"
