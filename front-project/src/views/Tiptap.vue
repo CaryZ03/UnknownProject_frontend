@@ -182,22 +182,7 @@
 </template>
   
   <script>
-import {
-  CodeIcon,
-  LettersDIcon,
-  LettersSIcon,
-  LettersEIcon,
-  LettersIIcon,
-  LettersNIcon,
-  LettersGIcon,
-  ComponentCheckboxIcon,
-  ComponentInputIcon,
-  ComponentSwitchIcon,
-  ComponentBreadcrumbIcon,
-  ComponentDropdownIcon,
-  ComponentRadioIcon,
-  ComponentStepsIcon,
-} from "tdesign-icons-vue";
+
 
 import { TiptapCollabProvider } from "@hocuspocus/provider";
 import CharacterCount from "@tiptap/extension-character-count";
@@ -422,27 +407,27 @@ export default {
     },
 
 
-    generateLink() {
-    const link = "http://localhost:8080/Tiptap/w9n1xdmo/1"; //link=..
-    const el = document.createElement("textarea");
-    el.value = link;
-    document.body.appendChild(el);
-    el.select();
-    document.execCommand("copy");
-    document.body.removeChild(el);
-    this.$message.success("链接已复制到剪贴板");
+  //   generateLink() {
+  //   const link = "http://localhost:8080/Tiptap/w9n1xdmo/1"; //link=..
+  //   const el = document.createElement("textarea");
+  //   el.value = link;
+  //   document.body.appendChild(el);
+  //   el.select();
+  //   document.execCommand("copy");
+  //   document.body.removeChild(el);
+  //   this.$message.success("链接已复制到剪贴板");
 
-    this.$alert("链接已生成:" + link, "提示", {
-      confirmButtonText: "确定",
-      dangerouslyUseHTMLString: true,
-      callback: (action) => {
-        // this.$message({
-        //   type: 'info',
-        //   message: `action: ${ action }`
-        // });
-      },
-    });
-  },
+  //   this.$alert("链接已生成:" + link, "提示", {
+  //     confirmButtonText: "确定",
+  //     dangerouslyUseHTMLString: true,
+  //     callback: (action) => {
+  //       // this.$message({
+  //       //   type: 'info',
+  //       //   message: `action: ${ action }`
+  //       // });
+  //     },
+  //   });
+  // },
 
     // -----------------------关于导出----------------------------------------
     // upload_saved_document(){

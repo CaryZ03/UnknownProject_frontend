@@ -23,11 +23,14 @@
         <t-button variant="outline" @click="cloneElement('mToolBar')" ghost
           >ToolBar</t-button
         >
-        <t-button variant="outline" @click="cloneElement('mToolBar')" ghost
-          >幽灵按钮</t-button
+        <t-button
+          variant="outline"
+          @click="cloneElement('ComponentInputIcon')"
+          ghost
+          >ComponentInputIcon</t-button
         >
-        <t-button variant="outline" @click="cloneElement('ComponentC')" ghost
-          >幽灵按钮</t-button
+        <t-button variant="outline" @click="cloneElement('LettersDIcon')" ghost
+          >LettersDIcon</t-button
         >
         <t-button variant="outline" @click="cloneElement('ComponentC')" ghost
           >幽灵按钮</t-button
@@ -52,32 +55,26 @@
       :x="110"
       :y="200"
     >
-      <!--     DragItem,
-    ComponentA,
-    ComponentB,
-    ComponentC,
-    mDivider,
-    mDropDown,
-    mLinkComponent,
-    mPagination,
-    mTabs,
-    mToolBar -->
     </vue-draggable-resizable>
 
     <div ref="result">
       <img :src="imageUrl" v-if="imageUrl" alt="Captured Image" />
     </div>
 
-    <div ref="elementToCapture" style="background-color:blanchedalmond ">
+    <div
+      ref="elementToCapture"
+      class="hihihi"
+      @click="test"
+      style="background-color: blanchedalmond; width: 600px; height: 600px"
+    >
       <vue-draggable-resizable
         class="outContain"
         @activated="outerActive"
         :draggable="outDraggable"
         :resizable="true"
-        :w="200"
-        :h="200"
-        style="border: 1px solid red; background-color: antiquewhite; z-index: -1;"
-
+        :w="1000"
+        :h="1000"
+        style="border: 1px solid red; background-color: antiquewhite"
       >
         <vue-draggable-resizable
           :parent="true"
@@ -88,10 +85,23 @@
           @dragstop="innerDragStop"
           w="auto"
           h="auto"
+          @activated="onSelected($event, index)"
         >
           <component-with-item :is="item"></component-with-item>
         </vue-draggable-resizable>
       </vue-draggable-resizable>
+      <span>12313213213</span>
+      <span>12313213213</span>
+      <br />
+      <br />
+
+      <span>12313213213</span>
+      <span>12313213213</span>
+
+      <span>12313213213</span>
+      <span>12313213213</span>
+      <span>12313213213</span>
+      <span>12313213213</span>
       <span>12313213213</span>
       <span>12313213213</span>
     </div>
@@ -115,8 +125,24 @@ import mPagination from "../components/Prototype/Components/mPagination.vue";
 import mTabs from "../components/Prototype/Components/mTabs.vue";
 import mToolBar from "../components/Prototype/Components/mToolBar.vue";
 import domToImage from "dom-to-image";
-
+import {
+  CodeIcon,
+  LettersDIcon,
+  LettersSIcon,
+  LettersEIcon,
+  LettersIIcon,
+  LettersNIcon,
+  LettersGIcon,
+  ComponentCheckboxIcon,
+  ComponentInputIcon,
+  ComponentSwitchIcon,
+  ComponentBreadcrumbIcon,
+  ComponentDropdownIcon,
+  ComponentRadioIcon,
+  ComponentStepsIcon,
+} from "tdesign-icons-vue";
 export default {
+
   data() {
     return {
       currentComponent: "ComponentA", // 默认绑定 ComponentA 组件
@@ -124,6 +150,8 @@ export default {
       clonedComponents: [], // 存储克隆的组件数组
       outDraggable: false,
       imageUrl: "",
+      selectComponent: null,
+      selectedIndex: -1,
     };
   },
   components: {
@@ -137,6 +165,12 @@ export default {
     mPagination,
     mTabs,
     mToolBar,
+  },
+  mounted() {
+    document.addEventListener("keydown", this.handleKeyDown);
+  },
+  destroyed() {
+    document.removeEventListener("keydown", this.handleKeyDown);
   },
   methods: {
     async captureAndSave() {
@@ -162,6 +196,8 @@ export default {
       //     console.error("oops, something went wrong!", error);
       //   });ref="elementToCapture"
       const element = this.$refs.elementToCapture; // 替换为你的 DOM 元素的引用
+      const htmlString = element.outerHTML;
+      console.log(htmlString);
       alert(element);
       this.imageUrl = await domToImage
         .toPng(element)
@@ -204,6 +240,19 @@ export default {
     cloneElement(ClonedComponent) {
       this.clonedComponents.push(ClonedComponent); // 将克隆的组件添加到数组中
     },
+    handleKeyDown(event) {
+        // 检测键盘事件并进行相应的处理
+        if (event.keyCode === 13) {
+          // 按下了回车键 (Enter)
+          console.log("enter")
+        } else if (event.keyCode === 27) {
+          // 按下了 Esc 键
+          console.log("esc")
+        } else if(event.keyCode === 46 || event.keyCode === 8){
+          this.clonedComponents.splice(this.selectedIndex,1)
+          console.log("delete")
+        }
+      },
 
     changeComponent(component) {
       //   this.currentComponent = component; // 根据按钮点击选择要渲染的组件
@@ -224,6 +273,14 @@ export default {
 
     outerActive() {
       this.outDraggable = true;
+    },
+    onSelected(event, index) {
+      this.selectedIndex = index;
+    },
+    onDelete() {},
+
+    test() {
+      console.log("hihihi");
     },
   },
 };
