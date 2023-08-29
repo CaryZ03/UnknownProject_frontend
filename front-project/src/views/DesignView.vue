@@ -41,7 +41,14 @@
         <t-button variant="outline" @click="cloneElement('Button')" ghost
           >幽灵按钮</t-button
         >
+        <t-button variant="outline" @click="cloneElement('testVue')" ghost
+          >test</t-button
+        >
+        <!--  -->
         <t-button variant="outline" @click="captureAndSave" ghost
+          >导出图片</t-button
+        >
+        <t-button variant="outline" @click="downloadHtmlFile('test.html')" ghost
           >导出图片</t-button
         >
       </t-space>
@@ -141,8 +148,10 @@ import {
   ComponentRadioIcon,
   ComponentStepsIcon,
 } from "tdesign-icons-vue";
-export default {
+import testVue from "./test.vue";
 
+// import TumblrButton from '../components/Buttons/TumblrButton.vue';
+export default {
   data() {
     return {
       currentComponent: "ComponentA", // 默认绑定 ComponentA 组件
@@ -152,6 +161,7 @@ export default {
       imageUrl: "",
       selectComponent: null,
       selectedIndex: -1,
+      ws: null,
     };
   },
   components: {
@@ -165,9 +175,12 @@ export default {
     mPagination,
     mTabs,
     mToolBar,
+    testVue,
   },
   mounted() {
     document.addEventListener("keydown", this.handleKeyDown);
+    this.ws = new WebSocket("ws://182.92.86.71:4514/ws/chat/1145/");
+    this.ws.onmessage = this.handleMessage;
   },
   destroyed() {
     document.removeEventListener("keydown", this.handleKeyDown);
@@ -212,25 +225,38 @@ export default {
         })
         .finally(this.close);
     },
-    derChatIcon() {
-      return <ChatIcon />;
+
+    handleMessage(event) {
+      this.clonedComponents = event.data;
+      console.log("receive");
     },
-    renderAddIcon() {
-      return <AddIcon />;
+
+    sendMessage() {
+      this.ws.send(this.clonedComponents);
+      console.log("sent");
     },
-    renderQrIcon() {
-      return <QrcodeIcon />;
+
+    downloadHtmlFile(fileName) {
+      const element = this.$refs.elementToCapture; // DOM 元素的引用
+      const htmlString = element.outerHTML;
+      console.log(htmlString);
+      alert(element);
+      const htmlContent = htmlString;
+
+      const blob = new Blob([htmlContent], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName;
+
+      document.body.appendChild(link);
+      link.click();
+
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
     },
-    renderPopup() {
-      return (
-        <img
-          alt="TDesign Logo"
-          width="120"
-          height="120"
-          src="https://tdesign.gtimg.com/site/site.jpg"
-        />
-      );
-    },
+
     handleClick(context) {
       console.log("click", context);
     },
@@ -241,18 +267,18 @@ export default {
       this.clonedComponents.push(ClonedComponent); // 将克隆的组件添加到数组中
     },
     handleKeyDown(event) {
-        // 检测键盘事件并进行相应的处理
-        if (event.keyCode === 13) {
-          // 按下了回车键 (Enter)
-          console.log("enter")
-        } else if (event.keyCode === 27) {
-          // 按下了 Esc 键
-          console.log("esc")
-        } else if(event.keyCode === 46 || event.keyCode === 8){
-          this.clonedComponents.splice(this.selectedIndex,1)
-          console.log("delete")
-        }
-      },
+      // 检测键盘事件并进行相应的处理
+      if (event.keyCode === 13) {
+        // 按下了回车键 (Enter)
+        console.log("enter");
+      } else if (event.keyCode === 27) {
+        // 按下了 Esc 键
+        console.log("esc");
+      } else if (event.keyCode === 46 || event.keyCode === 8) {
+        this.clonedComponents.splice(this.selectedIndex, 1);
+        console.log("delete");
+      }
+    },
 
     changeComponent(component) {
       //   this.currentComponent = component; // 根据按钮点击选择要渲染的组件
@@ -265,6 +291,7 @@ export default {
     innerDrag() {
       this.outDraggable = false;
       console.log("drag");
+      this.sendMessage();
     },
     innerDragStop() {
       this.outDraggable = true;
