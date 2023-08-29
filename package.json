@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "core-js": "^3.23.3",
     "element-ui": "^2.15.13",
     "three": "^0.155.0",
     "vue-ionicons": "^3.0.5",
