@@ -67,6 +67,9 @@ const routes = [
     component: Design,
 
   },
+
+
+  
   {
     path: '/WorkSpace',
     name: 'workSpace',
@@ -103,6 +106,7 @@ router.beforeEach((to, from, next) => {
   if (to.path === from.path && to.path !== '/') {  // 判断目标路径是否相同
     return next(false)  // 阻止路由跳转
   }
+
   next()  // 允许路由跳转
 })
 const routerRePush = VueRouter.prototype.push

@@ -53,20 +53,6 @@
         >
       </t-space>
     </div>
-    <vue-draggable-resizable
-      style="border: 0"
-      :min-width="100"
-      :min-height="900"
-      :resizable="false"
-      :w="65"
-      :x="110"
-      :y="200"
-    >
-    </vue-draggable-resizable>
-
-    <div ref="result">
-      <img :src="imageUrl" v-if="imageUrl" alt="Captured Image" />
-    </div>
 
     <div
       ref="elementToCapture"
@@ -79,11 +65,13 @@
         v-for="(item, index) in clonedComponents"
         ref="draggableRes"
         :key="index"
+        @resizing="(x, y, w, h) => innerResize(x, y, w, h, index)"
         @dragging="(x, y) => innerDrag(x, y, index)"
+        @resizestop="innerResizeStop"
         :snap="true"
         @dragstop="innerDragStop"
-        w="auto"
-        h="auto"
+        :w="x_scale[index]"
+        :h="y_scale[index]"
         :x="x_off[index]"
         :y="y_off[index]"
         @activated="onSelected($event, index)"
@@ -98,12 +86,9 @@
   
   <script>
 import DragItem from "@/components/Prototype/DragItem.vue";
-import { ChatIcon, AddIcon, QrcodeIcon } from "tdesign-icons-vue";
-
 import ComponentA from "../components/Prototype/Components/ComponentA.vue";
 import ComponentB from "../components/Prototype/Components/ComponentB.vue";
 import ComponentC from "../components/Prototype/Components/ComponentC.vue";
-
 import mDivider from "../components/Prototype/Components/mDivider.vue";
 import mDropDown from "../components/Prototype/Components/mDropDown.vue";
 import mLinkComponent from "../components/Prototype/Components/mLinkComponent.vue";
@@ -125,10 +110,28 @@ export default {
       selectComponent: null,
       selectedIndex: -1,
       ws: null,
-      x_off: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      y_off: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      x_scale: [],
-      y_scale: [],
+      x_off: [
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0,
+      ],
+      y_off: [
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0,
+      ],
+      x_scale: [
+        100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+        100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+        100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+        100, 100, 100, 100, 100, 100, 100, 100,
+      ],
+      y_scale: [
+        100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+        100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+        100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+        100, 100, 100, 100, 100, 100, 100, 100,
+      ],
     };
   },
   components: {
@@ -149,6 +152,16 @@ export default {
     this.ws = new WebSocket("ws://182.92.86.71:4514/ws/editor/1145/");
     this.ws.onmessage = this.handleMessage;
   },
+  // computed: {
+  //   getInitialWidth() {
+  //     return (index) =>
+  //       this.x_scale[index] !== undefined ? this.w_scale[index] : "auto";
+  //   },
+  //   getInitialHeight() {
+  //     return (index) =>
+  //       this.y_scale[index] !== undefined ? this.h_scale[index] : "auto";
+  //   },
+  // },
   destroyed() {
     document.removeEventListener("keydown", this.handleKeyDown);
   },
@@ -173,23 +186,16 @@ export default {
     },
 
     handleMessage(event) {
-      // // this.clonedComponents = event.data["message"];
-      // this.$set(this.clonedComponents, JSON.parse(event.data).message);
-      // // console.log(this.clonedComponents);
-      // this.clonedComponents = JSON.parse(event.data).message;
-      // this.selectComponent.$props.x = JSON.parse(event.data).x;
-      // this.selectComponent.$props.y = JSON.parse(event.data).y;
       const data = JSON.parse(event.data);
-
       this.clonedComponents = data.message;
       this.x_off = data.x_off;
       this.y_off = data.y_off;
+      this.x_scale = data.x_scale;
+      this.y_scale = data.y_scale;
       console.log("receive");
     },
 
     sendMessage() {
-      // const cps=JSON.stringify(this.clonedComponents);
-
       const sendData = JSON.stringify({
         message: this.clonedComponents,
         x_off: this.x_off,
@@ -208,17 +214,13 @@ export default {
       console.log(htmlString);
       alert(element);
       const htmlContent = htmlString;
-
       const blob = new Blob([htmlContent], { type: "text/html" });
       const url = URL.createObjectURL(blob);
-
       const link = document.createElement("a");
       link.href = url;
       link.download = fileName;
-
       document.body.appendChild(link);
       link.click();
-
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
     },
@@ -230,9 +232,8 @@ export default {
       console.log("hover", context);
     },
     cloneElement(ClonedComponent) {
-      // this.x_off.push(0);
-      // this.y_off.push(0);
       this.clonedComponents.push(ClonedComponent); // 将克隆的组件添加到数组中
+      this.sendMessage();
     },
     handleKeyDown(event) {
       // 检测键盘事件并进行相应的处理
@@ -245,28 +246,33 @@ export default {
       } else if (event.keyCode === 46 || event.keyCode === 8) {
         this.clonedComponents.splice(this.selectedIndex, 1);
         console.log("delete");
+        this.sendMessage();
       }
     },
-
-    changeComponent(component) {
-      //   this.currentComponent = component; // 根据按钮点击选择要渲染的组件
-      const DynamicComponent = Vue.extend(this.dynamicComponent);
-
-      // 实例化动态组件
-      this.dynamicComponent = new DynamicComponent().$mount();
-    },
-
     innerDrag: function (x, y, index) {
       this.dragging = true;
       this.x_off[index] = x;
       this.y_off[index] = y;
-      this.x = x;
-      this.y = y;
+      // this.x = x;
+      // this.y = y;
       console.log();
     },
 
     innerDragStop() {
       this.outDraggable = true;
+      console.log("stop!!!");
+      this.sendMessage();
+    },
+    innerResize: function (x, y, w, h, index) {
+      this.x_off[index] = x;
+      this.y_off[index] = y;
+      this.x_scale[index] = w;
+      this.y_scale[index] = h;
+      console.log(w, h);
+      // this.w = w;
+      // this.h = h;
+    },
+    innerResizeStop() {
       console.log("stop!!!");
       this.sendMessage();
     },
