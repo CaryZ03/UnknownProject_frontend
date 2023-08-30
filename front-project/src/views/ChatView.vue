@@ -148,20 +148,20 @@
               </el-popover>
             </el-col>
             <el-col :span="1">
-              <!-- <el-popover placement="top" width="160" v-model="atVisible" id="soloPop">
+              <el-popover placement="top" width="160" v-model="privateVisible" id="soloPop">
                 <p>私聊成员</p>
                 <div v-for="(member, index) in memberList" :key="index" :id="'generated-div-' + index"
-                  class="department-member" @click="atMember(index)">
+                  class="department-member" @click="privateMember(index)">
                   {{ member.name }}
                 </div>
                 <div style="text-align: right; margin: 0">
-                  <el-button size="mini" type="text" @click="atVisible = false">取消</el-button>
-                  <el-button type="primary" size="mini" @click="atVisible = false">确定</el-button>
+                  <el-button size="mini" type="text" @click="privateVisible = false">取消</el-button>
+                  <el-button type="primary" size="mini" @click="privateVisible = false">确定</el-button>
                 </div>
                 <div class="solo" slot="reference" @click="">
                   <i class="el-icon-user-solid icon-set solo-chat" @click=""></i>
                 </div>
-              </el-popover> -->   
+              </el-popover>  
             </el-col>
             <el-col :span="19">
 
@@ -238,6 +238,7 @@ export default {
       ],
       historyVisible: false,
       atVisible: false,
+      privateVisible: false,
       isAtAll: false,
       atList: [],
 
@@ -616,6 +617,12 @@ export default {
       this.atList.push(this.memberList[index].uid);
       console.log(this.atList);
     },
+    privateMember(index) {
+      // 传后端内容
+      this.messageInput += `(私聊 ${this.memberList[index].name}) `;
+      this.atList.push(this.memberList[index].uid);
+      console.log(this.atList);
+    },
     atAll() {
       this.isAtAll = true;
       this.messageInput += '@所有人 ';
@@ -647,6 +654,8 @@ export default {
         });
       // 调用接口更新memberList
     },
+
+    
     changeToUnread() {
       this.$store.state.notificationRedNum += 1;
     },
