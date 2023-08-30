@@ -111,7 +111,7 @@
           v-for="(item, index) in clonedComponents"
           ref="draggableRes"
           :key="index"
-          @resizing="(x, y, w, h) => innerResize(x, y, w, h, index)"
+          @resizing="(x, y, width, height) => innerResize(x, y, width, height, index)"
           @dragging="(x, y) => innerDrag(x, y, index)"
           @resizestop="innerResizeStop"
           :snap="true"
@@ -253,6 +253,8 @@ export default {
       this.y_off = data.y_off;
       this.x_scale = data.x_scale;
       this.y_scale = data.y_scale;
+      this.canvasX = data.x_canvas;
+      this.canvasY = data.y_canvas;
       console.log("receive");
     },
 
@@ -263,7 +265,12 @@ export default {
         y_off: this.y_off,
         x_scale: this.x_scale,
         y_scale: this.y_scale,
+        x_canvas: this.canvasX,
+        y_canvas: this.canvasY,
       });
+      // x_canvas: int
+      // x_canvas: int
+
       console.log(sendData);
       this.ws.send(sendData);
       console.log("sent");
@@ -358,6 +365,7 @@ export default {
       this.canvasX = x;
       this.canvasY = y;
       console.log(x, y);
+      this.sendMessage();
     },
     onDelete() {},
 
