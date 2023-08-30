@@ -1,82 +1,144 @@
 <template>
   <div class="container" id="capture">
     <div class="leftbar">
-      <t-space direction="vertical">
-        <t-button variant="outline" @click="cloneElement('mDropDown')" ghost
-          >DropDown</t-button
+      <template>
+        <t-menu
+          theme="light"
+          defaultValue="item2"
+          :collapsed="collapsed"
+          @change="changeHandler"
+          height="550px"
         >
-        <t-button variant="outline" @click="cloneElement('mDivider')" ghost
-          >Divider</t-button
-        >
-        <t-button variant="outline" @click="cloneElement('mPagination')" ghost
-          >Pagination</t-button
-        >
-        <t-button
-          variant="outline"
-          @click="cloneElement('mLinkComponent')"
-          ghost
-          >LinkComponent</t-button
-        >
-        <t-button variant="outline" @click="cloneElement('mTabs')" ghost
-          >Tabs</t-button
-        >
-        <t-button variant="outline" @click="cloneElement('mToolBar')" ghost
-          >ToolBar</t-button
-        >
-        <t-button
-          variant="outline"
-          @click="cloneElement('ComponentInputIcon')"
-          ghost
-          >ComponentInputIcon</t-button
-        >
-        <t-button variant="outline" @click="cloneElement('LettersDIcon')" ghost
-          >LettersDIcon</t-button
-        >
-        <t-button variant="outline" @click="cloneElement('ComponentC')" ghost
-          >幽灵按钮</t-button
-        >
-        <t-button variant="outline" @click="cloneElement('ComponentC')" ghost
-          >幽灵按钮</t-button
-        >
-        <t-button variant="outline" @click="cloneElement('Button')" ghost
-          >幽灵按钮</t-button
-        >
-        <t-button variant="outline" @click="cloneElement('testVue')" ghost
-          >test</t-button
-        >
-        <!--  -->
-        <t-button variant="outline" @click="captureAndSave" ghost
-          >导出图片</t-button
-        >
-        <t-button variant="outline" @click="downloadHtmlFile('test.html')" ghost
-          >导出图片</t-button
-        >
-      </t-space>
+          <template #logo>
+            <!-- <img :width="collapsed ? 35 : 136" :src="iconUrl" alt="logo" /> -->
+          </template>
+          <t-menu-group title="主导航">
+            <t-menu-item value="item1">
+              <template #icon>
+                <icon name="app" />
+              </template>
+              仪表盘
+            </t-menu-item>
+          </t-menu-group>
+          <t-menu-group title="组件">
+            <t-submenu title="画布大小" value="2-1">
+              <template #icon>
+                <icon name="server" />
+              </template>
+              <t-menu-item value="2-1-1" @click="changeCanvas('500px', '500')"
+                >IPONE
+              </t-menu-item>
+              <t-menu-item value="2-1-2" @click="changeCanvas('600', '1024')"
+                >7寸平板电脑(600×1024)</t-menu-item
+              >
+              <t-menu-item value="2-1-3" @click="changeCanvas('720', '1280')"
+                >10寸平板电脑(720×1280)</t-menu-item
+              >
+              <t-menu-item value="2-1-4" @click="changeCanvas('1024', '768')"
+                >iPad(1024×768)</t-menu-item
+              >
+            </t-submenu>
+            <t-menu-item @click="cloneElement('testVue')" value="2-2">
+              <template #icon>
+                <icon name="testVue" />
+              </template>
+              表单项
+            </t-menu-item>
+            <t-menu-item value="2-3">
+              <template #icon>
+                <icon name="root-list" />
+              </template>
+              详情页
+            </t-menu-item>
+            <t-menu-item value="2-4">
+              <template #icon>
+                <icon name="check" />
+              </template>
+              结果页
+            </t-menu-item>
+          </t-menu-group>
+          <t-menu-group title="更多">
+            <t-menu-item value="item3">
+              <template #icon>
+                <icon name="user" />
+              </template>
+              个人页
+            </t-menu-item>
+            <t-menu-item value="item4">
+              <template #icon>
+                <icon name="login" />
+              </template>
+              登录页
+            </t-menu-item>
+          </t-menu-group>
+          <template #operations>
+            <t-button
+              class="t-demo-collapse-btn"
+              variant="text"
+              shape="square"
+              @click.native="changeCollapsed"
+            >
+              <icon name="view-list" />
+            </t-button>
+          </template>
+        </t-menu>
+      </template>
     </div>
 
     <div
       ref="elementToCapture"
-      class="hihihi"
       @click="test"
-      style="background-color: blanchedalmond; width: 600px; height: 600px"
+      :style="{ width: 1000, height: 1000, backgroundColor: canvasColor }"
     >
       <vue-draggable-resizable
-        :parent="true"
-        v-for="(item, index) in clonedComponents"
-        ref="draggableRes"
-        :key="index"
-        @resizing="(x, y, w, h) => innerResize(x, y, w, h, index)"
-        @dragging="(x, y) => innerDrag(x, y, index)"
-        @resizestop="innerResizeStop"
-        :snap="true"
-        @dragstop="innerDragStop"
-        :w="x_scale[index]"
-        :h="y_scale[index]"
-        :x="x_off[index]"
-        :y="y_off[index]"
-        @activated="onSelected($event, index)"
+        :draggable="false"
+        :resizable="false"
+        style="
+          background-color: rgb(255, 255, 255);
+          border: 1px solid rgb(251, 221, 221);
+          display: block;
+          justify-content: center; /* 水平居中 */
+          align-items: center; /* 垂直居中 */
+          margin: -250px 0 0 -130px;
+        "
+        :w="canvasX"
+        :h="canvasY"
+        :x="-200"
+        :y="-250"
       >
-        <component-with-item :is="item"></component-with-item>
+        <vue-draggable-resizable
+          :parent="true"
+          v-for="(item, index) in clonedComponents"
+          ref="draggableRes"
+          :key="index"
+          @resizing="(x, y, w, h) => innerResize(x, y, w, h, index)"
+          @dragging="(x, y) => innerDrag(x, y, index)"
+          @resizestop="innerResizeStop"
+          :snap="true"
+          @dragstop="innerDragStop"
+          :w="x_scale[index]"
+          :h="y_scale[index]"
+          :x="x_off[index]"
+          :y="y_off[index]"
+          @activated="onSelected($event, index)"
+          style="
+            background-color: green;
+            border: 1px solid red;
+            -webkit-transition: background-color 200ms linear;
+            -ms-transition: background-color 200ms linear;
+            transition: background-color 200ms linear;
+          "
+        >
+          <div slot="tl">😀</div>
+          <div slot="tm">😀</div>
+          <div slot="tr">😀</div>
+          <div slot="mr">😀</div>
+          <div slot="br">😀</div>
+          <div slot="bm">😀</div>
+          <div slot="bl">😀</div>
+          <div slot="ml">😀</div>
+          <component-with-item :is="item"></component-with-item>
+        </vue-draggable-resizable>
       </vue-draggable-resizable>
     </div>
 
@@ -97,11 +159,17 @@ import mTabs from "../components/Prototype/Components/mTabs.vue";
 import mToolBar from "../components/Prototype/Components/mToolBar.vue";
 import domToImage from "dom-to-image";
 import testVue from "./test.vue";
+import { Icon } from "tdesign-icons-vue";
+
+import SideBar from "@/components/Layouts/SideBar.vue";
 
 // import TumblrButton from '../components/Buttons/TumblrButton.vue';
 export default {
   data() {
     return {
+      canvasX: 500,
+      canvasY: 500,
+      canvasColor: "red",
       currentComponent: "ComponentA", // 默认绑定 ComponentA 组件
       dynamicComponent: null,
       clonedComponents: [], // 存储克隆的组件数组
@@ -110,6 +178,7 @@ export default {
       selectComponent: null,
       selectedIndex: -1,
       ws: null,
+      collapsed: false,
       x_off: [
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -146,22 +215,14 @@ export default {
     mTabs,
     mToolBar,
     testVue,
+    SideBar,
+    Icon,
   },
   mounted() {
     document.addEventListener("keydown", this.handleKeyDown);
     this.ws = new WebSocket("ws://182.92.86.71:4514/ws/editor/1145/");
     this.ws.onmessage = this.handleMessage;
   },
-  // computed: {
-  //   getInitialWidth() {
-  //     return (index) =>
-  //       this.x_scale[index] !== undefined ? this.w_scale[index] : "auto";
-  //   },
-  //   getInitialHeight() {
-  //     return (index) =>
-  //       this.y_scale[index] !== undefined ? this.h_scale[index] : "auto";
-  //   },
-  // },
   destroyed() {
     document.removeEventListener("keydown", this.handleKeyDown);
   },
@@ -282,6 +343,21 @@ export default {
     },
     onSelected(event, index) {
       this.selectedIndex = index;
+    },
+
+    changeHandler(active) {
+      console.log("change", active);
+    },
+    changeCollapsed() {
+      this.collapsed = !this.collapsed;
+      this.iconUrl = this.collapsed
+        ? "https://oteam-tdesign-1258344706.cos.ap-guangzhou.myqcloud.com/site/logo%402x.png"
+        : "https://tdesign.gtimg.com/site/baseLogo-light.png";
+    },
+    changeCanvas(x, y) {
+      this.canvasX = x;
+      this.canvasY = y;
+      console.log(x, y);
     },
     onDelete() {},
 
