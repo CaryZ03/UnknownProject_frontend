@@ -3,6 +3,28 @@
     <Navbar></Navbar>
     <el-container>
       <el-aside class="el-aside">
+        <el-popover placement="bottom" width="300" v-model="historyCheckVisible" id="historyPop" class="historyPop">
+          <p>查找聊天记录</p>
+          <el-input placeholder="请输入内容" v-model="historyInput" clearable>
+          </el-input>
+          <div style="text-align: right; margin: 0">
+            <el-button size="mini" type="text" @click="historyCheckVisible = false">取消</el-button>
+            <el-button type="primary" size="mini" @click="searchHistoryMessage">确定</el-button>
+          </div>
+          <div class="search-history" slot="reference" @click="">
+            <el-row>
+              <el-col :span="7" class="box">
+                <i class="el-icon-search"></i>
+              </el-col>
+              <el-col :span="17">
+                查找聊天记录
+              </el-col>
+            </el-row>
+          </div>
+        </el-popover>
+        <div class="newChat">
+          <el-button type="success" round><i class="el-icon-circle-plus"></i>新建群聊</el-button>
+        </div>
         <div class="department-container">
           <div class="department" :class="{ 'department-hovered': hoverList[0].hover }"
             @mouseover="hoverList[0].hover = true" @mouseout="hoverList[0].hover = false" @click="checkSystemMessage">
@@ -23,28 +45,35 @@
               </el-col>
             </el-row>
           </div>
+          <div class="SelectChat">
+            <el-tabs v-model="activeSelectName" @tab-click="">
+              <el-tab-pane label="企业群聊" name="first">企业群聊
+                <div v-for="(team, index) in departmentList" :key="index" :id="'generated-div-' + index"
+                  class="department" :class="{ 'department-hovered': hoverList[index + 1].hover }"
+                  @mouseover="hoverList[index + 1].hover = true" @mouseout="hoverList[index + 1].hover = false"
+                  @click="checkTeamMessage(index)">
+                  <el-row>
+                    <el-col :span="6">
+                      <el-badge :value="redDotNum[index + 1]" class="red_dot" v-if="redDotNum[index + 1] > 0">
+                        <el-avatar shape="square" :size="70" :src="circleUrl" class="department-avatar-red"
+                          v-if="redDotNum[index + 1] > 0"></el-avatar>
+                      </el-badge>
+                      <el-avatar shape="square" :size="70" :src="circleUrl" class="department-avatar" v-else></el-avatar>
 
-          <div v-for="(team, index) in departmentList" :key="index" :id="'generated-div-' + index" class="department"
-            :class="{ 'department-hovered': hoverList[index + 1].hover }" @mouseover="hoverList[index + 1].hover = true"
-            @mouseout="hoverList[index + 1].hover = false" @click="checkTeamMessage(index)">
-            <el-row>
-              <el-col :span="6">
-                <el-badge :value="redDotNum[index + 1]" class="red_dot" v-if="redDotNum[index + 1] > 0">
-                  <el-avatar shape="square" :size="70" :src="circleUrl" class="department-avatar-red"
-                    v-if="redDotNum[index + 1] > 0"></el-avatar>
-                </el-badge>
-                <el-avatar shape="square" :size="70" :src="circleUrl" class="department-avatar" v-else></el-avatar>
-
-              </el-col>
-              <el-col :span="18">
-                <div class="department-name">{{ team.team_name }}</div>
-                <div class="depertment-latest-message">
-                  Xenon: 收到的消息
+                    </el-col>
+                    <el-col :span="18">
+                      <div class="department-name">{{ team.team_name }}</div>
+                      <div class="depertment-latest-message">
+                        Xenon: 收到的消息
+                      </div>
+                    </el-col>
+                  </el-row>
                 </div>
-              </el-col>
-            </el-row>
+              </el-tab-pane>
+              <el-tab-pane label="多人群聊" name="second">多人群聊</el-tab-pane>
+              <el-tab-pane label="私人聊天" name="third">私人聊天</el-tab-pane>
+            </el-tabs>
           </div>
-
         </div>
 
       </el-aside>
@@ -54,7 +83,8 @@
         <el-main id="scrollContainer" class="scrollContainer">
           <div>
             <div v-for="(message, index) in chatMessages" :key="index" :id="'div-' + index" :ref="'div-' + index">
-              <div class="recv-message" v-if="message.isSentByCurrentUser === false">
+              <div class="recv-message"
+                v-if="message.isSentByCurrentUser === false && (typeof message.private_connect_id === 'undefined' || message.private_connect_id === uid || message.private_connect_id === 0)">
                 <el-row>
                   <el-col :span="1">
                     <el-avatar v-if="message.user_name === '系统消息'" :src="sys_message_url"></el-avatar>
@@ -77,7 +107,21 @@
                         <el-button size="mini" round @click="skipToMessage(message.notification_id)">跳转至相应区域</el-button>
                         <el-button size="mini" round @click="changeToUnread">标记为未读</el-button>
                       </span>
-
+                    </div>
+                    <div v-else-if="message.private_connect_id === uid" class="chat-bubble received">
+                      <span>
+                        <div>
+                          {{ message.content }}
+                        </div>
+                      </span>
+                    </div>
+                    <div v-else-if="message.hasOwnProperty('is_history')" class="chat-bubble received">
+                      <span>
+                        <div>
+                          {{ message.content }}
+                        </div>
+                        <el-button size="mini" round @click="skipToHistoryMessage(message)">跳转至相应区域</el-button>
+                      </span>
                     </div>
                     <div v-else class="chat-bubble received">
                       {{ message.content }}
@@ -95,6 +139,14 @@
                     <div v-else-if="message.message_type === 'file'" class="chat-bubble sent file"
                       @click="downloadFile(message)">
                       {{ message.content }}
+                    </div>
+                    <div v-else-if="message.hasOwnProperty('is_history')" class="chat-bubble sent">
+                      <span>
+                        <div>
+                          {{ message.content }}
+                        </div>
+                        <el-button size="mini" round @click="skipToHistoryMessage(message)">跳转至相应区域</el-button>
+                      </span>
                     </div>
                     <div v-else class="chat-bubble sent">
                       {{ message.content }}
@@ -144,7 +196,7 @@
                   <el-button size="mini" type="text" @click="atVisible = false">取消</el-button>
                   <el-button type="primary" size="mini" @click="atVisible = false">确定</el-button>
                 </div>
-                <div class="at" slot="reference" @click="openAtMenu">@</div>
+                <div class="at" slot="reference" @click="openMemberMenu">@</div>
               </el-popover>
             </el-col>
             <el-col :span="1">
@@ -155,13 +207,13 @@
                   {{ member.name }}
                 </div>
                 <div style="text-align: right; margin: 0">
-                  <el-button size="mini" type="text" @click="privateVisible = false">取消</el-button>
+                  <el-button size="mini" type="text" @click="cancelPrivateChat">取消</el-button>
                   <el-button type="primary" size="mini" @click="privateVisible = false">确定</el-button>
                 </div>
                 <div class="solo" slot="reference" @click="">
-                  <i class="el-icon-user-solid icon-set solo-chat" @click=""></i>
+                  <i class="el-icon-user-solid icon-set solo-chat" @click="openMemberMenu"></i>
                 </div>
-              </el-popover>  
+              </el-popover>
             </el-col>
             <el-col :span="19">
 
@@ -241,26 +293,42 @@ export default {
       privateVisible: false,
       isAtAll: false,
       atList: [],
-
+      privateChatMember: 0,
+      historyCheckVisible: false,
+      historyInput: '',
+      activeSelectName: 'first',
     };
   },
   mounted() {
-    this.chatSocket = new WebSocket('ws://182.92.86.71:4514/ws/chat/1145/');
-    this.chatSocket.onmessage = this.handleMessage;
+    this.chatSocket = new WebSocket('ws://182.92.86.71:4514/ws/chat/104/');
+    this.chatSocket.onmessage = this.handleMessge;
     this.scrollToBottom();
     this.getDepartments();
+    this.check_profile_self();
   },
   updated() {
-    this.scrollToBottom();
+    // this.scrollToBottom();
   },
   methods: {
-
+    check_profile_self() {
+      const self = this;
+      this.$api.user.post_check_profile_self()
+        .then(function (response) {
+          const user_info = JSON.parse(response.data.user_info);
+          self.uid = user_info.user_id;
+          self.uname = user_info.user_name;
+          console.log(self.uid);
+          console.log(self.uname);
+          self.$store.state.curUserName = self.uname;
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
     getDepartments() {
       //接口取企业
       const self = this;
       self.departmentList.splice(0, self.departmentList.length);
-      console.log(self.uid);
-      console.log(self.uname);
       const dataObject = {
         tm_user_id: self.uid
       };
@@ -282,7 +350,7 @@ export default {
 
     },
 
-    checkSystemMessage() {
+    async checkSystemMessage() {
       this.chatMessages.splice(0, this.chatMessages.length);
       this.memberList.splice(0, this.memberList.length);
       this.curDepartment = '系统消息';
@@ -302,17 +370,21 @@ export default {
               isSentByCurrentUser: false,
               user_name: "系统消息",
               message_type: "message",
-              notification_id: jsonObj.notification_id
+              notification_id: jsonObj.notification_id,
+              private_connect_id: jsonObj.private_connect_id
             }
+            // console.log(jsonObj);
             self.chatMessages.push(data);
           }
         })
         .catch(function (error) {
           console.log(error);
         });
+      await this.sleep(500);
+      self.scrollToBottom();
     },
 
-    checkTeamMessage(index) {
+    async checkTeamMessage(index) {
       this.redDotNum[index + 1] = 0;
 
       this.curDepartment = this.departmentList[index].team_name;
@@ -358,7 +430,8 @@ export default {
               user_name: element.user_name,
               message_type: element.message_type,
               file_id: element.file_id,
-              cm_id: element.cm_id
+              cm_id: element.cm_id,
+              private_connect_id: element.private_connect_id
             }
             // console.log(message);
             self.chatMessages.push(message);
@@ -369,6 +442,8 @@ export default {
           console.log(error);
         });
       // console.log(self.curDepartmentId);
+      await this.sleep(1700);
+      self.scrollToBottom();
     },
 
     handleClose(done) {
@@ -407,9 +482,9 @@ export default {
         isSentByCurrentUser: false,
         user_name: data.user_name,
         message_type: data.message_type,
-        file_id: data.file_id
+        file_id: data.file_id,
+        private_connect_id: data.private_connect_id
       }
-
       if (this.uid === data.user_id) {
         return;
       }
@@ -436,8 +511,9 @@ export default {
         'array_data': this.atList,
         'message_type': "message",
         'file_id': 0,
-        'private_connect_id': 0
+        'private_connect_id': this.privateChatMember
       })
+      console.log(send_message);
       let send_message_used = {
         content: this.messageInput,
         isSentByCurrentUser: true,
@@ -455,7 +531,7 @@ export default {
         'is_at_all': this.isAtAll,
         'array_data': this.atList,
         'message_type': "message",
-        'private_connect_id': 0
+        'private_connect_id': this.privateChatMember
       })
 
       this.chatMessages.push(send_message_used);
@@ -507,10 +583,13 @@ export default {
           .catch(function (error) {
             console.log(error);
           });
+
       }
 
       this.atList.splice(0, this.atList.length);
       this.isAtAll = false;
+      await self.sleep(1300);
+      self.scrollToBottom();
       // console.log(this.chatMessages)
       console.log("send success")
     },
@@ -543,7 +622,7 @@ export default {
             'array_data': self.atList,
             'message_type': "file",
             'file_id': file_id,
-            'private_connect_id': 0
+            'private_connect_id': this.privateChatMember
           })
 
 
@@ -571,7 +650,7 @@ export default {
         'array_data': self.atList,
         'message_type': "file",
         'file_id': file_id,
-        'private_connect_id': 0
+        'private_connect_id': this.privateChatMember
       })
       console.log(send_message_to_backend);
       this.$api.chat.post_store_message(send_message_to_backend)
@@ -618,16 +697,15 @@ export default {
       console.log(this.atList);
     },
     privateMember(index) {
-      // 传后端内容
-      this.messageInput += `(私聊 ${this.memberList[index].name}) `;
-      this.atList.push(this.memberList[index].uid);
-      console.log(this.atList);
+      this.messageInput = `(私聊 ${this.memberList[index].name}) `;
+      this.privateChatMember = this.memberList[index].uid;
+      console.log(this.privateChatMember);
     },
     atAll() {
       this.isAtAll = true;
       this.messageInput += '@所有人 ';
     },
-    openAtMenu() {
+    openMemberMenu() {
       const self = this;
       const dataObject = {
         team_id: self.curDepartmentId,
@@ -655,7 +733,7 @@ export default {
       // 调用接口更新memberList
     },
 
-    
+
     changeToUnread() {
       this.$store.state.notificationRedNum += 1;
     },
@@ -674,6 +752,8 @@ export default {
             if (self.departmentList[i].team_id === response.data.team_id) {
               index = i;
               cm_id = response.data.cm_id;
+              console.log(i);
+              console.log(response.data.cm_id);
             }
           }
         })
@@ -681,13 +761,98 @@ export default {
           console.log(error);
         });
 
-      await self.sleep(2000);
+      await self.sleep(1500);
 
       self.checkTeamMessage(index);
+      await self.sleep(1500);
+      console.log(cm_id);
+      let index_chat = 0;
+      for (var i = 0; i < self.chatMessages.length; i++) {
+        if (self.chatMessages[i].cm_id == cm_id) {
+          index_chat = i;
+        }
+      }
+      await self.sleep(1500);
+      const divElement = document.getElementById('div-' + index_chat);
 
-      const element = self.$refs['div-' + index];  // 获取具有特定id的div元素的引用
-      console.log(element);
-      element.scrollIntoView({ behavior: 'smooth' });  // 滚动到指定div的位置
+      console.log(divElement);
+      divElement.scrollIntoView({ behavior: 'smooth' });  // 滚动到指定div的位置
+    },
+    cancelPrivateChat() {
+      this.privateVisible = false;
+      this.messageInput = '';
+      this.privateChatMember = 0;
+    },
+    async searchHistoryMessage() {
+      const self = this;
+      const dataObject = {
+        tm_user_id: self.uid,
+        search_info: self.historyInput
+      };
+      const jsonString = JSON.stringify(dataObject);
+      this.$api.chat.post_search_chat_message(jsonString)
+        .then(function (response) {
+          console.log(response);
+
+          // 绘制聊天记录
+          self.curDepartment = '聊天记录';
+          self.curDepartmentId = 0;
+          self.chatMessages.splice(0, self.chatMessages.length);
+          response.data.search_res.forEach(element => {
+            let isSentByCurrentUser_1 = false;
+            const num = parseInt(self.uid);
+            if (element.message_sender_id === num) {
+              isSentByCurrentUser_1 = true;
+            }
+            const message = {
+              content: element.message_content,
+              isSentByCurrentUser: isSentByCurrentUser_1,
+              user_name: element.message_sender_name,
+              message_type: element.message_type,
+              file_id: element.file_id,
+              cm_id: element.cm_id,
+              private_connect_id: element.private_connect_id,
+              is_history: true,
+              team_id: element.team_id
+            }
+            self.chatMessages.push(message);
+          });
+
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      await this.sleep(1300);
+      self.scrollToBottom();
+    },
+    async skipToHistoryMessage(message) {
+      const self = this;
+      let index = 0;
+      let cm_id = 0;
+      console.log(message);
+      for (var i = 0; i < self.departmentList.length; i++) {
+        if (self.departmentList[i].team_id === message.team_id) {
+          index = i;
+          cm_id = message.cm_id;
+          console.log(i);
+          console.log(message.cm_id);
+        }
+      }
+
+      self.checkTeamMessage(index);
+      await self.sleep(1500);
+      let index_chat = 0;
+      for (var i = 0; i < self.chatMessages.length; i++) {
+        if (self.chatMessages[i].cm_id == cm_id) {
+          index_chat = i;
+        }
+      }
+      await self.sleep(1500);
+      console.log(index_chat);
+      const divElement = document.getElementById('div-' + index_chat);
+
+      console.log(divElement);
+      divElement.scrollIntoView({ behavior: 'smooth' });  // 滚动到指定div的位置
     },
   }
 }
@@ -903,7 +1068,31 @@ body>.el-container {
 .file {
   padding: 50px;
 }
+
 .solo-chat {
   margin: 0 10px 0 -49px;
+}
+
+.search-history {
+  background-color: #cfd4d7;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+  font-size: 20px;
+  color: #989898;
+  margin: 50px 116px 0 120px;
+  border-radius: 4px;
+}
+
+.box {
+  text-align: right;
+}
+
+.historyPop {
+  padding: 50px !important;
+}
+.SelectChat {
+  margin: 0 46px 0 0px;
+}
+.newChat {
+  text-align: center;
 }
 </style>
