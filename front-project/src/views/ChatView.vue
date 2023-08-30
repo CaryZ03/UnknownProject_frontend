@@ -11,7 +11,7 @@
             <el-button size="mini" type="text" @click="historyCheckVisible = false">取消</el-button>
             <el-button type="primary" size="mini" @click="searchHistoryMessage">确定</el-button>
           </div>
-          <div class="search-history" slot="reference" @click="">
+          <div class="search-history" slot="reference">
             <el-row>
               <el-col :span="7" class="box">
                 <i class="el-icon-search"></i>
@@ -46,7 +46,7 @@
             </el-row>
           </div>
           <div class="SelectChat">
-            <el-tabs v-model="activeSelectName" @tab-click="">
+            <el-tabs v-model="activeSelectName">
               <el-tab-pane label="企业群聊" name="first">企业群聊
                 <div v-for="(team, index) in departmentList" :key="index" :id="'generated-div-' + index"
                   class="department" :class="{ 'department-hovered': hoverList[index + 1].hover }"
@@ -210,7 +210,7 @@
                   <el-button size="mini" type="text" @click="cancelPrivateChat">取消</el-button>
                   <el-button type="primary" size="mini" @click="privateVisible = false">确定</el-button>
                 </div>
-                <div class="solo" slot="reference" @click="">
+                <div class="solo" slot="reference">
                   <i class="el-icon-user-solid icon-set solo-chat" @click="openMemberMenu"></i>
                 </div>
               </el-popover>
