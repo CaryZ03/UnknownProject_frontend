@@ -31,11 +31,7 @@ const routes = [
     name: 'Text',
     component: Text
   },
-  {
-    path: '/Tiptap/:appID/:room',
-    name: 'Tiptap',
-    component: TiptapView
-  },
+
   {
     path: '/about',
     name: 'about',
@@ -64,31 +60,23 @@ const routes = [
     component: Design,
 
   },
+  // preview 可以通过teamid进行跳转preview
+  {
+    path: '/Preview/:teamid/:ptid',
+    name: 'preview',
+    component: Design,
+
+  },
   {
     path: '/WorkSpace',
     name: 'workSpace',
     component: WorkSpace,
+  },
 
-    children: [
-      {
-        path: 'Star',
-        name: 'star',
-      },
-      {
-        path: 'Default',
-        name: 'default',
-      },
-      {
-        path: 'Recent',
-        name: 'recent',
-
-      },
-      {
-        path: 'OnlineDoc',
-        name: 'onlineDoc',
-      }
-    ]
-
+  {
+    path: '/Tiptap/:teamid/:docid',
+    name: 'Tiptap',
+    component: TiptapView
   },
   {
     path: '/Chat',

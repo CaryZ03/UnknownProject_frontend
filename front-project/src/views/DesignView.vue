@@ -75,42 +75,21 @@
       style="background-color: blanchedalmond; width: 600px; height: 600px"
     >
       <vue-draggable-resizable
-        class="outContain"
-        @activated="outerActive"
-        :draggable="outDraggable"
-        :resizable="true"
-        :w="1000"
-        :h="1000"
-        style="border: 1px solid red; background-color: antiquewhite"
+        :parent="true"
+        v-for="(item, index) in clonedComponents"
+        ref="draggableRes"
+        :key="index"
+        @dragging="(x, y) => innerDrag(x, y, index)"
+        :snap="true"
+        @dragstop="innerDragStop"
+        w="auto"
+        h="auto"
+        :x="x_off[index]"
+        :y="y_off[index]"
+        @activated="onSelected($event, index)"
       >
-        <vue-draggable-resizable
-          :parent="true"
-          v-for="(item, index) in clonedComponents"
-          :key="index"
-          :on-drag-start="innerDrag"
-          :snap="true"
-          @dragstop="innerDragStop"
-          w="auto"
-          h="auto"
-          @activated="onSelected($event, index)"
-        >
-          <component-with-item :is="item"></component-with-item>
-        </vue-draggable-resizable>
+        <component-with-item :is="item"></component-with-item>
       </vue-draggable-resizable>
-      <span>12313213213</span>
-      <span>12313213213</span>
-      <br />
-      <br />
-
-      <span>12313213213</span>
-      <span>12313213213</span>
-
-      <span>12313213213</span>
-      <span>12313213213</span>
-      <span>12313213213</span>
-      <span>12313213213</span>
-      <span>12313213213</span>
-      <span>12313213213</span>
     </div>
 
     <div></div>
@@ -132,22 +111,6 @@ import mPagination from "../components/Prototype/Components/mPagination.vue";
 import mTabs from "../components/Prototype/Components/mTabs.vue";
 import mToolBar from "../components/Prototype/Components/mToolBar.vue";
 import domToImage from "dom-to-image";
-import {
-  CodeIcon,
-  LettersDIcon,
-  LettersSIcon,
-  LettersEIcon,
-  LettersIIcon,
-  LettersNIcon,
-  LettersGIcon,
-  ComponentCheckboxIcon,
-  ComponentInputIcon,
-  ComponentSwitchIcon,
-  ComponentBreadcrumbIcon,
-  ComponentDropdownIcon,
-  ComponentRadioIcon,
-  ComponentStepsIcon,
-} from "tdesign-icons-vue";
 import testVue from "./test.vue";
 
 // import TumblrButton from '../components/Buttons/TumblrButton.vue';
@@ -162,6 +125,10 @@ export default {
       selectComponent: null,
       selectedIndex: -1,
       ws: null,
+      x_off: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      y_off: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      x_scale: [],
+      y_scale: [],
     };
   },
   components: {
@@ -179,7 +146,7 @@ export default {
   },
   mounted() {
     document.addEventListener("keydown", this.handleKeyDown);
-    this.ws = new WebSocket("ws://182.92.86.71:4514/ws/chat/1145/");
+    this.ws = new WebSocket("ws://182.92.86.71:4514/ws/editor/1145/");
     this.ws.onmessage = this.handleMessage;
   },
   destroyed() {
@@ -187,27 +154,6 @@ export default {
   },
   methods: {
     async captureAndSave() {
-      // const element = this.$refs.elementToCapture;
-      // html2canvas(element,{ useCORS: true }).then((canvas) => {
-      //   alert(canvas)
-      //   this.imageUrl = canvas.toDataURL("image/png");
-      //   alert(this.imageUrl)
-      //   console.log(this.imageUrl)
-      // });
-
-      // var node = document.getElementById("capture");
-      // // options 可不传
-      // var options = {};
-      // domtoimage
-      //   .toPng(node, options)
-      //   .then(function (dataUrl) {
-      //     var img = new Image();
-      //     img.src = dataUrl;
-      //     document.body.appendChild(img);
-      //   })
-      //   .catch(function (error) {
-      //     console.error("oops, something went wrong!", error);
-      //   });ref="elementToCapture"
       const element = this.$refs.elementToCapture; // 替换为你的 DOM 元素的引用
       const htmlString = element.outerHTML;
       console.log(htmlString);
@@ -227,12 +173,32 @@ export default {
     },
 
     handleMessage(event) {
-      this.clonedComponents = event.data;
+      // // this.clonedComponents = event.data["message"];
+      // this.$set(this.clonedComponents, JSON.parse(event.data).message);
+      // // console.log(this.clonedComponents);
+      // this.clonedComponents = JSON.parse(event.data).message;
+      // this.selectComponent.$props.x = JSON.parse(event.data).x;
+      // this.selectComponent.$props.y = JSON.parse(event.data).y;
+      const data = JSON.parse(event.data);
+
+      this.clonedComponents = data.message;
+      this.x_off = data.x_off;
+      this.y_off = data.y_off;
       console.log("receive");
     },
 
     sendMessage() {
-      this.ws.send(this.clonedComponents);
+      // const cps=JSON.stringify(this.clonedComponents);
+
+      const sendData = JSON.stringify({
+        message: this.clonedComponents,
+        x_off: this.x_off,
+        y_off: this.y_off,
+        x_scale: this.x_scale,
+        y_scale: this.y_scale,
+      });
+      console.log(sendData);
+      this.ws.send(sendData);
       console.log("sent");
     },
 
@@ -264,6 +230,8 @@ export default {
       console.log("hover", context);
     },
     cloneElement(ClonedComponent) {
+      // this.x_off.push(0);
+      // this.y_off.push(0);
       this.clonedComponents.push(ClonedComponent); // 将克隆的组件添加到数组中
     },
     handleKeyDown(event) {
@@ -288,14 +256,19 @@ export default {
       this.dynamicComponent = new DynamicComponent().$mount();
     },
 
-    innerDrag() {
-      this.outDraggable = false;
-      console.log("drag");
-      this.sendMessage();
+    innerDrag: function (x, y, index) {
+      this.dragging = true;
+      this.x_off[index] = x;
+      this.y_off[index] = y;
+      this.x = x;
+      this.y = y;
+      console.log();
     },
+
     innerDragStop() {
       this.outDraggable = true;
       console.log("stop!!!");
+      this.sendMessage();
     },
 
     outerActive() {
