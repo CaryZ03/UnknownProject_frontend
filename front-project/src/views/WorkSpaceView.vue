@@ -86,11 +86,20 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
       background-color="#2a2d30"
       text-color="#fff"
       active-text-color="#ffd04b">
+
+      <el-menu-item index="7" @click="changeContent(3)" v-if="this.isProgramChosen === true">
+        <i class="el-icon-s-order"></i>项目详情</el-menu-item>
+
+      <el-menu-item index="6" @click="changeContent(2.2)">
+        <i class="el-icon-info"></i>团队信息
+      </el-menu-item>
+      <!-- <el-menu-item index="5-3" @click="changeContent(2.2)"><i class="el-icon-info"></i>团队信息</el-menu-item> -->
+
       <el-submenu index="1">
         <template slot="title"><i class="el-icon-collection" ></i>项目管理</template>
         <el-menu-item-group>
           <!-- <template slot="title">分组一</template> -->
-          <el-menu-item index="1-1" @click="changeContent(3)" v-if="this.isProgramChosen === true"><i class="el-icon-s-order"></i>项目详情</el-menu-item>
+          <!-- <el-menu-item index="1-1" @click="changeContent(3)" v-if="this.isProgramChosen === true"><i class="el-icon-s-order"></i>项目详情</el-menu-item> -->
           <el-menu-item index="1-2" @click="changeContent(0)" v-if="this.isProgramChosen === false"><i class="el-icon-s-order"></i>项目列表</el-menu-item>
           <el-menu-item index="1-2" @click="changeContent(0)" v-if="this.isProgramChosen"><i class="el-icon-sort"></i>切换项目</el-menu-item>
           <el-menu-item index="1-3" @click="changeContent(0.1)" v-if="this.isProgramChosen === false"><i class="el-icon-delete"></i>回收站</el-menu-item>
@@ -140,7 +149,7 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
           <template slot="title">分组一</template>
           <el-menu-item index="5-1" @click="changeContent(2)"><i class="el-icon-user"></i>人员管理</el-menu-item>
           <el-menu-item index="5-2" @click="changeRouter()"><i class="el-icon-chat-line-round"></i>团队群聊</el-menu-item>
-          <el-menu-item index="5-3" @click="changeContent(2.2)"><i class="el-icon-info"></i>团队信息</el-menu-item>
+          <!-- <el-menu-item index="5-3" @click="changeContent(2.2)"><i class="el-icon-info"></i>团队信息</el-menu-item> -->
         </el-menu-item-group>
         
       </el-submenu>
@@ -1432,7 +1441,7 @@ export default {
           demandList: [],
         }, //当前项目
 
-        activeIndex: 0, // 默认选中的按钮索引为0
+        activeIndex: 2.2, // 默认选中的按钮索引为0
 
         //项目表
         tableData: [{
@@ -1992,6 +2001,8 @@ export default {
     changeCurTeam(team){
         this.$store.state.curTeam = team;
         this.loadInfo();
+        this.changeContent(2.2);
+        this.isProgramChosen = false;
     },
 
     saveProInfo(){
@@ -2106,7 +2117,7 @@ export default {
         console.log(1);
         this.isProgramChosen = false;
         this.currentProgram = {};
-        this.changeContent(0)
+        this.changeContent(2.2)
       },
 
       async changeContent(index) {
@@ -2556,7 +2567,7 @@ export default {
           })
 
             this.newProjectDialogVisible = false;  // 关闭对话框
-
+            this.getTeamProList();
             this.$message.success('新项目添加成功');
             console.log(this.tableData)
           }
@@ -2564,7 +2575,9 @@ export default {
         },
       resetNewProject() {
 
-          this.loadInfo();
+          // this.loadInfo();
+          // this.getTeamProList();
+
           this.$refs.newProjectForm.resetFields();  // 重置表单数据
           this.newProjectDialogVisible = false;  // 关闭对话框
         },
@@ -3380,7 +3393,8 @@ padding-left: 25px;
   }
 
   .el-main{
-    background-color: #212427;
+    /* background-color: #212427; */
+    background-color: #e9e8e8;
     color: #e7e2e2;
   }
 
@@ -3393,7 +3407,7 @@ padding-left: 25px;
   }
 
   .inherited-styles-for-exported-element {
-  color: #e7e2e2;
+  color: #414040;
   font-family: "PingFang SC", "Microsoft YaHei", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
   font-size: 15px;
   font-weight: 600;
