@@ -263,6 +263,9 @@ export default {
             localStorage.setItem("curUserMail", this.$store.state.curUserMail);
             localStorage.setItem("token", response.data["token_key"]);
             alert("登录成功");
+
+            this.flashTeamList();
+            this.dialogVisible = true;
           } else {
             console.log(response.data);
           }
