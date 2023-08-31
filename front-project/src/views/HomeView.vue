@@ -455,6 +455,9 @@ export default {
   
       this.dialogVisible = false; // 关闭弹窗
       this.$store.state.curTeam = row;
+      
+      localStorage.setItem("curTeam",  JSON.stringify(this.$store.state.curTeam));
+      
       this.$router.push('/WorkSpace'); // 进行页面跳转
     },
     

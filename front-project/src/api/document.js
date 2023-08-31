@@ -46,7 +46,24 @@ export async function post_change_prototype(data) {
     })
 }
 
+//change_prototype_recycle
 
+export async function post_change_prototype_recycle(data) {
+    return request({
+        method: 'POST',
+        url:  '/document/change_prototype_recycle',
+        data: data,
+    })
+}
+
+//delete_prototype
+export async function post_delete_prototype(data) {
+    return request({
+        method: 'POST',
+        url:  '/document/delete_prototype',
+        data: data,
+    })
+}
 
 
 
