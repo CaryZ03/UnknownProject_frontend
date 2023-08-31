@@ -703,12 +703,16 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
                 <div style="display: flex; align-items: center;">
                   <el-avatar :size="80" :round="true">{{ getInitials(personInform.nickname) }}</el-avatar>
                   <div style="margin-left: 20px;max-width: 70%;">
-                    <h3>{{ personInform.nickname }}</h3>
+                    <h3 style="font-size: 20px;">{{ personInform.nickname }}</h3>
                     <p>Realname: {{ personInform.realname }}</p>
                     <p>Email: {{ personInform.address }}</p>
                     <p>Identity: {{ personInform.identity }}</p>
+                    <p>Tel: {{ personInform.tel }}</p>
                   </div>
                 </div>
+                <el-button type="primary" icon="el-icon-edit" @click="openEditDialog" size="mini" style="float:right
+                "></el-button>
+
               </el-card>
 
               <span  class="inherited-styles-for-exported-element">团队成员信息</span>
@@ -840,10 +844,13 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
                   <el-form-item label="Nickname:">
                     <el-input v-model="formData.nickname"></el-input>
                   </el-form-item>
+                  <el-form-item label="tel:">
+                    <el-input v-model="formData.tel"></el-input>
+                  </el-form-item>
                 </el-form>
 
                 <div slot="footer">
-                  <el-button @click="editDialogVisible = false">取消</el-button>
+                  <el-button @click="editPersonInformDialogVisible = false">取消</el-button>
                   <el-button type="primary" @click="saveUserInfo">确定</el-button>
                 </div>
               </el-dialog>
@@ -1071,63 +1078,6 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
               </div>
               
               <!-- 列表展示 -->
-              <div v-if="displayMode === 'list'">
-                 <el-table
-             :data="protoTable.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
-             :default-sort = "{prop: 'date', order: 'descending'}"
-             style="width: 100%" >
-                <!-- column 1 -->
-                <el-table-column
-                  label="原型名" sortable
-                  prop="name">
-                  <template slot-scope="scope">
-              <template v-if="scope.row.editable">
-                <div style="display: flex;">
-                      <el-input v-model="scope.row.name" size="mini" @blur="saveEdit(scope.row)" ref="nameInput"></el-input>
-                      <el-button type="text" icon="el-icon-check" @click="saveEdit(scope.row)"></el-button>
-                </div>
-              </template>
-              <template v-else>
-                  <span @click="startEdit(scope.row)">{{ scope.row.name }}</span>
-                  <el-button type="text" icon="el-icon-edit" @click="startEdit(scope.row)" style="float: right;"></el-button>
-              </template>
-            </template>
-                </el-table-column>
-          
-                <!-- column 2 -->
-                <el-table-column
-                  label="上次修改时间" sortable
-                  prop="lastChangeTime">
-                </el-table-column>
-
-                <!-- column 3 -->
-                <el-table-column
-                  label="大小" sortable
-                  prop="size">
-                </el-table-column>
-          
-                <!-- column 4 -->
-                <el-table-column
-                  align="right">
-                  <template slot="header" slot-scope="scope">
-                    <el-input
-                      v-model="search"
-                      size="mini"
-                      placeholder="输入关键字搜索"/>
-                  </template>
-                  <template slot-scope="scope">
-                    <el-button
-                      size="mini"
-                      @click="handleEditProto(scope.$index, scope.row)">Edit</el-button>
-                    <el-button
-                      size="mini"
-                      type="danger"
-                      @click="handleDeleteProto(scope.$index, scope.row)">Delete</el-button>
-                  </template>
-                </el-table-column>
-          
-                 </el-table>
-              </div>
 
               <!-- 略缩图展示 -->
               <div v-if="displayMode === 'thumbnail'">
@@ -1158,6 +1108,44 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
                   </el-row>
                   </div>
                   
+              </div>
+
+
+              <!-- 新列表展示 -->
+              <div v-if="displayMode === 'list'">
+                  <el-table :data="protoTable.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%">
+                    <!-- 需求内容 -->
+                    <el-table-column label="原型名" prop="name" sortable>
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.name" @blur="saveEditProto(scope.row)"></el-input>
+                      </template>
+                    </el-table-column>
+
+                    <!--  -->
+                    <el-table-column label="上次修改时间" prop="lastChangeTime" sortable>
+                    
+                    </el-table-column>
+
+                    <!--  -->
+                    <el-table-column label="大小" prop="size" sortable>
+                
+                    </el-table-column>
+
+
+                    <!-- 操作列 -->
+                    <el-table-column align="right" >
+                      <template slot="header" slot-scope="scope">
+                    <el-input
+                      v-model="search"
+                      size="mini"
+                      placeholder="输入关键字搜索"/>
+                  </template>
+                      <template slot-scope="scope">
+                        <el-button size="mini" @click="handleEdit(scope.row)">编辑</el-button>
+                        <el-button size="mini" type="danger" @click="handleDeleteProto(scope.$index, scope.row)">删除</el-button>
+                      </template>
+                    </el-table-column>
+                  </el-table>
                 </div>
                                     
             </div>
@@ -1556,6 +1544,7 @@ export default {
         formData: {
           realname: '',
           nickname: '',
+          tel:'',
         },
 
         newTeam: {
@@ -1837,6 +1826,7 @@ export default {
           realname: "刘兆丰",
           address: "326855092@qq.com",
           identity: "团队创建者",
+          tel: '114514'
         },
 
         //申请列表
@@ -1851,6 +1841,57 @@ export default {
     },
   
     methods: {
+
+
+
+
+      openEditDialog() {
+    // 打开对话框时，将当前用户信息填充到表单中
+    this.formData.realname = this.personInform.realname;
+    this.formData.nickname = this.personInform.nickname;
+    this.formData.tel = this.personInform.tel;
+
+    this.editPersonInformDialogVisible = true; // 打开对话框
+  },
+
+  saveUserInfo() {
+    // 执行保存逻辑，这里只是将表单中的数据赋值给原始数据，您可以根据实际需求进行处理
+    this.personInform.realname = this.formData.realname;
+    this.personInform.nickname = this.formData.nickname;
+    this.personInform.tel = this.formData.tel;
+
+    //上传后端
+    const tmp = {
+      "username": this.formData.nickname,
+      "signature": "没有签名捏",
+      "tel": this.formData.tel,
+      "expire_time": 60,
+      "real_name": this.formData.realname,
+      "visible": "False"
+    }
+    console.log("saveUserInfo input:",tmp)
+    this.$api.user.post_change_profile(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取成功")
+              console.log(response.data.msg)
+              this.getPersonInfo();
+              this.getTeamPersonList();
+
+            }
+            else{
+              console.log(response.data)
+            }
+          }).catch(error => {
+            alert("获取失败")
+            console.log("error：\n");
+            console.log(error)
+          })
+
+    this.editPersonInformDialogVisible = false; // 关闭对话框
+  },
+
 
     handleApply (index,row,op){
       const tmp = {
@@ -2155,9 +2196,9 @@ export default {
           })
     },
 
-    getProtoList(row){
+    getProtoList(){
         const tmp = {
-          "project_id": row.project_id,
+          "project_id": this.currentProgram.project_id,
           "recycle": 'False',
         }
         console.log("获取原型列表 input：",tmp)
@@ -2168,19 +2209,41 @@ export default {
             console.log("获取团队列表成功")
             console.log("success",response.data.protoTable)
 
-            // if(response.data.tm_info.length === 0){
-            //       this.teamList = []
-            //     }
-            // else{
-            //     const tmInfoArray = response.data.tm_info.map((item) => JSON.parse(item.replace(/\\/g, '')));
-            //     console.log(tmInfoArray);
-            //       //赋值
-            //     this.teamList = tmInfoArray;
-            //   }
-            const tmInfoArray = response.data.tm_info.map((item) => JSON.parse(item.replace(/\\/g, '')));
+            const tmInfoArray = response.data.protoTable.map((item) => JSON.parse(item.replace(/\\/g, '')));
             console.log(tmInfoArray);
               //赋值
             this.protoTable = tmInfoArray;
+
+            this.protoTable.forEach(proto=>{
+              proto.editable = false
+            })
+            
+            
+          }
+        }).catch(error => {
+          // alert("获取失败")
+          console.log("error：\n");
+          console.log(error)
+        })
+    },
+
+    getProtoRecycleList(){
+      const tmp = {
+          "project_id": this.currentProgram.project_id,
+          "recycle": 'True',
+        }
+        console.log("获取原型回收站列表 input：",tmp)
+        this.$api.document.post_show_prototype_list(tmp).then((response) => {
+          // console.log(tmp)
+          // console.log(response.data)
+          if (response.data.errno == 0) {
+            console.log("获取成功")
+            console.log("success",response.data.protoTable)
+
+            const tmInfoArray = response.data.protoTable.map((item) => JSON.parse(item.replace(/\\/g, '')));
+            console.log(tmInfoArray);
+              //赋值
+            this.protoRecycleTable = tmInfoArray;
             
           }
         }).catch(error => {
@@ -2238,6 +2301,7 @@ export default {
               this.personInform.nickname = tmObj.user_name;
               this.personInform.realname = tmObj.user_real_name;
               this.personInform.address = tmObj.user_email;
+              this.personInform.tel = tmObj.user_tel;
               // this.personInform.identity = tmObj;
               
             }
@@ -2517,7 +2581,8 @@ export default {
         //后端
         this.getRequirementList();
 
-        this.getProtoList(row);
+        this.getProtoList();
+        this.getProtoRecycleList();
 
 
         this.changeContent(3);//切换到项目信息页面
@@ -2721,7 +2786,8 @@ export default {
               console.log("删除成功")
               console.log(response.data.msg)
 
-              // this.getProtoList();
+              this.getProtoList();
+              this.getProtoRecycleList();
 
             }
           }).catch(error => {
@@ -2840,11 +2906,14 @@ export default {
 
 
       startEdit(row) {
+
+    
     row.editable = true;
+    console.log("startEdit row:",row)
     // row.tempName = row.name;  // 将当前名称保存到 tempName 中
-    this.$nextTick(() => {  // 等待下一次 DOM 更新后自动聚焦输入框
-      this.$refs.nameInput[0].focus();
-    });
+    // this.$nextTick(() => {  // 等待下一次 DOM 更新后自动聚焦输入框
+    //   this.$refs.nameInput[0].focus();
+    // });
       },
 
 
@@ -2910,6 +2979,30 @@ export default {
     });
       },
 
+      saveEditProto(row){
+
+        const tmp = {
+          "prototype_id": row.prototype_id,
+          "prototype_name": row.name,
+          "prototype_recycle": 'False',
+        }
+        console.log("saveEditProto input:",tmp)
+        this.$api.document.post_change_prototype(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取成功")
+              console.log(response.data.msg)
+
+            }
+          }).catch(error => {
+            alert("获取失败")
+            console.log("error：\n");
+            console.log(error)
+          })
+
+          row.editable = false
+      },
 
       addNewProject() {
         // 验证表单数据
@@ -3081,6 +3174,25 @@ export default {
           size: this.newProto.size,
           editable: false
         });
+        const tmp = {
+          "prototype_name":this.newProto.name,
+          "project_id": this.currentProgram.project_id
+        }
+        this.$api.document.post_create_prototype(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取成功")
+              console.log(response.data.msg)
+
+              this.getProtoList();
+
+            }
+          }).catch(error => {
+            alert("获取失败")
+            console.log("error：\n");
+            console.log(error)
+          })
 
         this.newProtoDialogVisible = false;  // 关闭对话框
 

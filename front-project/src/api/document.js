@@ -28,6 +28,23 @@ export async function post_show_prototype_list(data) {
     })
 }
 
+//create_prototype
+export async function post_create_prototype(data) {
+    return request({
+        method: 'POST',
+        url:  '/document/create_prototype',
+        data: data,
+    })
+}
+
+// change_prototype
+export async function post_change_prototype(data) {
+    return request({
+        method: 'POST',
+        url:  '/document/change_prototype',
+        data: data,
+    })
+}
 
 
 
