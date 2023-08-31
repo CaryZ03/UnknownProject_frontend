@@ -23,8 +23,33 @@
           </div>
         </el-popover>
         <div class="newChat">
-          <el-button type="success" round><i class="el-icon-circle-plus"></i>新建群聊</el-button>
+          <el-button type="success" round @click="createChatVisible = true"><i class="el-icon-circle-plus"></i>新建群聊</el-button>
         </div>
+        <el-dialog
+          title="新建群聊"
+          :visible.sync="createChatVisible"
+          width="30%"
+          :before-close="handleClose">
+          <el-form ref="createChatForm" :model="createChatForm" label-width="80px">
+            <el-form-item label="群聊名称">
+              <el-input v-model="createChatForm.chatGroupName"></el-input>
+            </el-form-item>
+            <el-form-item label="活动区域">
+              <el-select v-model="createChatForm.chatGroupMember" multiple placeholder="请选择群聊成员">
+                <el-option
+                  v-for="item in memberList"
+                  :key="item.uid"
+                  :label="item.name"
+                  :value="item.uid">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-form>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="createChatVisible = false">取 消</el-button>
+            <el-button type="primary" @click="createGroupChat">确 定</el-button>
+          </span>
+        </el-dialog>
         <div class="department-container">
           <div class="department" :class="{ 'department-hovered': hoverList[0].hover }"
             @mouseover="hoverList[0].hover = true" @mouseout="hoverList[0].hover = false" @click="checkSystemMessage">
@@ -70,8 +95,77 @@
                   </el-row>
                 </div>
               </el-tab-pane>
-              <el-tab-pane label="多人群聊" name="second">多人群聊</el-tab-pane>
-              <el-tab-pane label="私人聊天" name="third">私人聊天</el-tab-pane>
+              <el-tab-pane label="创建的群聊" name="second">
+                创建的群聊
+                <div v-for="(group, index) in createGroupChatList" :key="index" :id="'generated-group-div-' + index"
+                  class="department" :class="{ 'department-hovered': hoverList[index + 1].hover }"
+                  @mouseover="hoverList[index + 1].hover = true" @mouseout="hoverList[index + 1].hover = false"
+                  @click="checkGroupMessage(index)">
+                  <el-row>
+                    <el-col :span="6">
+                      <el-badge :value="redDotNum[index + 1]" class="red_dot" v-if="redDotNum[index + 1] > 0">
+                        <el-avatar shape="square" :size="70" :src="circleUrl" class="department-avatar-red"
+                          v-if="redDotNum[index + 1] > 0"></el-avatar>
+                      </el-badge>
+                      <el-avatar shape="square" :size="70" :src="circleUrl" class="department-avatar" v-else></el-avatar>
+
+                    </el-col>
+                    <el-col :span="18">
+                      <div class="department-name">{{ group.gc_name }}</div>
+                      <div class="depertment-latest-message">
+                        Xenon: 收到的消息
+                      </div>
+                    </el-col>
+                  </el-row>
+                </div>
+              </el-tab-pane>
+              <el-tab-pane label="加入的群聊" name="third">
+                加入的群聊
+                <div v-for="(group, index) in joinGroupChatList" :key="index" :id="'generated-group-div-' + index"
+                  class="department" :class="{ 'department-hovered': hoverList[index + 1].hover }"
+                  @mouseover="hoverList[index + 1].hover = true" @mouseout="hoverList[index + 1].hover = false"
+                  @click="checkGroupMessage(index)">
+                  <el-row>
+                    <el-col :span="6">
+                      <el-badge :value="redDotNum[index + 1]" class="red_dot" v-if="redDotNum[index + 1] > 0">
+                        <el-avatar shape="square" :size="70" :src="circleUrl" class="department-avatar-red"
+                          v-if="redDotNum[index + 1] > 0"></el-avatar>
+                      </el-badge>
+                      <el-avatar shape="square" :size="70" :src="circleUrl" class="department-avatar" v-else></el-avatar>
+
+                    </el-col>
+                    <el-col :span="18">
+                      <div class="department-name">{{ group.gc_name }}</div>
+                      <div class="depertment-latest-message">
+                        Xenon: 收到的消息
+                      </div>
+                    </el-col>
+                  </el-row>
+                </div>
+              </el-tab-pane>
+              <el-tab-pane label="私人聊天" name="forth">私人聊天
+                <div v-for="(person, index) in privateChatList" :key="index" :id="'generated-person-div-' + index"
+                  class="department" :class="{ 'department-hovered': hoverList[index + 1].hover }"
+                  @mouseover="hoverList[index + 1].hover = true" @mouseout="hoverList[index + 1].hover = false"
+                  @click="checkPrivateMessage(index)">
+                  <el-row>
+                    <el-col :span="6">
+                      <el-badge :value="redDotNum[index + 1]" class="red_dot" v-if="redDotNum[index + 1] > 0">
+                        <el-avatar shape="square" :size="70" :src="circleUrl" class="department-avatar-red"
+                          v-if="redDotNum[index + 1] > 0"></el-avatar>
+                      </el-badge>
+                      <el-avatar shape="square" :size="70" :src="circleUrl" class="department-avatar" v-else></el-avatar>
+
+                    </el-col>
+                    <el-col :span="18">
+                      <div class="department-name">{{ person.user_name }}</div>
+                      <div class="depertment-latest-message">
+                        Xenon: 收到的消息
+                      </div>
+                    </el-col>
+                  </el-row>
+                </div>
+              </el-tab-pane>
             </el-tabs>
           </div>
         </div>
@@ -79,7 +173,14 @@
       </el-aside>
 
       <el-container>
-        <el-header>{{ this.curDepartment }}({{ this.memberList.length }})</el-header>
+        <el-header>
+          <div v-if="isPrivateChat">
+            {{ this.curDepartment }}(私聊)
+          </div>
+          <div v-else>
+            {{ this.curDepartment }}({{ this.memberList.length }})
+          </div>
+        </el-header>
         <el-main id="scrollContainer" class="scrollContainer">
           <div>
             <div v-for="(message, index) in chatMessages" :key="index" :id="'div-' + index" :ref="'div-' + index">
@@ -179,15 +280,33 @@
         </el-main>
         <el-footer>
           <el-row id="icon-button">
-            <el-col :span="3">
-              <i class="el-icon-folder-opened icon-set" @click="openFileManager"></i>
-              <i class="el-icon-picture icon-set"></i>
-              <i class="el-icon-chat-dot-round icon-set" @click="historyVisible = true"></i>
+            <el-col :span="2">
+              <div class="file-two">
+                <i class="el-icon-folder-opened icon-set" @click="openFileManager"></i>
+                <i class="el-icon-picture icon-set"></i>
+              </div>
+            </el-col>
+            <el-col :span="1">
+              <el-popover placement="top" width="160" v-model="privateVisible_first" id="soloPop">
+                <p>创建私人聊天
+                </p>
+                <div v-for="(member, index) in memberList" :key="index" :id="'generated-div-' + index"
+                  class="department-member" @click="createPrivateChat(index)">
+                  {{ member.name }}
+                </div>
+                <div style="text-align: right; margin: 0">
+                  <el-button size="mini" type="text" @click="privateVisible_first = false">取消</el-button>
+                  <el-button type="primary" size="mini" @click="privateVisible_first = false">确定</el-button>
+                </div>
+                <div class="private" slot="reference">
+                  <i class="el-icon-s-custom icon-set" @click="openMemberMenu"></i>
+                </div>
+              </el-popover>
             </el-col>
             <el-col :span="1">
               <el-popover placement="top" width="160" v-model="atVisible" id="atPop">
                 <p>@成员</p>
-                <div class="department-member" @click="atAll">所有人</div>
+                <div class="department-member" @click="atAll" v-if="is_creator_or_manager">所有人</div>
                 <div v-for="(member, index) in memberList" :key="index" :id="'generated-div-' + index"
                   class="department-member" @click="atMember(index)">
                   {{ member.name }}
@@ -201,7 +320,7 @@
             </el-col>
             <el-col :span="1">
               <el-popover placement="top" width="160" v-model="privateVisible" id="soloPop">
-                <p>私聊成员</p>
+                <p>悄悄话</p>
                 <div v-for="(member, index) in memberList" :key="index" :id="'generated-div-' + index"
                   class="department-member" @click="privateMember(index)">
                   {{ member.name }}
@@ -216,16 +335,26 @@
               </el-popover>
             </el-col>
             <el-col :span="19">
-
             </el-col>
           </el-row>
 
-
-          <div class="inputArea">
+          <div class="inputArea" v-if="activeSelectName === 'second' || activeSelectName === 'third' ">
+            <el-input type="textarea" :rows="4" placeholder="请输入内容" v-model="messageInput" class="inputArea-body"
+              @keyup.enter.native="handleEnterGroup">
+            </el-input>
+            <el-button type="success" plain class="send-button" @click="sendGroupMessage">发送</el-button>
+          </div>
+          <div class="inputArea" v-else-if="isPrivateChat === false">
             <el-input type="textarea" :rows="4" placeholder="请输入内容" v-model="messageInput" class="inputArea-body"
               @keyup.enter.native="handleEnter">
             </el-input>
             <el-button type="success" plain class="send-button" @click="sendMessage">发送</el-button>
+          </div>
+          <div class="inputArea" v-else>
+            <el-input type="textarea" :rows="4" placeholder="请输入内容" v-model="messageInput" class="inputArea-body"
+              @keyup.enter.native="handleEnterPrivate">
+            </el-input>
+            <el-button type="success" plain class="send-button" @click="sendPrivateMessage">发送</el-button>
           </div>
         </el-footer>
       </el-container>
@@ -244,8 +373,8 @@ export default {
   },
   data() {
     return {
-      uid: this.$store.state.curUserID,
-      uname: this.$store.state.curUserName,
+      uid: 1,
+      uname: '',
       curDepartment: '花季猫狗猪猪兔兔牛马丁真收容中心',
       curDepartmentId: '1',
       departmentList: [],
@@ -297,22 +426,35 @@ export default {
       historyCheckVisible: false,
       historyInput: '',
       activeSelectName: 'first',
+      privateVisible_first: false,
+      privateChatList: [],
+      isPrivateChat: false,
+      curPrivateID: 0,
+      createChatVisible: false,
+      createChatForm: {
+        chatGroupName: '',
+        chatGroupMember: [],
+      },
+      createGroupChatList: [],
+      joinGroupChatList: [],
+      is_creator_or_manager: false,
     };
   },
   mounted() {
-    this.chatSocket = new WebSocket('ws://182.92.86.71:4514/ws/chat/104/');
-    this.chatSocket.onmessage = this.handleMessge;
     this.scrollToBottom();
-    this.getDepartments();
     this.check_profile_self();
+    this.getDepartments();
+    this.getPrivateChat();
+    this.getGroupChat();
+    this.checkSystemMessage();
   },
   updated() {
     // this.scrollToBottom();
   },
   methods: {
-    check_profile_self() {
+    async check_profile_self() {
       const self = this;
-      this.$api.user.post_check_profile_self()
+      await this.$api.user.post_check_profile_self()
         .then(function (response) {
           const user_info = JSON.parse(response.data.user_info);
           self.uid = user_info.user_id;
@@ -324,14 +466,17 @@ export default {
         .catch(function (error) {
           console.log(error);
         });
+      console.log("uid" + self.uid);
     },
-    getDepartments() {
-      //接口取企业
+    async getDepartments() {
       const self = this;
+      //接口取企业
+      await self.sleep(1500);
       self.departmentList.splice(0, self.departmentList.length);
       const dataObject = {
         tm_user_id: self.uid
       };
+      console.log(dataObject)
       const jsonString = JSON.stringify(dataObject);
       this.$api.chat.post_get_teams_for_user(jsonString)
         .then(function (response) {
@@ -342,6 +487,43 @@ export default {
               team_name: element.team_name
             }
             self.departmentList.push(team);
+
+          });
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+
+    },
+    async getGroupChat() {
+      const self = this;
+      //接口取企业
+      await self.sleep(1500);
+      self.createGroupChatList.splice(0, self.createGroupChatList.length);
+      self.joinGroupChatList.splice(0, self.joinGroupChatList.length);
+      const dataObject = {
+        user_id: self.uid
+      };
+      console.log(dataObject)
+      const jsonString = JSON.stringify(dataObject);
+      this.$api.chat.post_acquire_group_chat(jsonString)
+        .then(function (response) {
+          console.log("response");
+          console.log(response)
+          self.createGroupChatList.splice(0, self.createGroupChatList.length);
+          response.data.group_chats_info_creator.forEach(element => {
+            const group = {
+              gc_id: element.gc_id,
+              gc_name: element.gc_name
+            }
+            self.createGroupChatList.push(group);
+          });
+          response.data.group_chats_info_joiner.forEach(element => {
+            const group = {
+              gc_id: element.gc_id,
+              gc_name: element.gc_name
+            }
+            self.joinGroupChatList.push(group);
           });
         })
         .catch(function (error) {
@@ -351,6 +533,7 @@ export default {
     },
 
     async checkSystemMessage() {
+      this.isPrivateChat = false;
       this.chatMessages.splice(0, this.chatMessages.length);
       this.memberList.splice(0, this.memberList.length);
       this.curDepartment = '系统消息';
@@ -360,7 +543,7 @@ export default {
         user_id: self.uid
       };
       const jsonString = JSON.stringify(dataObject);
-      this.$api.message.post_check_notification_list(jsonString)
+      await this.$api.message.post_check_notification_list(jsonString)
         .then(function (response) {
           console.log(response)
           for (const item of response.data.notification_list_info) {
@@ -380,11 +563,11 @@ export default {
         .catch(function (error) {
           console.log(error);
         });
-      await this.sleep(500);
       self.scrollToBottom();
     },
 
     async checkTeamMessage(index) {
+      this.isPrivateChat = false;
       this.redDotNum[index + 1] = 0;
 
       this.curDepartment = this.departmentList[index].team_name;
@@ -394,11 +577,21 @@ export default {
         team_id: self.curDepartmentId,
         tm_user_id: self.uid
       };
+      if(this.chatSocket !== null)
+      {
+        this.chatSocket.close();
+      }
+      const socketURL = 'ws://182.92.86.71:4514/ws/chat/' + self.departmentList[index].team_id + '/';
+      console.log("socketURL" + socketURL);
+      this.chatSocket = new WebSocket(socketURL);
+      this.chatSocket.onmessage = this.handleMessage;
+
       const jsonString = JSON.stringify(dataObject);
       // 加载企业成员
       this.$api.chat.post_get_team_members_and_permissions(jsonString)
         .then(function (response) {
           self.memberList.splice(0, self.memberList.length);
+          self.is_creator_or_manager = response.data.is_creator_or_manager;
           response.data.members.forEach(element => {
             const mem = {
               uid: element.tm_user_id,
@@ -416,7 +609,7 @@ export default {
         team_id: self.curDepartmentId,
       };
       const jsonString1 = JSON.stringify(dataObject1);
-      this.$api.chat.post_get_team_chat_history(jsonString1)
+      await this.$api.chat.post_get_team_chat_history(jsonString1)
         .then(function (response) {
           response.data.chat_history.forEach(element => {
             let isSentByCurrentUser_1 = false;
@@ -442,7 +635,142 @@ export default {
           console.log(error);
         });
       // console.log(self.curDepartmentId);
-      await this.sleep(1700);
+      self.scrollToBottom();
+    },
+
+    async checkGroupMessage(index) {
+      this.isPrivateChat = false;
+      this.redDotNum[index + 1] = 0;
+      if(this.activeSelectName === 'second')
+      {
+        this.curDepartment = this.createGroupChatList[index].gc_name;
+        this.curDepartmentId = this.createGroupChatList[index].gc_id;
+      }
+      else {
+        this.curDepartment = this.joinGroupChatList[index].gc_name;
+        this.curDepartmentId = this.joinGroupChatList[index].gc_id;
+      }
+      const self = this;
+      const dataObject = {
+        gc_id: self.curDepartmentId
+      };
+      if(this.chatSocket !== null)
+      {
+        this.chatSocket.close();
+      }
+      const socketURL = 'ws://182.92.86.71:4514/ws/chat/' + self.curDepartmentId + '/';
+      console.log("socketURL" + socketURL);
+      this.chatSocket = new WebSocket(socketURL);
+      this.chatSocket.onmessage = this.handleMessage;
+      const jsonString = JSON.stringify(dataObject);
+      this.$api.chat.post_get_group_chat_members(jsonString)
+        .then(function (response) {
+          self.memberList.splice(0, self.memberList.length);
+          console.log(response);
+          response.data.members.forEach(element => {
+            const mem = {
+              uid: element.user_id,
+              name: element.user_name,
+              is_creator: element.is_creator
+            }
+            self.memberList.push(mem);
+          });
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+        self.chatMessages.splice(0, self.chatMessages.length);
+      
+        const dataObject1 = {
+        gc_id: self.curDepartmentId,
+      };
+      const jsonString1 = JSON.stringify(dataObject1);
+      await this.$api.chat.post_get_group_chat_history(jsonString1)
+        .then(function (response) {
+          response.data.chat_history.forEach(element => {
+            let isSentByCurrentUser_1 = false;
+            const num = parseInt(self.uid)
+            if (element.user_id === num) {
+              isSentByCurrentUser_1 = true;
+            }
+            const message = {
+              content: element.message,
+              isSentByCurrentUser: isSentByCurrentUser_1,
+              user_name: element.user_name,
+              message_type: element.message_type,
+              file_id: element.file_id,
+              cm_id: element.cm_id
+            }
+            // console.log(message);
+            self.chatMessages.push(message);
+          });
+          // console.log(self.chatMessages);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      // console.log(self.curDepartmentId);
+      self.scrollToBottom();
+    },
+
+
+    async checkPrivateMessage(index) {
+      this.isPrivateChat = true;
+      this.redDotNum[index + 1] = 0;
+      this.curDepartment = this.privateChatList[index].user_name;
+      this.curDepartmentId = this.privateChatList[index].user_id;
+      const self = this;
+      // 加载成员
+      this.memberList.splice(0, this.memberList.length);
+      const mem = {
+        uid: self.privateChatList[index].user_name,
+        name: self.privateChatList[index].user_id
+      }
+      self.memberList.push(mem);
+      self.curPrivateID = self.privateChatList[index].pc_id;
+      self.chatMessages.splice(0, self.chatMessages.length);
+      const dataObject = {
+        pc_id: self.privateChatList[index].pc_id,
+      };
+
+      if(this.chatSocket !== null)
+      {
+        this.chatSocket.close();
+      }
+      const socketURL = 'ws://182.92.86.71:4514/ws/chat/' + self.privateChatList[index].pc_id + '/';
+      console.log("socketURL" + socketURL);
+      this.chatSocket = new WebSocket(socketURL);
+      this.chatSocket.onmessage = this.handleMessage;
+
+      console.log(dataObject);
+      const jsonString = JSON.stringify(dataObject);
+      await this.$api.chat.post_get_private_chat_history(jsonString)
+        .then(function (response) {
+          console.log(response);
+          response.data.chat_history.forEach(element => {
+            let isSentByCurrentUser_1 = false;
+            const num = parseInt(self.uid)
+            if (element.user_id === num) {
+              isSentByCurrentUser_1 = true;
+            }
+            const message = {
+              content: element.message,
+              isSentByCurrentUser: isSentByCurrentUser_1,
+              user_name: element.user_name,
+              message_type: element.message_type,
+              file_id: element.file_id,
+              cm_id: element.cm_id,
+              private_connect_id: 0
+            }
+            // console.log(message);
+            self.chatMessages.push(message);
+          });
+          console.log(self.chatMessages);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      // console.log(self.curDepartmentId);
       self.scrollToBottom();
     },
 
@@ -477,25 +805,35 @@ export default {
     },
     handleMessage(event) {
       const data = JSON.parse(event.data);
-      let recv_message_used = {
-        content: data.message,
-        isSentByCurrentUser: false,
-        user_name: data.user_name,
-        message_type: data.message_type,
-        file_id: data.file_id,
-        private_connect_id: data.private_connect_id
-      }
-      if (this.uid === data.user_id) {
-        return;
-      }
+      console.log("111111111");
+        let recv_message_used = {
+          content: data.message,
+          isSentByCurrentUser: false,
+          user_name: data.user_name,
+          message_type: data.message_type,
+          file_id: data.file_id,
+          private_connect_id: data.private_connect_id
+        }
+        console.log(recv_message_used);
+        // if (this.uid === data.user_id) {
+        //   return;
+        // }
       this.handleAt(data);
-
       this.chatMessages.push(recv_message_used);
+      console.log(this.chatMessages);
     },
 
     handleEnter() {
       console.log('回车键被按下');
       this.sendMessage();
+    },
+    handleEnterPrivate() {
+      console.log('回车键被按下,是私聊模式');
+      this.sendPrivateMessage();
+    },
+    handleEnterGroup() {
+      console.log('回车键被按下,是私聊模式');
+      this.sendGroupMessage();
     },
     async sendMessage() {
       const self = this;
@@ -541,7 +879,7 @@ export default {
 
 
       let message_id = 1;
-      this.$api.chat.post_store_message(send_message_to_backend)
+      await this.$api.chat.post_store_message(send_message_to_backend)
         .then(function (response) {
           message_id = response.data.cm_id;
         })
@@ -549,7 +887,7 @@ export default {
           console.log(error);
         });
 
-      await this.sleep(2000);
+      // await this.sleep(2000);
 
       if (this.isAtAll === true || this.atList.length != 0) {
         console.log("消息处理")
@@ -576,7 +914,7 @@ export default {
           },
           'receiver_list': receiver_list
         })
-        this.$api.message.post_group_send_notification_to_user(jsonString)
+        await this.$api.message.post_group_send_notification_to_user(jsonString)
           .then(function (response) {
             console.log(response);
           })
@@ -588,12 +926,146 @@ export default {
 
       this.atList.splice(0, this.atList.length);
       this.isAtAll = false;
-      await self.sleep(1300);
+      // await self.sleep(1300);
       self.scrollToBottom();
       // console.log(this.chatMessages)
       console.log("send success")
     },
+    async sendPrivateMessage() {
+      const self = this;
+      if (self.messageInput === '\n' || self.messageInput === '') {
+        self.messageInput = '';
+        return;
+      }
+      // socket发送的内容
+      const send_message = JSON.stringify({
+        'message': self.messageInput,
+        'user_id': self.uid,
+        'user_name': self.uname,
+        'is_at_all': false,
+        'array_data': [],
+        'message_type': "message",
+        'file_id': 0,
+        'private_connect_id': 0
+      })
+      // 打印在屏幕上的内容
+      let send_message_used = {
+        content: self.messageInput,
+        isSentByCurrentUser: true,
+        user_name: self.uname,
+        message_type: "message",
+        file_id: 0
+      }
+      // 将消息存至数据库
+      const send_message_to_backend = JSON.stringify({
+        'message': self.messageInput,
+        'user_id': self.uid,
+        'pc_id': self.curPrivateID,
+        'message_type': "message"
+      })
+      this.chatMessages.push(send_message_used);
+      this.chatSocket.send(send_message);
+      this.messageInput = '';
 
+      ////// !!!!!!!存数据库
+      await this.$api.chat.post_store_private_message(send_message_to_backend)
+        .then(function (response) {
+          console.log(response);
+          console.log("fuck 送成功");
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      
+    },
+    async sendGroupMessage() {
+      const self = this;
+      if (this.messageInput === '\n' || this.messageInput === '') {
+        this.messageInput = '';
+        return;
+      }
+      const send_message = JSON.stringify({
+        'message': this.messageInput,
+        'user_id': this.uid,
+        'user_name': this.uname,
+        'is_at_all': this.isAtAll,
+        'array_data': this.atList,
+        'message_type': "message",
+        'file_id': 0,
+        'private_connect_id': this.privateChatMember
+      })
+      let send_message_used = {
+        content: this.messageInput,
+        isSentByCurrentUser: true,
+        user_name: this.uname,
+        message_type: "message",
+        file_id: 0
+      }
+      const send_message_to_backend = JSON.stringify({
+        'message': this.messageInput,
+        'user_id': this.uid,
+        'gc_id': this.curDepartmentId,
+        'is_at_all': this.isAtAll,
+        'array_data': this.atList,
+        'message_type': "message",
+        'private_connect_id': this.privateChatMember
+      })
+
+      this.chatMessages.push(send_message_used);
+      this.chatSocket.send(send_message);
+      this.messageInput = '';
+
+      let message_id = 1;
+      await this.$api.chat.post_store_group_message(send_message_to_backend)
+        .then(function (response) {
+          message_id = response.data.cm_id;
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+
+        if (this.isAtAll === true || this.atList.length != 0) {
+        console.log("消息处理")
+        let receiver_list = [];
+        if (this.isAtAll === true) {
+          for (const member of this.memberList) {
+            receiver_list.push(member.uid);
+          }
+        }
+        else {
+          for (const member of this.atList) {
+            receiver_list.push(member);
+          }
+        }
+        console.log("receiver_list: ", receiver_list)
+        const id = parseInt(this.uid);
+        const jsonString = JSON.stringify({
+          'notification': {
+            'name': "有人@了你",
+            'content': "@@@",
+            'creator_id': id,
+            'type': 'at',
+            'cm_id': message_id
+          },
+          'receiver_list': receiver_list
+        })
+        await this.$api.message.post_group_send_notification_to_user(jsonString)
+          .then(function (response) {
+            console.log(response);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+
+      }
+
+      this.atList.splice(0, this.atList.length);
+      this.isAtAll = false;
+      // await self.sleep(1300);
+      self.scrollToBottom();
+      // console.log(this.chatMessages)
+      console.log("send success Group")
+    },
     openFileManager() {
       this.$refs.fileInput.click();
     },
@@ -611,7 +1083,7 @@ export default {
       const formData = new FormData();
       formData.append('file', selectedFile);
 
-      this.$api.document.post_upload_file(formData)
+      await this.$api.document.post_upload_file(formData)
         .then(function (response) {
           file_id = response.data.file_id;
           const send_message_file = JSON.stringify({
@@ -641,7 +1113,7 @@ export default {
         .catch(function (error) {
           console.log(error);
         });
-      await self.sleep(4000);
+      // await self.sleep(4000);
       const send_message_to_backend = JSON.stringify({
         'message': selectedFile.name,
         'user_id': self.uid,
@@ -697,7 +1169,7 @@ export default {
       console.log(this.atList);
     },
     privateMember(index) {
-      this.messageInput = `(私聊 ${this.memberList[index].name}) `;
+      this.messageInput = `(对 ${this.memberList[index].name} 说悄悄话) `;
       this.privateChatMember = this.memberList[index].uid;
       console.log(this.privateChatMember);
     },
@@ -745,7 +1217,7 @@ export default {
         notification_id: notification_id,
       };
       const jsonString = JSON.stringify(dataObject);
-      this.$api.message.post_skip_info(jsonString)
+      await this.$api.message.post_skip_info(jsonString)
         .then(function (response) {
           console.log(response);
           for (var i = 0; i < self.departmentList.length; i++) {
@@ -761,18 +1233,23 @@ export default {
           console.log(error);
         });
 
-      await self.sleep(1500);
 
       self.checkTeamMessage(index);
       await self.sleep(1500);
-      console.log(cm_id);
+      console.log(typeof cm_id);
       let index_chat = 0;
-      for (var i = 0; i < self.chatMessages.length; i++) {
-        if (self.chatMessages[i].cm_id == cm_id) {
-          index_chat = i;
+      await new Promise((resolve, reject) => {
+        for (var i = 0; i < self.chatMessages.length; i++) {
+          if (self.chatMessages[i].cm_id == cm_id) {
+            index_chat = i;
+          }
         }
-      }
-      await self.sleep(1500);
+        resolve();
+      })
+
+      ////// !!!!!!!!!!!这里取不到
+      await self.sleep(2000);
+      console.log(index_chat);
       const divElement = document.getElementById('div-' + index_chat);
 
       console.log(divElement);
@@ -790,7 +1267,7 @@ export default {
         search_info: self.historyInput
       };
       const jsonString = JSON.stringify(dataObject);
-      this.$api.chat.post_search_chat_message(jsonString)
+      await this.$api.chat.post_search_chat_message(jsonString)
         .then(function (response) {
           console.log(response);
 
@@ -822,7 +1299,6 @@ export default {
         .catch(function (error) {
           console.log(error);
         });
-      await this.sleep(1300);
       self.scrollToBottom();
     },
     async skipToHistoryMessage(message) {
@@ -853,6 +1329,87 @@ export default {
 
       console.log(divElement);
       divElement.scrollIntoView({ behavior: 'smooth' });  // 滚动到指定div的位置
+    },
+    async createPrivateChat(index) {
+      const self = this;
+      const dataObject = {
+        user1_id: self.uid,
+        user2_id: self.memberList[index].uid,
+        team_id: self.curDepartmentId
+      };
+      const jsonString = JSON.stringify(dataObject);
+      await this.$api.chat.post_create_private_chat(jsonString)
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+        const h = this.$createElement;
+
+        this.$notify({
+          title: '通知',
+          message: h('i', { style: 'color: teal'}, '创建私聊成功')
+        });
+        self.privateVisible_first = false;
+        self.activeSelectName = 'third';
+        // 跳转到私聊界面
+    },
+    async getPrivateChat() {
+      const self = this;
+      await self.sleep(1500);
+      self.privateChatList.splice(0, self.privateChatList.length);
+      const dataObject = {
+        user_id: self.uid,
+      };
+      console.log(dataObject);
+      const jsonString = JSON.stringify(dataObject);
+      await this.$api.chat.post_acquire_private_chat(jsonString)
+        .then(function (response) {
+          console.log(response);
+          console.log(response.data.private_chats_info);
+          response.data.private_chats_info.forEach(element => {
+            const person = {
+              user_id: element.opposite_id,
+              user_name: element.opposite_name,
+              pc_id: element.pc_id
+            }
+            self.privateChatList.push(person);
+          });
+          console.log(self.privateChatList);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+    async createGroupChat() {
+      // console.log(this.createChatForm);
+      const self = this;
+      const dataObject = {
+        team_id: self.curDepartmentId,
+        creator_id: self.uid,
+        users_id: self.createChatForm.chatGroupMember,
+        gc_name: self.createChatForm.chatGroupName
+      };
+      // console.log(dataObject);
+      // console.log(self.createChatForm.chatGroupMember);
+      const jsonString = JSON.stringify(dataObject);
+      await this.$api.chat.post_create_group_chat(jsonString)
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      self.createChatForm.chatGroupName = '';
+      self.createChatForm.chatGroupMember.splice(0, self.createChatForm.chatGroupMember.length);
+      self.createChatVisible = false;
+      const h = this.$createElement;
+
+        this.$notify({
+          title: '通知',
+          message: h('i', { style: 'color: teal'}, '群聊创建成功')
+        });
     },
   }
 }
@@ -1033,6 +1590,7 @@ body>.el-container {
   height: 100px;
   margin-left: 0px;
   transition: background-color 0.3s ease-out;
+  overflow: auto;
 }
 
 .department-hovered {
@@ -1089,10 +1647,25 @@ body>.el-container {
 .historyPop {
   padding: 50px !important;
 }
+
 .SelectChat {
   margin: 0 46px 0 0px;
 }
+
 .newChat {
   text-align: center;
+}
+
+.solo {
+  padding: 0 0 0 62px;
+  margin: 0 83px 0 -61px;
+}
+
+.file-two {
+  margin: 0 -23px 0 0;
+}
+
+.private {
+  margin: 0 38px 0 -23px;
 }
 </style>
