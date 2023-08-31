@@ -148,6 +148,12 @@
         >Redo</t-button
       >
 
+      <t-button variant="text" @click="uploadDoc" ghost>保存</t-button>
+      <t-button variant="text" @click="getHistory">历史</t-button>
+
+      <!-- 新建团队界面 -->
+       
+
       <t-button @click="generateLink" variant="text" ghost>分享链接</t-button>
       <!-- <t-button variant="text" ghost>幽灵按钮</t-button> -->
     </div>
@@ -177,13 +183,37 @@
       </button>
     </floating-menu>
 
-    <editor-content id="pdfDom" class="editor__content" :editor="editor" />
+    <div
+      class="myeditor"
+      style="right: 0%; width: 100%; height: 100vh; position: relative"
+    >
+      <editor-content id="pdfDom" :editor="editor" />
+
+      <time-line :his="his" @child-event="handleChildEvent"></time-line>
+      <div
+        v-for="(h, index) in his"
+        :key="index"
+        class="history"
+        style="
+          width: 100px;
+          height: 100px;
+          background-color: black;
+          display: flex;
+          position: absolute;
+          bottom: 0;
+          left: 0;
+        "
+      >
+        <t-button variant="text" @click="(index) => changeContent(index)" ghost
+          >Redo</t-button
+        >
+      </div>
+    </div>
   </div>
 </template>
   
   <script>
-
-
+import { ChevronDownIcon } from "tdesign-icons-vue";
 import { TiptapCollabProvider } from "@hocuspocus/provider";
 import CharacterCount from "@tiptap/extension-character-count";
 import Collaboration from "@tiptap/extension-collaboration";
@@ -201,7 +231,7 @@ import { saveAs } from "file-saver";
 import htmlDocx from "html-docx-js/dist/html-docx";
 import TurndownService from "turndown";
 import suggestion from "./suggestion.js";
-
+import TimeLine from "@/components/TimeLine.vue";
 const getRandomElement = (list) => {
   return list[Math.floor(Math.random() * list.length)];
 };
@@ -219,6 +249,7 @@ export default {
     EditorContent,
     MenuBar,
     FloatingMenu,
+    TimeLine,
   },
 
   data() {
@@ -228,10 +259,20 @@ export default {
         color: this.getRandomColor(),
       },
       provider: null,
+      teamid: -1,
+      docid: -1,
       editor: null,
       status: "connecting",
       room: "room1",
+      his: [],
+
+      content: null,
+      tmpcontent: null,
     };
+  },
+  created() {
+    this.teamid = this.$route.params.teamid;
+    this.docid = this.$route.params.docid;
   },
 
   mounted() {
@@ -275,9 +316,22 @@ export default {
     });
 
     localStorage.setItem("currentUser", JSON.stringify(this.currentUser));
+
+    this.getHistory();
   },
 
   methods: {
+    clickHandler(data) {
+      this.$message.success(`选中【${data.value}】`);
+    },
+    getContent() {
+      return <div>操作四</div>;
+    },
+    handleChildEvent(data) {
+      console.log('Received data from child component:', data);
+      changeContent(data);
+    },
+
     setName() {
       const name = (window.prompt("Name") || "").trim().substring(0, 32);
 
@@ -391,6 +445,38 @@ export default {
       });
       saveAs(file);
     },
+// //////////////////////////////////////////////////////////////
+    uploadDoc() {
+      const htmlstring = this.editor.getHTML();
+      const data = JSON.stringify({
+        document_id: this.docid,
+        document_content: htmlstring,
+      });
+      this.$api.doc.post_upload_saved_document(data).then((res) => {
+        console.log("UP load"+res.data["msg"]);
+      });
+
+      this.getHistory();
+    },
+
+    getHistory() {
+      const data = JSON.stringify({
+        document_id: this.docid,
+      });
+
+      this.$api.doc
+        .post_show_save(data)
+        .then((res) => {
+          console.log(res.data["msg"]);
+          if (res.data["errno"] === 0) {
+            this.his = JSON.parse(res.data["s_info"]);
+            console.log("拿到了ids" +this.his);
+          }
+        })
+        .catch((err) => {
+          console.log("err");
+        });
+    },
 
     saveJSON() {
       var file = new File([this.editor.getJSON()], this.title + ".json", {
@@ -405,29 +491,46 @@ export default {
       });
       saveAs(file);
     },
+    //  see the history
+    changeContent(sdid) {
+      const data = {
+        save_id: sdid
+      };
+      this.$api.doc.post_search_save(data).then((res) => {
+        console.log(index);
+        console.log(res.data["errno"]);
+        if (res.data["errno"] === 0) {
+          this.content = res.data["content_message"];
+          this.editor.commands.setContent(this.content);
+        }
+      });
+      // TODO 差点逻辑
+      // 目标是能看以往的同时能回退当前版本
+      // this.content =
+      // document_content
+    },
 
+    //   generateLink() {
+    //   const link = "http://localhost:8080/Tiptap/w9n1xdmo/1"; //link=..
+    //   const el = document.createElement("textarea");
+    //   el.value = link;
+    //   document.body.appendChild(el);
+    //   el.select();
+    //   document.execCommand("copy");
+    //   document.body.removeChild(el);
+    //   this.$message.success("链接已复制到剪贴板");
 
-  //   generateLink() {
-  //   const link = "http://localhost:8080/Tiptap/w9n1xdmo/1"; //link=..
-  //   const el = document.createElement("textarea");
-  //   el.value = link;
-  //   document.body.appendChild(el);
-  //   el.select();
-  //   document.execCommand("copy");
-  //   document.body.removeChild(el);
-  //   this.$message.success("链接已复制到剪贴板");
-
-  //   this.$alert("链接已生成:" + link, "提示", {
-  //     confirmButtonText: "确定",
-  //     dangerouslyUseHTMLString: true,
-  //     callback: (action) => {
-  //       // this.$message({
-  //       //   type: 'info',
-  //       //   message: `action: ${ action }`
-  //       // });
-  //     },
-  //   });
-  // },
+    //   this.$alert("链接已生成:" + link, "提示", {
+    //     confirmButtonText: "确定",
+    //     dangerouslyUseHTMLString: true,
+    //     callback: (action) => {
+    //       // this.$message({
+    //       //   type: 'info',
+    //       //   message: `action: ${ action }`
+    //       // });
+    //     },
+    //   });
+    // },
 
     // -----------------------关于导出----------------------------------------
     // upload_saved_document(){
@@ -440,7 +543,6 @@ export default {
     // download_saved_document(){
     // }
   },
-
 
   beforeUnmount() {
     this.editor.destroy();
@@ -480,7 +582,7 @@ export default {
 }
 .editor {
   background-color: #fff;
-  border: 3px solid #0d0d0d;
+  border: 8px solid #000000;
   border-radius: 0.75rem;
   color: #0d0d0d;
   display: flex;
@@ -617,7 +719,13 @@ export default {
     background-color: rgba(#616161, 0.1);
     color: #616161;
   }
-
+  .el-dropdown-link {
+    cursor: pointer;
+    color: #409eff;
+  }
+  .el-icon-arrow-down {
+    font-size: 12px;
+  }
   pre {
     background: #0d0d0d;
     border-radius: 0.5rem;

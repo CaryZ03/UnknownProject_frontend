@@ -3267,12 +3267,14 @@ export default {
         this.$router.push({
           name: 'tiptap',
           params:{
-          
-          "docid": this.currentProgram.project_id,
+          "projectid": this.currentProgram.project_id,
+          "docid": 1,
           "teamid": this.currentTeam.team_id,
           },
         })
       },
+
+      
 
 
       //demand
