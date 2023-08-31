@@ -12,13 +12,22 @@ const Chat = () => import('../views/ChatView.vue')
 const Login = () => import('../views/LoginView.vue')
 const TiptapView = () => import('../views/Tiptap.vue') 
 
+const Invite = () => import('../views/InviteView.vue')
+
+const joinTeam = () => import('../views/JoinTeam.vue')
+
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: HomeView
+    component: HomeView,
+    children: [
+      {
+        path: "/invite/:id",
+      }
+    ]
 
   },
   {
@@ -26,6 +35,11 @@ const routes = [
     name: 'Login',
     component: Login
   },
+  // {
+  //   path: '/Invite/:key',
+  //   name: 'Invite',
+  //   component: Invite
+  // },
   {
     path: '/Text',
     name: 'Text',

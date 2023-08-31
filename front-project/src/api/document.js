@@ -19,6 +19,17 @@ export async function post_download_file(data) {
     })
 }
 
+//show_prototype_list
+export async function post_show_prototype_list(data) {
+    return request({
+        method: 'POST',
+        url:  '/document/show_prototype_list',
+        data: data,
+    })
+}
+
+
+
 
 
 

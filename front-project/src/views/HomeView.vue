@@ -107,6 +107,11 @@
       <el-table-column prop="team_description" label="团队描述"></el-table-column>
       <el-table-column prop="team_tel" label="联系电话"></el-table-column>
       <el-table-column prop="team_creator" label="创建者"></el-table-column>
+      <el-table-column label="操作">
+          <template slot-scope="{ row }">
+            <el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteTeam(row)"></el-button>
+          </template>
+        </el-table-column>
     </el-table>
     <el-button type="primary" icon="el-icon-plus" @click="showCreateTeamDialog()">新建团队</el-button>
   </el-dialog>
@@ -187,6 +192,46 @@ export default {
   watch: {},
   computed: {},
   methods: {
+
+    deleteTeam(row){
+      event.stopPropagation(); // 阻止冒泡事件
+      this.$confirm('确定要删除团队吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+
+          // 在这里执行具体的删除逻辑
+          const tmp ={
+            "team_id": row.team_id,
+          }
+          this.$api.team.post_delete_team(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("删除成功")
+              console.log(response.data.msg)
+              this.flashTeamList();
+            }
+          }).catch(error => {
+            alert("失败")
+            console.log("error：\n");
+            console.log(error)
+          })
+
+          
+
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+    },
 
 
     login() {
