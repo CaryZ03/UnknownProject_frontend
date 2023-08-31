@@ -129,19 +129,22 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
 
     <!-- 左侧导航栏 -->
     <!-- background-color="#2a2d30" -->
-    <el-menu :default-openeds="[ '1','2',]"  class="el-menu-vertical-demo"
+    <el-menu :default-openeds="[ '1',]"  class="el-menu-vertical-demo"
       background-color="#2a2d30 "
       text-color="#fff"
-      active-text-color="#ffd04b"  >
+      active-text-color="#ffd04b"  
+      ref="menus"
+      @select="handleMenuItemSelect"
+      >
 
       <el-menu-item index="7" @click="changeContent(3)" v-if="this.isProgramChosen === true">
         <i class="el-icon-s-order"></i>项目详情</el-menu-item>
 
-      <el-menu-item index="6" @click="changeContent(2.2)">
+      <el-menu-item index="6" @click="changeContent(2.2)" v-if="!this.isProgramChosen">
         <i class="el-icon-info"></i>团队信息
       </el-menu-item>
 
-      <el-submenu index="1" v-if="this.isProgramChosen">
+      <el-submenu index="1" v-if="this.isProgramChosen" ref="submenu1">
         <template slot="title"><i class="el-icon-sort" ></i>切换项目</template>
         <el-menu-item-group>
           <!-- <template slot="title">分组一</template> -->
@@ -169,7 +172,7 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
 
 
 
-      <el-submenu index="1" v-if="this.isProgramChosen === false">
+      <el-submenu index="1" v-if="this.isProgramChosen === false" ref="submenu1">
         <template slot="title"><i class="el-icon-collection" ></i>项目管理</template>
         <el-menu-item-group>
           <!-- <template slot="title">分组一</template> -->
@@ -181,7 +184,7 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
 
       </el-submenu>
 
-      <el-submenu index="2" v-if="this.isProgramChosen === true">
+      <el-submenu index="2" v-if="this.isProgramChosen === true" ref="submenu1">
         <template slot="title"><i class="el-icon-document" @click="changeContent(1)"></i>文档管理</template>
         <el-menu-item-group>
 
@@ -195,7 +198,7 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
       </el-submenu>
 
       <!-- 3 -->
-      <el-submenu index="3" v-if="this.isProgramChosen === true">
+      <el-submenu index="3" v-if="this.isProgramChosen === true" ref="submenu1">
         <template slot="title"><i class="el-icon-s-help" @click="changeContent(1)"></i>原型管理</template>
         <el-menu-item-group>
           
@@ -205,7 +208,7 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
       </el-submenu>
 
       <!-- 4 -->
-      <el-submenu index="4" v-if="this.isProgramChosen === true">
+      <el-submenu index="4" v-if="this.isProgramChosen === true" ref="submenu1">
         <template slot="title"><i class="el-icon-s-claim" @click="changeContent(1)"></i>需求管理</template>
         <el-menu-item-group>
           
@@ -217,7 +220,7 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
 
 
 
-      <el-submenu index="5">
+      <el-submenu index="5" ref="submenu1">
         <template slot="title"><i class="el-icon-setting" @click="changeContent(2)"></i>团队管理</template>
         <el-menu-item-group>
           <el-menu-item index="5-1" @click="changeContent(6)" v-if="this.personInform.identity !== '普通用户' ">
@@ -339,7 +342,6 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
 
             <!-- 项目列表（选中项目时） -->
           
-
             <div class="program-bottom" v-if="this.isProgramChosen === false">
                <!--按钮  -->
               <el-button
@@ -1169,18 +1171,7 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
        <el-table-column
          label="原型名" sortable
          prop="name">
-         <template slot-scope="scope">
-     <template v-if="scope.row.editable">
-       <div style="display: flex;">
-             <el-input v-model="scope.row.name" size="mini" @blur="saveEdit(scope.row)" ref="nameInput"></el-input>
-             <el-button type="text" icon="el-icon-check" @click="saveEdit(scope.row)"></el-button>
-       </div>
-     </template>
-     <template v-else>
-         <span @click="startEdit(scope.row)">{{ scope.row.name }}</span>
-         <el-button type="text" icon="el-icon-edit" @click="startEdit(scope.row)" style="float: right;"></el-button>
-     </template>
-   </template>
+        
        </el-table-column>
  
        <!-- column 2 -->
@@ -1842,8 +1833,17 @@ export default {
   
     methods: {
 
+      handleMenuItemSelect(index, indexPath){
+          // // 获取当前点击的 el-menu-item 的索引路径
+          // const itemIndexPath = indexPath[indexPath.length - 1];
 
-
+          // // 根据索引路径找到对应的 el-submenu，并打开它
+          // const submenu = this.$refs.submenu1[itemIndexPath];
+          // console.log("submenu:",submenu)
+          // if (submenu) {
+          //   submenu.open();
+          // }
+      },
 
       openEditDialog() {
     // 打开对话框时，将当前用户信息填充到表单中
@@ -2346,6 +2346,8 @@ export default {
     },
 
     loadInfo(){
+
+
           //获取当前团队信息
           this.currentTeam = this.$store.state.curTeam;
 
@@ -2786,9 +2788,10 @@ export default {
           }
           
           const tmp = {
-            "prototype_id": row.prototype_id
+            "prototype_id": row.prototype_id,
+            "recycle": 'True',
           }
-          this.$api.document.post_delete_prototype(tmp).then((response) => {
+          this.$api.document.post_change_prototype_recycle(tmp).then((response) => {
             // console.log(tmp)
             // console.log(response.data)
             if (response.data.errno == 0) {
@@ -2826,7 +2829,31 @@ export default {
         }).then(() => {
 
           // 在这里执行具体的删除逻辑
-          this.protoRecycleTable.splice(index, 1);
+          // this.protoRecycleTable.splice(index, 1);
+
+
+          //后端
+          const tmp = {
+            "prototype_id": row.prototype_id,
+          }
+          console.log("删除回收站原型input：",tmp)
+          this.$api.document.post_delete_prototype(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("删除成功")
+              console.log(response.data.msg)
+              this.getProtoRecycleList();
+
+            }
+            else{
+              console.log(response.data)
+            }
+          }).catch(error => {
+            alert("删除失败")
+            console.log("error：\n");
+            console.log(error)
+          })
        
           this.$message({
             type: 'success',
@@ -3123,6 +3150,27 @@ export default {
 
         this.protoRecycleTable.splice(index, 1);
         this.protoTable.push(row);
+
+        const tmp = {
+            "prototype_id": row.prototype_id,
+            "recycle": 'False',
+          }
+          this.$api.document.post_change_prototype_recycle(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("回收成功")
+              console.log(response.data.msg)
+
+              this.getProtoList();
+              this.getProtoRecycleList();
+
+            }
+          }).catch(error => {
+            alert("回收失败")
+            console.log("error：\n");
+            console.log(error)
+          })
 
         this.$message({
             type: 'success',
@@ -3572,6 +3620,11 @@ export default {
   },
 
   mounted: function (){
+
+      this.$store.state.curUserID = localStorage.getItem("curUserID");
+      this.$store.state.curTeam = JSON.parse(localStorage.getItem("curTeam"));
+      console.log('curTeam:',this.$store.state.curTeam)
+      console.log('curUserID:',this.$store.state.curUserID)
       this.loadInfo();
   }
     
