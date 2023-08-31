@@ -45,11 +45,7 @@ const routes = [
     name: 'Text',
     component: Text
   },
-  {
-    path: '/Tiptap/:appID/:room',
-    name: 'Tiptap',
-    component: TiptapView
-  },
+
   {
     path: '/about',
     name: 'about',
@@ -78,31 +74,26 @@ const routes = [
     component: Design,
 
   },
+  // preview 可以通过teamid进行跳转preview
+  {
+    path: '/Preview/:teamid/:ptid',
+    name: 'preview',
+    component: Design,
+
+  },
+
+
+  
   {
     path: '/WorkSpace',
     name: 'workSpace',
     component: WorkSpace,
+  },
 
-    children: [
-      {
-        path: 'Star',
-        name: 'star',
-      },
-      {
-        path: 'Default',
-        name: 'default',
-      },
-      {
-        path: 'Recent',
-        name: 'recent',
-
-      },
-      {
-        path: 'OnlineDoc',
-        name: 'onlineDoc',
-      }
-    ]
-
+  {
+    path: '/Tiptap/:teamid/:docid',
+    name: 'Tiptap',
+    component: TiptapView
   },
   {
     path: '/Chat',
@@ -129,6 +120,7 @@ router.beforeEach((to, from, next) => {
   if (to.path === from.path && to.path !== '/') {  // 判断目标路径是否相同
     return next(false)  // 阻止路由跳转
   }
+
   next()  // 允许路由跳转
 })
 const routerRePush = VueRouter.prototype.push

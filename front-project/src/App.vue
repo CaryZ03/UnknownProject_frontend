@@ -25,7 +25,41 @@ export default {
       socket: null,
     };
   },
-  
+  updated() {
+    this.socket = new WebSocket('ws://182.92.86.71:4514/ws/notification/receiver/7/');
+
+    this.socket.addEventListener('open', (event) => {
+      console.log('WebSocket connection opened:', event);
+
+      // 在这里可以发送用户认证信息，如 token 或其他信息
+      // this.socket.send(JSON.stringify({ "auth": "your_auth_token" }));
+      });
+      this.socket.addEventListener('message', (event) => {
+      const notification = JSON.parse(event.data);
+      console.log('Received notification:', notification);
+
+      // 将接收到的通知消息添加到数组中
+      this.notifications.push(notification);
+      const h = this.$createElement;
+
+        this.$notify({
+          title: '通知',
+          message: h('i', { style: 'color: teal'}, "你收到了一条通知消息")
+        });
+
+        this.$store.state.notificationRedNum += 1;
+    }); 
+
+    this.socket.addEventListener('close', (event) => {
+      console.log('WebSocket connection closed:', event);
+    });
+    },
+    beforeDestroy() {
+    // 在组件销毁之前，关闭 WebSocket 连接
+    if (this.socket !== null) {
+      this.socket.close();
+    }
+  },
   mounted() {
     this.$api.user
       .get_check_token()

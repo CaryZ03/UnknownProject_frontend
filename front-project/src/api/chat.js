@@ -33,6 +33,14 @@ export async function post_store_message(data) {
     })
 }
 
+export async function post_search_chat_message(data) {
+    return request({
+        method: 'POST',
+        url:  '/chat/search_chat_message',
+        data: data
+    })
+}
+
 
 
 
