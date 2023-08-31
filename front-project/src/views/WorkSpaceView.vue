@@ -3259,8 +3259,19 @@ export default {
       },
 
       resetNewProto() {
-    this.$refs.newProtoForm.resetFields();  // 重置表单数据
-    this.newProtoDialogVisible = false;  // 关闭对话框
+        this.$refs.newProtoForm.resetFields();  // 重置表单数据
+        this.newProtoDialogVisible = false;  // 关闭对话框
+      },
+
+      handleEditDoc(index, row){
+        this.$router.push({
+          name: 'tiptap',
+          params:{
+          
+          "docid": this.currentProgram.project_id,
+          "teamid": this.currentTeam.team_id,
+          },
+        })
       },
 
 

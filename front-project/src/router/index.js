@@ -92,8 +92,8 @@ const routes = [
   },
 
   {
-    path: '/Tiptap/:teamid/:docid',
-    name: 'Tiptap',
+    path: '/tiptap/:teamid/:docid',
+    name: 'tiptap',
     component: TiptapView
   },
   {
