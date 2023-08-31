@@ -83,6 +83,13 @@
               </template>
               下载图片
             </t-menu-item>
+            <t-menu-item @click="saveProto" value="item4">
+              <template #icon>
+                <icon name="login" />
+              </template>
+              保存该原型
+            </t-menu-item>
+            
           </t-menu-group>
           <template #operations>
             <t-button
@@ -100,45 +107,44 @@
 
     <div
       ref="elementToCapture"
-      style="background-color: aliceblue; width: 800px; height: 825px;"
+      style="background-color: aliceblue; width: 800px; height: 825px"
     >
-    hihihi
-    <vue-draggable-resizable
-          :parent="true"
-          v-for="(item, index) in clonedComponents"
-          ref="draggableRes"
-          :key="index"
-          @resizing="
-            (x, y, width, height) => innerResize(x, y, width, height, index)
-          "
-          @dragging="(x, y) => innerDrag(x, y, index)"
-          @resizestop="innerResizeStop"
-          :snap="true"
-          @dragstop="innerDragStop"
-          :w="x_scale[index]"
-          :h="y_scale[index]"
-          :x="x_off[index]"
-          :y="y_off[index]"
-          @activated="onSelected($event, index)"
-          style="
-            background-color: green;
-            border: 1px solid rgb(255, 255, 255);
-            -webkit-transition: background-color 200ms linear;
-            -ms-transition: background-color 200ms linear;
-            transition: background-color 200ms linear;
-          "
-        >
-          <div slot="tl">😀</div>
-          <div slot="tm">😀</div>
-          <div slot="tr">😀</div>
-          <div slot="mr">😀</div>
-          <div slot="br">😀</div>
-          <div slot="bm">😀</div>
-          <div slot="bl">😀</div>
-          <div slot="ml">😀</div>
-          <component-with-item :is="item"></component-with-item>
-        </vue-draggable-resizable>
-
+      hihihi
+      <vue-draggable-resizable
+        :parent="true"
+        v-for="(item, index) in clonedComponents"
+        ref="draggableRes"
+        :key="index"
+        @resizing="
+          (x, y, width, height) => innerResize(x, y, width, height, index)
+        "
+        @dragging="(x, y) => innerDrag(x, y, index)"
+        @resizestop="innerResizeStop"
+        :snap="true"
+        @dragstop="innerDragStop"
+        :w="x_scale[index]"
+        :h="y_scale[index]"
+        :x="x_off[index]"
+        :y="y_off[index]"
+        @activated="onSelected($event, index)"
+        style="
+          background-color: green;
+          border: 1px solid rgb(255, 255, 255);
+          -webkit-transition: background-color 200ms linear;
+          -ms-transition: background-color 200ms linear;
+          transition: background-color 200ms linear;
+        "
+      >
+        <div slot="tl">😀</div>
+        <div slot="tm">😀</div>
+        <div slot="tr">😀</div>
+        <div slot="mr">😀</div>
+        <div slot="br">😀</div>
+        <div slot="bm">😀</div>
+        <div slot="bl">😀</div>
+        <div slot="ml">😀</div>
+        <component-with-item :is="item"></component-with-item>
+      </vue-draggable-resizable>
     </div>
 
     <div></div>
@@ -228,9 +234,7 @@ export default {
     this.ws = new WebSocket("ws://182.92.86.71:4514/ws/editor/1145/");
     this.ws.onmessage = this.handleMessage;
   },
-  computed(){
-
-  },
+  computed() {},
   destroyed() {
     document.removeEventListener("keydown", this.handleKeyDown);
   },
@@ -276,12 +280,7 @@ export default {
         x_canvas: this.canvasX,
         y_canvas: this.canvasY,
       });
-      // x_canvas: int
-      // x_canvas: int
-
-      console.log(sendData);
       this.ws.send(sendData);
-      console.log("sent");
     },
 
     downloadHtmlFile(fileName) {
@@ -386,7 +385,6 @@ export default {
       const htmlContent = htmlString;
       this.previewContent = htmlString;
 
-
       this.$router.push({
         name: "preview",
         params: { teamid: this.teamid, ptid: this.ptid },
@@ -397,13 +395,65 @@ export default {
     test() {
       console.log("hihihi");
     },
+    // 存给服务器
+    saveProto() {
+      const saveData = JSON.stringify({
+        message: this.clonedComponents,
+        x_off: this.x_off,
+        y_off: this.y_off,
+        x_scale: this.x_scale,
+        y_scale: this.y_scale,
+        x_canvas: this.canvasX,
+        y_canvas: this.canvasY,
+      });
+
+      const sdmsg = {
+        prototype_id: this.ptid,
+        prototype_components: saveData,
+      };
+
+      this.$api.doc.post_save_prototype_components(sdmsg).then((res)=>{
+        if(res.data["errno"]===0){
+          console.log("参数保存成功");
+        }
+        else{
+          console.log("参数保存失败："+res.data["errno"]);
+        }
+      }).catch((err)=>{
+        console.log("获得error");
+      });
+    },
   },
 
   created() {
     this.teamid = this.$route.params.teamid;
     this.ptid = this.$route.params.ptid;
+    const data = {
+      prototype_id: this.ptid,
+    };
 
+    console.log("ptid:" + this.ptid);
 
+    this.$api.doc
+      .post_get_prototype_components(data)
+      .then((res) => {
+        if (res.data["errno"] === 0) {
+          console.log("Sent Successfully!");
+          const ddata = JSON.parse(res.data["components"]);
+          this.clonedComponents = ddata.message;
+          this.x_off = ddata.x_off;
+          this.y_off = ddata.y_off;
+          this.x_scale = ddata.x_scale;
+          this.y_scale = ddata.y_scale;
+          this.canvasX = ddata.x_canvas;
+          this.canvasY = ddata.y_canvas;
+        } else {
+          console.log("I did not receive it ");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     // 查成分是否是team内的成员可以参与编辑
   },
 };

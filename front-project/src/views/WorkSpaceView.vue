@@ -1141,7 +1141,7 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
                       placeholder="输入关键字搜索"/>
                   </template>
                       <template slot-scope="scope">
-                        <el-button size="mini" @click="handleEdit(scope.row)">编辑</el-button>
+                        <el-button size="mini" @click="editProto(scope.row)">编辑</el-button>
                         <el-button size="mini" type="danger" @click="handleDeleteProto(scope.$index, scope.row)">删除</el-button>
                       </template>
                     </el-table-column>
@@ -2012,6 +2012,15 @@ export default {
        this.$router.push({
               path: `/Chat`,
         });
+    },
+    editProto(rows){
+      this.$router.push({
+        name: "design",
+        params: {
+          teamid: this.$store.state.curTeamID,
+          ptid: rows.prototype_id,
+        },
+      });
     },
 
     saveData(row){

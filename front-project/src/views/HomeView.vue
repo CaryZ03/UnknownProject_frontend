@@ -264,6 +264,9 @@ export default {
             localStorage.setItem("token", response.data["token_key"]);
             alert("登录成功");
             this.wrapper.classList.remove("active-popup");
+
+            this.flashTeamList();
+            this.dialogVisible = true;
           } else {
             console.log(response.data);
           }
