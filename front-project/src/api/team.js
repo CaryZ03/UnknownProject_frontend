@@ -121,3 +121,22 @@ export async function post_member_role(data) {
         data: data
     })
 }
+
+//delete_member
+
+export async function post_delete_member(data) {
+    return request({
+        method: 'POST',
+        url:  `/team/delete_member`,
+        data: data
+    })
+}
+
+// invite_link
+export async function post_invite_link(data) {
+    return request({
+        method: 'POST',
+        url:  `/team/invite_link`,
+        data: data
+    })
+}

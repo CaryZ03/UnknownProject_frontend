@@ -71,6 +71,9 @@ export default {
           this.$store.state.curUserMail = localStorage.getItem("curUserMail");
           this.$store.state.curUserID = localStorage.getItem("curUserID");
           this.$store.state.curUserName = localStorage.getItem("curUserName");
+
+          
+
         } else {
           alert(res.data["errno"]);
           this.$store.state.isLogin = false;
