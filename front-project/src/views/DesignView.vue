@@ -64,11 +64,24 @@
               </template>
               个人页
             </t-menu-item>
-            <t-menu-item value="item4">
+            <t-menu-item @click="downloadHtmlFile" value="item4">
               <template #icon>
                 <icon name="login" />
               </template>
-              登录页
+              导出HTML
+            </t-menu-item>
+            <t-menu-item @click="createPreview" value="item4">
+              <template #icon>
+                <icon name="login" />
+              </template>
+              预览HTML
+            </t-menu-item>
+
+            <t-menu-item @click="captureAndSave" value="item4">
+              <template #icon>
+                <icon name="login" />
+              </template>
+              下载图片
             </t-menu-item>
           </t-menu-group>
           <template #operations>
@@ -87,31 +100,17 @@
 
     <div
       ref="elementToCapture"
-      @click="test"
-      :style="{ width: 1000, height: 1000, backgroundColor: canvasColor }"
+      style="background-color: aliceblue; width: 800px; height: 825px;"
     >
-      <vue-draggable-resizable
-        :draggable="false"
-        :resizable="false"
-        style="
-          background-color: rgb(255, 255, 255);
-          border: 1px solid rgb(251, 221, 221);
-          display: block;
-          justify-content: center; /* 水平居中 */
-          align-items: center; /* 垂直居中 */
-          margin: -250px 0 0 -130px;
-        "
-        :w="canvasX"
-        :h="canvasY"
-        :x="-200"
-        :y="-250"
-      >
-        <vue-draggable-resizable
+    hihihi
+    <vue-draggable-resizable
           :parent="true"
           v-for="(item, index) in clonedComponents"
           ref="draggableRes"
           :key="index"
-          @resizing="(x, y, width, height) => innerResize(x, y, width, height, index)"
+          @resizing="
+            (x, y, width, height) => innerResize(x, y, width, height, index)
+          "
           @dragging="(x, y) => innerDrag(x, y, index)"
           @resizestop="innerResizeStop"
           :snap="true"
@@ -123,7 +122,7 @@
           @activated="onSelected($event, index)"
           style="
             background-color: green;
-            border: 1px solid red;
+            border: 1px solid rgb(255, 255, 255);
             -webkit-transition: background-color 200ms linear;
             -ms-transition: background-color 200ms linear;
             transition: background-color 200ms linear;
@@ -139,7 +138,7 @@
           <div slot="ml">😀</div>
           <component-with-item :is="item"></component-with-item>
         </vue-draggable-resizable>
-      </vue-draggable-resizable>
+
     </div>
 
     <div></div>
@@ -170,6 +169,9 @@ export default {
       canvasX: 500,
       canvasY: 500,
       canvasColor: "red",
+      previewContent: "",
+      teamid: -1,
+      ptid: -1,
       currentComponent: "ComponentA", // 默认绑定 ComponentA 组件
       dynamicComponent: null,
       clonedComponents: [], // 存储克隆的组件数组
@@ -219,9 +221,15 @@ export default {
     Icon,
   },
   mounted() {
+    this.teamid = this.$route.params.teamid;
+    this.ptid = this.$route.params.ptid;
+    // TODO 添加检测
     document.addEventListener("keydown", this.handleKeyDown);
     this.ws = new WebSocket("ws://182.92.86.71:4514/ws/editor/1145/");
     this.ws.onmessage = this.handleMessage;
+  },
+  computed(){
+
   },
   destroyed() {
     document.removeEventListener("keydown", this.handleKeyDown);
@@ -282,6 +290,7 @@ export default {
       console.log(htmlString);
       alert(element);
       const htmlContent = htmlString;
+      this.previewContent = htmlString;
       const blob = new Blob([htmlContent], { type: "text/html" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
@@ -369,9 +378,33 @@ export default {
     },
     onDelete() {},
 
+    createPreview() {
+      const element = this.$refs.elementToCapture; // DOM 元素的引用
+      const htmlString = element.outerHTML;
+      console.log(htmlString);
+      alert(element);
+      const htmlContent = htmlString;
+      this.previewContent = htmlString;
+
+
+      this.$router.push({
+        name: "preview",
+        params: { teamid: this.teamid, ptid: this.ptid },
+        query: { htmlString },
+      });
+    },
+
     test() {
       console.log("hihihi");
     },
+  },
+
+  created() {
+    this.teamid = this.$route.params.teamid;
+    this.ptid = this.$route.params.ptid;
+
+
+    // 查成分是否是team内的成员可以参与编辑
   },
 };
 </script>
