@@ -16,6 +16,7 @@ const Invite = () => import('../views/InviteView.vue')
 
 const joinTeam = () => import('../views/JoinTeam.vue')
 
+const Preview = () =>  import('../views/Preview.vue')
 Vue.use(VueRouter)
 
 const routes = [
@@ -69,7 +70,7 @@ const routes = [
 
   },
   {
-    path: '/Design',
+    path: '/Design/:teamid/:ptid',
     name: 'design',
     component: Design,
 
@@ -78,7 +79,7 @@ const routes = [
   {
     path: '/Preview/:teamid/:ptid',
     name: 'preview',
-    component: Design,
+    component: Preview,
 
   },
 
