@@ -19,6 +19,14 @@ import 'tdesign-vue/es/style/index.css';
 Vue.use(TDesign);
 // VueDraggableResizable
 import VueDraggableResizable from 'vue-draggable-resizable'
+
+// optionally import default styles
+import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
+
+// import Vue from 'vue'
+import VModal from 'vue-js-modal'
+Vue.use(VModal)
+
 Vue.component('vue-draggable-resizable', VueDraggableResizable)
 
 //全局使用ionicons图标

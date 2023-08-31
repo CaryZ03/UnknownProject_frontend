@@ -1,385 +1,447 @@
 <template>
-    <div class="container">
+  <div class="container" id="capture">
+    <div class="leftbar">
+      <template>
+        <t-menu
+          theme="light"
+          defaultValue="item2"
+          :collapsed="collapsed"
+          @change="changeHandler"
+          height="550px"
+        >
+          <template #logo>
+            <!-- <img :width="collapsed ? 35 : 136" :src="iconUrl" alt="logo" /> -->
+          </template>
+          <t-menu-group title="主导航">
+            <t-menu-item value="item1">
+              <template #icon>
+                <icon name="app" />
+              </template>
+              仪表盘
+            </t-menu-item>
+          </t-menu-group>
+          <t-menu-group title="组件">
+            <t-submenu title="画布大小" value="2-1">
+              <template #icon>
+                <icon name="server" />
+              </template>
+              <t-menu-item value="2-1-1" @click="changeCanvas('500px', '500')"
+                >IPONE
+              </t-menu-item>
+              <t-menu-item value="2-1-2" @click="changeCanvas('600', '1024')"
+                >7寸平板电脑(600×1024)</t-menu-item
+              >
+              <t-menu-item value="2-1-3" @click="changeCanvas('720', '1280')"
+                >10寸平板电脑(720×1280)</t-menu-item
+              >
+              <t-menu-item value="2-1-4" @click="changeCanvas('1024', '768')"
+                >iPad(1024×768)</t-menu-item
+              >
+            </t-submenu>
+            <t-menu-item @click="cloneElement('testVue')" value="2-2">
+              <template #icon>
+                <icon name="testVue" />
+              </template>
+              表单项
+            </t-menu-item>
+            <t-menu-item value="2-3">
+              <template #icon>
+                <icon name="root-list" />
+              </template>
+              详情页
+            </t-menu-item>
+            <t-menu-item value="2-4">
+              <template #icon>
+                <icon name="check" />
+              </template>
+              结果页
+            </t-menu-item>
+          </t-menu-group>
+          <t-menu-group title="更多">
+            <t-menu-item value="item3">
+              <template #icon>
+                <icon name="user" />
+              </template>
+              个人页
+            </t-menu-item>
+            <t-menu-item @click="downloadHtmlFile" value="item4">
+              <template #icon>
+                <icon name="login" />
+              </template>
+              导出HTML
+            </t-menu-item>
+            <t-menu-item @click="createPreview" value="item4">
+              <template #icon>
+                <icon name="login" />
+              </template>
+              预览HTML
+            </t-menu-item>
 
-        <div ref="stageContainer" class="canvas-container"></div>
+            <t-menu-item @click="captureAndSave" value="item4">
+              <template #icon>
+                <icon name="login" />
+              </template>
+              下载图片
+            </t-menu-item>
+          </t-menu-group>
+          <template #operations>
+            <t-button
+              class="t-demo-collapse-btn"
+              variant="text"
+              shape="square"
+              @click.native="changeCollapsed"
+            >
+              <icon name="view-list" />
+            </t-button>
+          </template>
+        </t-menu>
+      </template>
+    </div>
 
+    <div
+      ref="elementToCapture"
+      style="background-color: aliceblue; width: 800px; height: 825px;"
+    >
+    hihihi
+    <vue-draggable-resizable
+          :parent="true"
+          v-for="(item, index) in clonedComponents"
+          ref="draggableRes"
+          :key="index"
+          @resizing="
+            (x, y, width, height) => innerResize(x, y, width, height, index)
+          "
+          @dragging="(x, y) => innerDrag(x, y, index)"
+          @resizestop="innerResizeStop"
+          :snap="true"
+          @dragstop="innerDragStop"
+          :w="x_scale[index]"
+          :h="y_scale[index]"
+          :x="x_off[index]"
+          :y="y_off[index]"
+          @activated="onSelected($event, index)"
+          style="
+            background-color: green;
+            border: 1px solid rgb(255, 255, 255);
+            -webkit-transition: background-color 200ms linear;
+            -ms-transition: background-color 200ms linear;
+            transition: background-color 200ms linear;
+          "
+        >
+          <div slot="tl">😀</div>
+          <div slot="tm">😀</div>
+          <div slot="tr">😀</div>
+          <div slot="mr">😀</div>
+          <div slot="br">😀</div>
+          <div slot="bm">😀</div>
+          <div slot="bl">😀</div>
+          <div slot="ml">😀</div>
+          <component-with-item :is="item"></component-with-item>
+        </vue-draggable-resizable>
 
     </div>
+
+    <div></div>
+  </div>
 </template>
   
-<script>
-import Konva from 'konva';
+  <script>
+import DragItem from "@/components/Prototype/DragItem.vue";
+import ComponentA from "../components/Prototype/Components/ComponentA.vue";
+import ComponentB from "../components/Prototype/Components/ComponentB.vue";
+import ComponentC from "../components/Prototype/Components/ComponentC.vue";
+import mDivider from "../components/Prototype/Components/mDivider.vue";
+import mDropDown from "../components/Prototype/Components/mDropDown.vue";
+import mLinkComponent from "../components/Prototype/Components/mLinkComponent.vue";
+import mPagination from "../components/Prototype/Components/mPagination.vue";
+import mTabs from "../components/Prototype/Components/mTabs.vue";
+import mToolBar from "../components/Prototype/Components/mToolBar.vue";
+import domToImage from "dom-to-image";
+import testVue from "./test.vue";
+import { Icon } from "tdesign-icons-vue";
+
+import SideBar from "@/components/Layouts/SideBar.vue";
+
+// import TumblrButton from '../components/Buttons/TumblrButton.vue';
 export default {
-    data() {
-        return {
-            stage: null,
-            layer: null,
-            shapes: [],
-            isMouseDown: false,
-            isDrawing: false,
-            shape: null,
-            deleteShape: null,
-            isDragging: false,
-            enterDraw: false,
-            overShape: false,
-            drawShape: 'circle'
+  data() {
+    return {
+      canvasX: 500,
+      canvasY: 500,
+      canvasColor: "red",
+      previewContent: "",
+      teamid: -1,
+      ptid: -1,
+      currentComponent: "ComponentA", // 默认绑定 ComponentA 组件
+      dynamicComponent: null,
+      clonedComponents: [], // 存储克隆的组件数组
+      outDraggable: false,
+      imageUrl: "",
+      selectComponent: null,
+      selectedIndex: -1,
+      ws: null,
+      collapsed: false,
+      x_off: [
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0,
+      ],
+      y_off: [
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0,
+      ],
+      x_scale: [
+        100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+        100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+        100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+        100, 100, 100, 100, 100, 100, 100, 100,
+      ],
+      y_scale: [
+        100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+        100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+        100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+        100, 100, 100, 100, 100, 100, 100, 100,
+      ],
+    };
+  },
+  components: {
+    DragItem,
+    ComponentA,
+    ComponentB,
+    ComponentC,
+    mDivider,
+    mDropDown,
+    mLinkComponent,
+    mPagination,
+    mTabs,
+    mToolBar,
+    testVue,
+    SideBar,
+    Icon,
+  },
+  mounted() {
+    this.teamid = this.$route.params.teamid;
+    this.ptid = this.$route.params.ptid;
+    // TODO 添加检测
+    document.addEventListener("keydown", this.handleKeyDown);
+    this.ws = new WebSocket("ws://182.92.86.71:4514/ws/editor/1145/");
+    this.ws.onmessage = this.handleMessage;
+  },
+  computed(){
 
-        };
-    },
-    mounted() {
-        //检测鼠标状态
-        // this.stage.on('mousedown',()=>{
-        //     this.isMouseDown=true
-        //     console.log("!!!!!!!!!!!!!!!!")
-        // });
-
-        // this.stage.on('mouseup',()=>{
-        //     this.isMouseDown=false
-        // });
-        //konvas舞台
-        this.stage = new Konva.Stage({
-            container: this.$refs.stageContainer,
-            width: window.innerWidth,
-            height: window.innerHeight,
-            draggable: false
-        });
-        this.layer = new Konva.Layer();
-        this.stage.add(this.layer);
-
-
-        this.stage.on('dragstart', () => {
-            this.isDragging = true
-        });
-        this.stage.on('dragmove', () => {
-
-        });
-        this.stage.on('dragend', () => {
-            this.isDragging = false
-        });
-
-        // var startPos;
-        this.stage.on('mousedown touchstart', (event) => {
-
-            if (!this.overShape) {
-                const { x, y } = event.target.getStage().getPointerPosition();
-                console.log("!!!!!!!!!!!!!!!!")
-                // startPos = {x,y}
-                if (this.isDragging) return;
-                this.isDrawing = true;
-                switch (this.drawShape) {
-                    case 'circle':
-                        this.shape = new Konva.Circle({
-                            x: x,
-                            y: y,
-                            radius: 0,
-                            stroke: 'black',
-                            strokeWidth: 2,
-                            fill: 'red',
-                            draggable: true,
-
-                        });
-                        console.log("draw circle")
-                        break;
-
-                    case 'rect':
-                        this.shape = new Konva.Rect({
-                            x: x,
-                            y: y,
-                            width: 0,
-                            height: 0,
-                            stroke: 'black',
-                            fill: 'red',
-                            draggable: true,
-                        });
-                        console.log("draw rect")
-                        break;
-
-
-                    default:
-                        break;
-                }
-
-                this.shape.on('mouseover', () => {
-                    this.overShape = true;
-                })
-                this.shape.on('mouseout', () => {
-                    this.overShape = false
-                })
-
-                console.log("break")
-                this.layer.add(this.shape);
-            }
-        });
-        this.stage.on('mousemove touchmove', (event) => {
-            if (!this.isDrawing) return;
-            if (this.isDragging) return;
-            console.log("break2")
-            const { x, y } = event.target.getStage().getPointerPosition();
-            switch (this.drawShape) {
-                case 'circle':
-                const pos = this.stage.getPointerPosition();
-                    const radius = Math.sqrt(
-                        Math.pow(x - this.shape.x(),2) + Math.pow(y - this.shape.y(),2)
-                    );
-
-                    console.log(radius)
-                    this.shape.radius(radius)
-                    this.layer.batchDraw();
-                    // 更新圆形的半径和位置
-                    // circle.radius(radius);
-                    console.log("draw circle")
-                    break;
-
-                case 'rect':
-                    const width = x - this.shape.x();
-                    const height = y - this.shape.y();
-                    this.shape.width(width);
-                    this.shape.height(height);
-                    this.layer.batchDraw();
-                    break;
-                default:
-                    break;
-            }
-        });
-
-        this.stage.on('mouseup touchend', () => {
-            this.isDrawing = false;
-            this.shape = null;
-        });
-
-        this.shape.on('mouseover mousedown', () => {
-            this.isDragging = true
+  },
+  destroyed() {
+    document.removeEventListener("keydown", this.handleKeyDown);
+  },
+  methods: {
+    async captureAndSave() {
+      const element = this.$refs.elementToCapture; // 替换为你的 DOM 元素的引用
+      const htmlString = element.outerHTML;
+      console.log(htmlString);
+      alert(element);
+      this.imageUrl = await domToImage
+        .toPng(element)
+        .then((dataUrl) => {
+          const a = document.createElement("a");
+          a.setAttribute("download", "screenshot");
+          a.href = dataUrl;
+          a.click();
         })
-
-
-
-        // 删除
-        // const deleteEle = () => {
-        //     weapon.destroy();
-        //     layer.batchDraw();
-        // };
-
-        // 绑定删除事件
-        // document.getElementById('deleteButton').addEventListener('click', deleteEle);
-
-
-        this.drawShape();
-        this.drawGrid();
+        .catch((error) => {
+          console.error("oops, something went wrong!", error);
+        })
+        .finally(this.close);
     },
 
-    methods: {
-        handleOpen(key, keyPath) {
-            console.log(key, keyPath);
-        },
-        handleClose(key, keyPath) {
-            console.log(key, keyPath);
-        },
-        drawShape() {
-            const rect = new Konva.Rect({
-                x: 50,
-                y: 50,
-                width: 100,
-                height: 100,
-                fill: 'red',
-                draggable: true,
-            });
+    handleMessage(event) {
+      const data = JSON.parse(event.data);
+      this.clonedComponents = data.message;
+      this.x_off = data.x_off;
+      this.y_off = data.y_off;
+      this.x_scale = data.x_scale;
+      this.y_scale = data.y_scale;
+      this.canvasX = data.x_canvas;
+      this.canvasY = data.y_canvas;
+      console.log("receive");
+    },
 
-            this.layer.add(rect);
-            this.layer.draw();
+    sendMessage() {
+      const sendData = JSON.stringify({
+        message: this.clonedComponents,
+        x_off: this.x_off,
+        y_off: this.y_off,
+        x_scale: this.x_scale,
+        y_scale: this.y_scale,
+        x_canvas: this.canvasX,
+        y_canvas: this.canvasY,
+      });
+      // x_canvas: int
+      // x_canvas: int
 
-            this.shapes.push(rect);
-        },
-        handleZoom(event) {
-            event.evt.preventDefault();
-            const scaleBy = 1.1;
-            const oldScale = this.stage.scaleX();
-            const mousePointTo = {
-                x: this.stage.getPointerPosition().x / oldScale - this.stage.x() / oldScale,
-                y: this.stage.getPointerPosition().y / oldScale - this.stage.y() / oldScale,
-            };
-            const newScale = event.evt.deltaY > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+      console.log(sendData);
+      this.ws.send(sendData);
+      console.log("sent");
+    },
 
-            this.stage.scale({ x: newScale, y: newScale });
+    downloadHtmlFile(fileName) {
+      const element = this.$refs.elementToCapture; // DOM 元素的引用
+      const htmlString = element.outerHTML;
+      console.log(htmlString);
+      alert(element);
+      const htmlContent = htmlString;
+      this.previewContent = htmlString;
+      const blob = new Blob([htmlContent], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    },
 
-            const newPos = {
-                x: -(mousePointTo.x - this.stage.getPointerPosition().x / newScale) * newScale,
-                y: -(mousePointTo.y - this.stage.getPointerPosition().y / newScale) * newScale,
-            };
+    handleClick(context) {
+      console.log("click", context);
+    },
+    handleHover(context) {
+      console.log("hover", context);
+    },
+    cloneElement(ClonedComponent) {
+      this.clonedComponents.push(ClonedComponent); // 将克隆的组件添加到数组中
+      this.sendMessage();
+    },
+    handleKeyDown(event) {
+      // 检测键盘事件并进行相应的处理
+      if (event.keyCode === 13) {
+        // 按下了回车键 (Enter)
+        console.log("enter");
+      } else if (event.keyCode === 27) {
+        // 按下了 Esc 键
+        console.log("esc");
+      } else if (event.keyCode === 46 || event.keyCode === 8) {
+        this.clonedComponents.splice(this.selectedIndex, 1);
+        console.log("delete");
+        this.sendMessage();
+      }
+    },
+    innerDrag: function (x, y, index) {
+      this.dragging = true;
+      this.x_off[index] = x;
+      this.y_off[index] = y;
+      // this.x = x;
+      // this.y = y;
+      console.log();
+    },
 
-            this.stage.position(newPos);
-            this.stage.batchDraw();
-        },
+    innerDragStop() {
+      this.outDraggable = true;
+      console.log("stop!!!");
+      this.sendMessage();
+    },
+    innerResize: function (x, y, w, h, index) {
+      this.x_off[index] = x;
+      this.y_off[index] = y;
+      this.x_scale[index] = w;
+      this.y_scale[index] = h;
+      console.log(w, h);
+      // this.w = w;
+      // this.h = h;
+    },
+    innerResizeStop() {
+      console.log("stop!!!");
+      this.sendMessage();
+    },
+
+    outerActive() {
+      this.outDraggable = true;
+    },
+    onSelected(event, index) {
+      this.selectedIndex = index;
+    },
+
+    changeHandler(active) {
+      console.log("change", active);
+    },
+    changeCollapsed() {
+      this.collapsed = !this.collapsed;
+      this.iconUrl = this.collapsed
+        ? "https://oteam-tdesign-1258344706.cos.ap-guangzhou.myqcloud.com/site/logo%402x.png"
+        : "https://tdesign.gtimg.com/site/baseLogo-light.png";
+    },
+    changeCanvas(x, y) {
+      this.canvasX = x;
+      this.canvasY = y;
+      console.log(x, y);
+      this.sendMessage();
+    },
+    onDelete() {},
+
+    createPreview() {
+      const element = this.$refs.elementToCapture; // DOM 元素的引用
+      const htmlString = element.outerHTML;
+      console.log(htmlString);
+      alert(element);
+      const htmlContent = htmlString;
+      this.previewContent = htmlString;
 
 
-    }
+      this.$router.push({
+        name: "preview",
+        params: { teamid: this.teamid, ptid: this.ptid },
+        query: { htmlString },
+      });
+    },
+
+    test() {
+      console.log("hihihi");
+    },
+  },
+
+  created() {
+    this.teamid = this.$route.params.teamid;
+    this.ptid = this.$route.params.ptid;
+
+
+    // 查成分是否是team内的成员可以参与编辑
+  },
 };
 </script>
-  
-<style scoped>
+
+<style>
 .container {
-    width: 100%;
-    height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-image: linear-gradient(220.55deg, #565656 0%, #181818 100%);
+
+  display: flex; /* 添加 flex 布局 */
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
 }
 
-.canvas-container {
-    border: 0;
-    display: block;
-    height: 100%;
-    left: 0;
-    list-style: none;
-    padding: 0;
-    position: absolute;
-    text-decoration: none;
-    top: 0;
-    width: 100%;
-    /* margin: 163px 0 0 482px; */
-    background-color: initial;
-    background-image: linear-gradient(220.55deg, #FFF6EB 0%, #DFD1C5 100%);
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-}
+.leftbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  /* width: 10%; */
+  height: 100%;
+  /* background-size: cover;
+  background-position: center; */
+  /* background-image: linear-gradient(220.55deg, #565656 0%, #181818 100%); */
 
-.canvas-container {
-    height: 100%;
-    width: 100%;
+  display: flex; /* 添加 flex 布局 */
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
 }
 </style>
   
-
-
-<style scoped>
-/* leftbar */
-body {
-    background: #eee;
-    /* This is just a helper in case the element has a transparent background or white colors. */
-}
-
-@keyframes template_animation_leave {
-    0% {
-        background-position: 0 -2400px;
-    }
-
-    to {
-        background-position: 0 0;
-    }
-}
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    outline: 0;
-    padding: 0;
-    user-select: none;
-}
-
-.inherited-styles-for-exported-element {
-    color: #19191a;
-    cursor: default;
-    font-family: Inter, -apple-system, "San Francisco", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
-    font-size: 12px;
-    text-align: center;
-}
-
-.ed-svg-icon {
-    transform: translateZ(0);
-}
-
-.templateTool {
-    align-items: center;
-    display: flex;
-}
-
-.templateTool--icon {
-    background-image: url(https://cdn.boardmix.cn/app/assets/template-icon-spirit-a580efa1.png);
-    background-size: cover;
-    height: 80px;
-    width: 80px;
-}
-
-.toolbar-item {
-    align-items: center;
-    display: flex;
-    height: 40px;
-    justify-content: center;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 0;
-    position: relative;
-    width: 40px;
-}
-
-.toolbar-item--icon {
-    border-radius: 4px;
-    height: 40px;
-    width: 40px;
-}
-
-.toolbar-item--icon-img {
-    height: 40px;
-    pointer-events: none;
-    width: 40px;
-}
-
-.toolbar--content {
-    background-color: #fff;
-    border: .8px solid rgba(5, 4, 16, .09);
-    border-image: none 100% 1 0 1 0 stretch;
-    border-radius: 8px;
-    box-shadow: 0 6px 20px rgba(25, 25, 26, .06), 0 2px 12px rgba(25, 25, 26, .04);
-    padding: 3px;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    transition: left .15s;
-    width: 48px;
-    z-index: 10;
-}
-
-.toolbar--more {
-    align-items: center;
-    border-radius: 4px;
-    display: flex;
-    height: 40px;
-    justify-content: center;
-    position: relative;
-    width: 40px;
-}
-
-.toolbar--scroller {
-    padding-top: 8px;
-    transition: height .2s;
-}
-
-.toolbar--before-item,
-.toolbar--exchange-item {
-    margin-bottom: 8px;
-}
-
-.toolbar--divider {
-    background: rgba(5, 4, 16, .09);
-    height: 1px;
-    margin: 0 auto;
-    width: 32px;
-}
-
-.toolbar--more-blue {
-    background: #7856ff;
-    border-radius: 50%;
-    height: 6px;
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 6px;
-}
-
-.toolbar--more:hover,
-.toolbar-item--icon:hover {
-    background-color: rgba(18, 17, 42, .05);
-}
-
-.templateTool:hover .templateTool--animate {
-    animation: template_animation_enter .15s steps(30) forwards;
-    animation-range-end: normal;
-    animation-range-start: normal;
-    animation-timeline: auto;
-}
-</style>

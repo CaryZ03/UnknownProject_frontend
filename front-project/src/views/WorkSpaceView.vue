@@ -3,7 +3,7 @@
     <el-container style="height: 100%; border: 2px solid #eee">
   <!-- 侧边栏 -->
   
-  <el-aside width="250px" style="background-color:#2a2d30 ;height: 100%; padding: 0;">
+  <el-aside width="250px" style="height: 100%; padding: 0;"  :class="{'pro-chosen':isProgramChosen }" >
     
     <!-- aside top -->
     <div class="aside-top">
@@ -14,7 +14,8 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
       <el-popover
   placement="right"
   width="400"
-  trigger="click" >
+  trigger="click" 
+  @hide="isDeleteButtonPressed = false">
         <!--内容  -->
         <div class=" inherited-styles-for-exported-element2">
           
@@ -28,6 +29,7 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
             <div>
 
               <!-- <el-col v-for="document in documentTable" :key="document.id" :span="6"></el-col> -->
+              <!-- 切换团队单元格 -->
               <div style="opacity: 1;" v-for="team in teamList" :key="team.team_id" :span="6" @click="changeCurTeam(team)" >
                 <div data-test-id="aside-space-item" class="flex relative items-center justify-between cursor-pointer px-2 rounded text-black animate-hover h-[58px]">
                   <div class="flex items-center w-10/12">
@@ -50,10 +52,45 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
                       <div class="text-ellipsis text-grey3 text-t4 mt-px w-full">{{team.team_name}}</div>
                     </div>
 
+                    
+
                     <i class="el-icon-check" v-if="team.team_id === currentTeam.team_id"></i>
+                    <el-button type="danger" icon="el-icon-close" size="mini" @click="deleteTeam(team.team_id)" v-if="isDeleteButtonPressed && team.team_id !== currentTeam.team_id"></el-button>
                   </div>
                 </div>
               </div>
+
+              <!-- 新增和删除按钮 -->
+              <div style="opacity: 1;"  :span="6"  >
+                <div data-test-id="aside-space-item" class="flex relative items-center justify-between cursor-pointer px-2 rounded text-black animate-hover h-[58px]">
+                  <div class="flex items-center w-10/12">
+
+                    <!-- 按钮 -->
+                    <el-button type="primary" icon="el-icon-plus"  @click="showCreateTeamDialog()" circle></el-button>
+                    <el-button type="danger" icon="el-icon-delete" @click="isDeleteButtonPressed = !isDeleteButtonPressed" circle></el-button>
+                      
+                  </div>
+                </div>
+              </div>
+
+              <!-- 新建团队界面 -->
+              <el-dialog :visible.sync="createTeamDialogVisible" title="新建团队" :modal-append-to-body="false">
+              <el-form label-width="100px">
+                <el-form-item label="团队名称">
+                  <el-input v-model="newTeam.team_name" placeholder="请输入团队名称"></el-input>
+                </el-form-item>
+                <el-form-item label="团队描述">
+                  <el-input v-model="newTeam.team_description" type="textarea" rows="3" placeholder="请输入团队描述"></el-input>
+                </el-form-item>
+                <el-form-item label="联系电话">
+                  <el-input v-model="newTeam.team_tel" placeholder="请输入联系电话"></el-input>
+                </el-form-item>
+              </el-form>
+              <span slot="footer" class="dialog-footer">
+                <el-button @click="cancelCreateTeam">取消</el-button>
+                <el-button type="primary" @click="submitCreateTeam">确定</el-button>
+              </span>
+            </el-dialog>
 
 
 
@@ -66,31 +103,77 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
         <el-button  size="mini" icon="el-icon-sort" slot="reference" circle></el-button>
       </el-popover>
 
-        
-          
       
     </div>
 
     <div class="aside-top-below" v-if="this.isProgramChosen === true">
-      <span style="padding-left: 8px;
-padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ this.currentProgram.name }}</span>
+      <!-- <span style="padding: 0 7px 0 0px;; font-size: 10px;"><i class="el-icon-collection-tag"></i>当前项目：</span> -->
+      
+        <div class="relative" style="display: flex;margin: 19px 0 0px;">
+                            <!-- 图标 -->
+                            <span class="text-h4 flex flex-shrink-0 select-none 
+                            items-center justify-center rounded uppercase 
+                            leading-none text-black2 w-[34px] h-[34px]" 
+                            style="font-size: 20px; 
+                            background-color: rgb(62, 193, 250);">
+                            {{getInitials(this.currentProgram.name)}}
+                            </span>
+                            <span style="padding: 7px 0 0 10px;">{{ this.currentProgram.name }}</span>
+                        </div>
     </div>
 
     <!-- 返回工作栏按钮 -->
     <div  v-if="this.isProgramChosen === true">
-      <el-button  @click="backToWorkspace()" style="margin: 16px 0 0 41px;" size="mini">返回工作台</el-button>
+      <el-button  @click="backToWorkspace()" style="margin: 16px 0 0 23px;" size="mini">返回工作台</el-button>
     </div>
 
     <!-- 左侧导航栏 -->
+    <!-- background-color="#2a2d30" -->
     <el-menu :default-openeds="[ '1','2',]"  class="el-menu-vertical-demo"
-      background-color="#2a2d30"
+      background-color="#2a2d30 "
       text-color="#fff"
-      active-text-color="#ffd04b">
-      <el-submenu index="1">
+      active-text-color="#ffd04b"  >
+
+      <el-menu-item index="7" @click="changeContent(3)" v-if="this.isProgramChosen === true">
+        <i class="el-icon-s-order"></i>项目详情</el-menu-item>
+
+      <el-menu-item index="6" @click="changeContent(2.2)">
+        <i class="el-icon-info"></i>团队信息
+      </el-menu-item>
+
+      <el-submenu index="1" v-if="this.isProgramChosen">
+        <template slot="title"><i class="el-icon-sort" ></i>切换项目</template>
+        <el-menu-item-group>
+          <!-- <template slot="title">分组一</template> -->
+          <!-- <el-menu-item index="1-1" @click="changeContent(3)" v-if="this.isProgramChosen === true"><i class="el-icon-s-order"></i>项目详情</el-menu-item> -->
+          <el-menu-item  :index="'1-' + (index + 1)" @click="handleEdit(index,program)" v-for="(program,index) in this.tableData" :key="index" :span = 6>
+            <template>
+              <div class="relative" style="display: flex;">
+              <!-- <span class="text-h4 flex flex-shrink-0 select-none 
+                            items-center justify-center rounded uppercase 
+                            leading-none text-black2 w-[34px] h-[34px]" 
+                            style="font-size: 12px; 
+                            background-color: rgb(250, 250, 62);">
+                            {{getInitials(program.name)}}
+              </span> -->
+              <el-avatar :size="30" :round="true">{{ getInitials(program.name) }}</el-avatar>
+              <span style="padding: 0 0 0 10px;margin: -7px 0px 0;max-width: 70%;
+              overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ program.name }}</span>
+              
+            </div>
+            </template>
+          </el-menu-item>
+        </el-menu-item-group>
+
+      </el-submenu>
+
+
+
+      <el-submenu index="1" v-if="this.isProgramChosen === false">
         <template slot="title"><i class="el-icon-collection" ></i>项目管理</template>
         <el-menu-item-group>
           <!-- <template slot="title">分组一</template> -->
-          <el-menu-item index="1-1" @click="changeContent(3)" v-if="this.isProgramChosen === true"><i class="el-icon-s-order"></i>项目详情</el-menu-item>
+          <!-- <el-menu-item index="1-1" @click="changeContent(3)" v-if="this.isProgramChosen === true"><i class="el-icon-s-order"></i>项目详情</el-menu-item> -->
           <el-menu-item index="1-2" @click="changeContent(0)" v-if="this.isProgramChosen === false"><i class="el-icon-s-order"></i>项目列表</el-menu-item>
           <el-menu-item index="1-2" @click="changeContent(0)" v-if="this.isProgramChosen"><i class="el-icon-sort"></i>切换项目</el-menu-item>
           <el-menu-item index="1-3" @click="changeContent(0.1)" v-if="this.isProgramChosen === false"><i class="el-icon-delete"></i>回收站</el-menu-item>
@@ -101,7 +184,7 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
       <el-submenu index="2" v-if="this.isProgramChosen === true">
         <template slot="title"><i class="el-icon-document" @click="changeContent(1)"></i>文档管理</template>
         <el-menu-item-group>
-          <template slot="title">分组一</template>
+
           <el-menu-item index="2-1" @click="changeContent(1)"><i class="el-icon-s-order"></i>文档列表</el-menu-item>
           <el-menu-item index="2-2" @click="changeContent(1.1)"><i class="el-icon-delete"></i>回收站</el-menu-item>
         </el-menu-item-group>
@@ -113,9 +196,9 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
 
       <!-- 3 -->
       <el-submenu index="3" v-if="this.isProgramChosen === true">
-        <template slot="title"><i class="el-icon-document" @click="changeContent(1)"></i>原型管理</template>
+        <template slot="title"><i class="el-icon-s-help" @click="changeContent(1)"></i>原型管理</template>
         <el-menu-item-group>
-          <template slot="title">分组一</template>
+          
           <el-menu-item index="3-1" @click="changeContent(4)"><i class="el-icon-s-order"></i>原型列表</el-menu-item>
           <el-menu-item index="3-2" @click="changeContent(4.1)"><i class="el-icon-delete"></i>回收站</el-menu-item>
         </el-menu-item-group>
@@ -123,11 +206,11 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
 
       <!-- 4 -->
       <el-submenu index="4" v-if="this.isProgramChosen === true">
-        <template slot="title"><i class="el-icon-document" @click="changeContent(1)"></i>需求管理</template>
+        <template slot="title"><i class="el-icon-s-claim" @click="changeContent(1)"></i>需求管理</template>
         <el-menu-item-group>
-          <template slot="title">分组一</template>
+          
           <el-menu-item index="4-1" @click="changeContent(5)"><i class="el-icon-s-order"></i>需求列表</el-menu-item>
-          <el-menu-item index="4-2" @click="changeContent(5.1)"><i class="el-icon-delete"></i>回收站</el-menu-item>
+          <!-- <el-menu-item index="4-2" @click="changeContent(5.1)"><i class="el-icon-delete"></i>回收站</el-menu-item> -->
         </el-menu-item-group>
       </el-submenu>
 
@@ -137,10 +220,12 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
       <el-submenu index="5">
         <template slot="title"><i class="el-icon-setting" @click="changeContent(2)"></i>团队管理</template>
         <el-menu-item-group>
-          <template slot="title">分组一</template>
-          <el-menu-item index="5-1" @click="changeContent(2)"><i class="el-icon-user"></i>人员管理</el-menu-item>
-          <el-menu-item index="5-2" @click="changeContent(2.1)"><i class="el-icon-chat-line-round"></i>团队群聊</el-menu-item>
-          <el-menu-item index="5-3" @click="changeContent(2.2)"><i class="el-icon-info"></i>团队信息</el-menu-item>
+          <el-menu-item index="5-1" @click="changeContent(6)" v-if="this.personInform.identity !== '普通用户' ">
+            <i class="el-icon-s-promotion"></i>申请管理
+          </el-menu-item>
+          <el-menu-item index="5-2" @click="changeContent(2)"><i class="el-icon-user"></i>人员管理</el-menu-item>
+          <el-menu-item index="5-3" @click="changeRouter()"><i class="el-icon-chat-line-round"></i>团队群聊</el-menu-item>
+          <!-- <el-menu-item index="5-3" @click="changeContent(2.2)"><i class="el-icon-info"></i>团队信息</el-menu-item> -->
         </el-menu-item-group>
         
       </el-submenu>
@@ -150,7 +235,7 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
   <!-- 右边部分 -->
   <el-container>
     <!-- 右侧导航栏 header -->
-    <el-header style="color: #eee; font-size: 12px; display: flex">
+    <el-header style="color: #eee; font-size: 12px; display: flex" :class="{'pro-chosen-header':isProgramChosen }">
      
         <el-breadcrumb separator="/" style="margin: 28px 0 0;color:#eee ; ">
           <el-breadcrumb-item :to="{ path: '/' }" >首页</el-breadcrumb-item>
@@ -163,7 +248,7 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
 
         <router-link to="/Chat" class="menu-bell-router">
           <div class="menu-bell">
-            <el-badge class="item" :value="12" :max="99">
+            <el-badge class="item" :value="this.$store.state.notificationRedNum" :max="99">
                 <i class="el-icon-message-solid" size="large"></i>
             </el-badge>
           </div>
@@ -242,6 +327,9 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
             @click="handleEdit(scope.$index, scope.row)">查看</el-button>
           <el-button
             size="mini"
+            @click="handleCopy(scope.$index, scope.row)">复制</el-button>
+          <el-button
+            size="mini"
             type="danger"
             @click="handleDelete(scope.$index, scope.row)" >删除</el-button>
         </template>
@@ -250,59 +338,7 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
             </el-table>
 
             <!-- 项目列表（选中项目时） -->
-            <el-table
-            :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
-            :default-sort = "{prop: 'date', order: 'descending'}"
-            style="width: 100%" v-if="this.isProgramChosen ">
-
-      <el-table-column
-        label="开始时间"
-        prop="date" sortable icon="el-icon-time">
-        <template slot-scope="scope">
-          <i class="el-icon-time"></i>
-          <span style="margin-left: 10px">{{ scope.row.date }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column
-        label="项目名称" sortable
-        prop="name">
-        <template slot-scope="scope">
-    <template v-if="scope.row.editable">
-      <div style="display: flex;">
-            <el-input v-model="scope.row.name" size="mini" @blur="saveEdit(scope.row)" ref="nameInput"></el-input>
-            <el-button type="text" icon="el-icon-check" @click="saveEdit(scope.row)"></el-button>
-      </div>
-    </template>
-    <template v-else>
-        <span @click="startEdit(scope.row)">{{ scope.row.name }}</span>
-        <el-button type="text" icon="el-icon-edit" @click="startEdit(scope.row)" style="float: right;"></el-button>
-    </template>
-  </template>
-      </el-table-column>
-
-      <el-table-column
-        label="负责人" sortable
-        prop="person">
-      </el-table-column>
-
-      <el-table-column
-        align="right">
-        <template slot="header" slot-scope="scope" >
-          <el-input
-            v-model="search"
-            size="mini"
-            placeholder="输入关键字搜索"/>
-        </template>
-        <template slot-scope="scope" >
-          <el-button
-            size="mini"
-            @click="handleEdit(scope.$index, scope.row)">切换</el-button>
-   
-        </template>
-      </el-table-column>
-
-            </el-table>
+          
 
             <div class="program-bottom" v-if="this.isProgramChosen === false">
                <!--按钮  -->
@@ -376,7 +412,7 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
       <el-table-column
         label="项目名称" sortable
         prop="name">
-        <template slot-scope="scope">
+        <!-- <template slot-scope="scope">
     <template v-if="scope.row.editable">
       <div style="display: flex;">
             <el-input v-model="scope.row.name" size="mini" @blur="saveEdit(scope.row)" ref="nameInput"></el-input>
@@ -387,7 +423,7 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
         <span @click="startEdit(scope.row)">{{ scope.row.name }}</span>
         <el-button type="text" icon="el-icon-edit" @click="startEdit(scope.row)" style="float: right;"></el-button>
     </template>
-  </template>
+  </template> -->
       </el-table-column>
 
       <!-- column 3 -->
@@ -666,13 +702,17 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
               <el-card shadow="hover" style="width: 500px;">
                 <div style="display: flex; align-items: center;">
                   <el-avatar :size="80" :round="true">{{ getInitials(personInform.nickname) }}</el-avatar>
-                  <div style="margin-left: 20px;">
-                    <h3>{{ personInform.nickname }}</h3>
+                  <div style="margin-left: 20px;max-width: 70%;">
+                    <h3 style="font-size: 20px;">{{ personInform.nickname }}</h3>
                     <p>Realname: {{ personInform.realname }}</p>
                     <p>Email: {{ personInform.address }}</p>
                     <p>Identity: {{ personInform.identity }}</p>
+                    <p>Tel: {{ personInform.tel }}</p>
                   </div>
                 </div>
+                <el-button type="primary" icon="el-icon-edit" @click="openEditDialog" size="mini" style="float:right
+                "></el-button>
+
               </el-card>
 
               <span  class="inherited-styles-for-exported-element">团队成员信息</span>
@@ -692,7 +732,7 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
                 <!-- column 2 -->
                 <el-table-column
                   label="真实姓名" sortable
-                  prop="realname">
+                  prop="real_name">
                 </el-table-column>
 
                  <!-- column 3 -->
@@ -795,6 +835,26 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
                       </div>
                 </el-dialog>
 
+              <!-- changePersonInform -->
+              <el-dialog title="编辑用户信息" :visible.sync="editPersonInformDialogVisible" width="30%">
+                <el-form :model="formData" label-width="120px">
+                  <el-form-item label="Realname:">
+                    <el-input v-model="formData.realname"></el-input>
+                  </el-form-item>
+                  <el-form-item label="Nickname:">
+                    <el-input v-model="formData.nickname"></el-input>
+                  </el-form-item>
+                  <el-form-item label="tel:">
+                    <el-input v-model="formData.tel"></el-input>
+                  </el-form-item>
+                </el-form>
+
+                <div slot="footer">
+                  <el-button @click="editPersonInformDialogVisible = false">取消</el-button>
+                  <el-button type="primary" @click="saveUserInfo">确定</el-button>
+                </div>
+              </el-dialog>
+
 
             </div>
               
@@ -803,10 +863,22 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
           <!-- 按钮3.2 -->
           <transition name="el-fade-in-linear">  
             <div v-if="activeIndex === 2.2">
+              
+              <el-card shadow="hover" style="width: 500px;">
+                <div style="display: flex; align-items: center;">
+                  <el-avatar :size="80" :round="true">{{ getInitials(this.currentTeam.team_name) }}</el-avatar>
+                  <div style="margin-left: 20px; max-width: 70%;">
+                    <h3 style="margin: 0 0 13px;">{{ currentTeam.team_name }}</h3>
+                    <span> {{ currentTeam.team_description }}</span>
+                   
+                  </div>
+                </div>
+              </el-card>
+
 
               <span  class="inherited-styles-for-exported-element">团队信息</span>
 
-              <el-card shadow="hover" style="width: 800px; background-color:#eee ;">
+              <el-card shadow="hover" style="width: 800px; ">
                 <el-form :model="currentTeam" label-width="100px">
                 <el-form-item label="团队名称" class="item">
                   <template v-if="!isTeamInfoEditing"><el-tag type="info" :disable-transitions="true">{{ currentTeam.team_name }}</el-tag></template>
@@ -853,6 +925,17 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
           <!-- 按钮4 -->
           <transition name="el-fade-in-linear">  
             <div v-if="activeIndex === 3">
+              
+              <el-card shadow="hover" style="width: 500px;">
+                <div style="display: flex; align-items: center;">
+                  <el-avatar :size="80" :round="true">{{ getInitials(this.currentProgram.name) }}</el-avatar>
+                  <div style="margin-left: 20px;max-width: 70%;">
+                    <h3 style="margin: 0 0 13px;">{{ currentProgram.name }}</h3>
+                    <span> {{ currentProgram.project_description }}</span>
+                   
+                  </div>
+                </div>
+              </el-card>
 
               <span  class="inherited-styles-for-exported-element">项目信息</span>
               
@@ -995,63 +1078,6 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
               </div>
               
               <!-- 列表展示 -->
-              <div v-if="displayMode === 'list'">
-                 <el-table
-             :data="protoTable.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
-             :default-sort = "{prop: 'date', order: 'descending'}"
-             style="width: 100%" >
-                <!-- column 1 -->
-                <el-table-column
-                  label="原型名" sortable
-                  prop="name">
-                  <template slot-scope="scope">
-              <template v-if="scope.row.editable">
-                <div style="display: flex;">
-                      <el-input v-model="scope.row.name" size="mini" @blur="saveEdit(scope.row)" ref="nameInput"></el-input>
-                      <el-button type="text" icon="el-icon-check" @click="saveEdit(scope.row)"></el-button>
-                </div>
-              </template>
-              <template v-else>
-                  <span @click="startEdit(scope.row)">{{ scope.row.name }}</span>
-                  <el-button type="text" icon="el-icon-edit" @click="startEdit(scope.row)" style="float: right;"></el-button>
-              </template>
-            </template>
-                </el-table-column>
-          
-                <!-- column 2 -->
-                <el-table-column
-                  label="上次修改时间" sortable
-                  prop="lastChangeTime">
-                </el-table-column>
-
-                <!-- column 3 -->
-                <el-table-column
-                  label="大小" sortable
-                  prop="size">
-                </el-table-column>
-          
-                <!-- column 4 -->
-                <el-table-column
-                  align="right">
-                  <template slot="header" slot-scope="scope">
-                    <el-input
-                      v-model="search"
-                      size="mini"
-                      placeholder="输入关键字搜索"/>
-                  </template>
-                  <template slot-scope="scope">
-                    <el-button
-                      size="mini"
-                      @click="handleEditProto(scope.$index, scope.row)">Edit</el-button>
-                    <el-button
-                      size="mini"
-                      type="danger"
-                      @click="handleDeleteProto(scope.$index, scope.row)">Delete</el-button>
-                  </template>
-                </el-table-column>
-          
-                 </el-table>
-              </div>
 
               <!-- 略缩图展示 -->
               <div v-if="displayMode === 'thumbnail'">
@@ -1082,6 +1108,44 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
                   </el-row>
                   </div>
                   
+              </div>
+
+
+              <!-- 新列表展示 -->
+              <div v-if="displayMode === 'list'">
+                  <el-table :data="protoTable.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%">
+                    <!-- 需求内容 -->
+                    <el-table-column label="原型名" prop="name" sortable>
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.name" @blur="saveEditProto(scope.row)"></el-input>
+                      </template>
+                    </el-table-column>
+
+                    <!--  -->
+                    <el-table-column label="上次修改时间" prop="lastChangeTime" sortable>
+                    
+                    </el-table-column>
+
+                    <!--  -->
+                    <el-table-column label="大小" prop="size" sortable>
+                
+                    </el-table-column>
+
+
+                    <!-- 操作列 -->
+                    <el-table-column align="right" >
+                      <template slot="header" slot-scope="scope">
+                    <el-input
+                      v-model="search"
+                      size="mini"
+                      placeholder="输入关键字搜索"/>
+                  </template>
+                      <template slot-scope="scope">
+                        <el-button size="mini" @click="handleEdit(scope.row)">编辑</el-button>
+                        <el-button size="mini" type="danger" @click="handleDeleteProto(scope.$index, scope.row)">删除</el-button>
+                      </template>
+                    </el-table-column>
+                  </el-table>
                 </div>
                                     
             </div>
@@ -1234,7 +1298,7 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
                           v-model="scope.row.startTime"
                           type="date"
                           format="yyyy-MM-dd"
-                          :picker-options="pickerOptions"
+                          
                           @change="saveData(scope.row)">
                         </el-date-picker>
                       </template>
@@ -1247,7 +1311,7 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
                           v-model="scope.row.endTime"
                           type="date"
                           format="yyyy-MM-dd"
-                          :picker-options="pickerOptions"
+                          
                           @change="saveData(scope.row)">
                         </el-date-picker>
                       </template>
@@ -1324,7 +1388,7 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
                           v-model="scope.row.startTime"
                           type="date"
                           format="yyyy-MM-dd"
-                          :picker-options="pickerOptions"
+                          
                           @change="saveData(scope.row)">
                         </el-date-picker>
                       </template>
@@ -1337,7 +1401,7 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
                           v-model="scope.row.endTime"
                           type="date"
                           format="yyyy-MM-dd"
-                          :picker-options="pickerOptions"
+                          
                           @change="saveData(scope.row)">
                         </el-date-picker>
                       </template>
@@ -1358,7 +1422,8 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
                         <span>完成状况</span>
                       </template>
                       <template slot-scope="scope">
-                        <el-tag :type="[scope.row.status === '已完成' ? 'success' : 'info']">{{ scope.row.status }}</el-tag>
+                        <el-tag type="success" v-if="scope.row.status === '已完成'">{{ scope.row.status }}</el-tag>
+                        <el-tag type='info' v-else>{{ scope.row.status }}</el-tag>
                         <el-dropdown @command="handleStatusChange(scope.row)" trigger="click">
                           <span class="el-dropdown-link">
                             <i class="el-icon-arrow-down el-icon--right"></i>
@@ -1393,6 +1458,68 @@ padding-right: 7px;"><i class="el-icon-collection-tag"></i>当前项目：{{ thi
             </div>
               
           </transition>
+
+          <!-- 按钮7 -->
+          <transition name="el-fade-in-linear">  
+            <div v-if="activeIndex === 6">
+
+              <span  class="inherited-styles-for-exported-element">申请列表</span>
+              
+              <!-- docuList-top -->
+              <div class="program-bottom" style="border-radius: 0px; !important">
+
+              </div>  
+              <!-- 列表展示 -->
+              <!-- editable list -->
+              <el-table
+            :data="applicationTable.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
+            :default-sort = "{prop: 'apply_time', order: 'descending'}"
+            style="width: 100%" >
+
+              <el-table-column
+                label="申请时间"
+                prop="apply-time" sortable icon="el-icon-time">
+                <template slot-scope="scope">
+                  <i class="el-icon-time"></i>
+                  <span style="margin-left: 10px">{{ scope.row.apply_time }}</span>
+                </template>
+              </el-table-column>
+
+              <el-table-column
+                label="申请人" sortable
+                prop="user_name">
+              </el-table-column>
+
+              <el-table-column
+                label="备注" sortable
+                prop="message">
+              </el-table-column>
+
+              <el-table-column
+                align="right">
+                <template slot="header" slot-scope="scope" >
+                  <el-input
+                    v-model="search"
+                    size="mini"
+                    placeholder="输入关键字搜索"/>
+                </template>
+                <template slot-scope="scope" >
+                  <el-button
+                    size="mini"
+                    @click="handleApply(scope.$index, scope.row,'yes')">同意</el-button>
+
+                  <el-button
+                    size="mini"
+                    type="danger"
+                    @click="handleApply(scope.$index, scope.row,'no')" >拒绝</el-button>
+                </template>
+              </el-table-column>
+
+                    </el-table>
+                                    
+            </div>
+              
+          </transition>
           
       </div>
       
@@ -1413,6 +1540,23 @@ export default {
   data() {
       
       return {
+        editPersonInformDialogVisible: false,
+        formData: {
+          realname: '',
+          nickname: '',
+          tel:'',
+        },
+
+        newTeam: {
+        team_name: '',
+        team_description: '',
+        team_tel: ''
+        },
+
+        createTeamDialogVisible: false,
+
+        isDeleteButtonPressed: false,
+
         isTeamInfoEditing :false,
 
         isProgInfoEditting : false,
@@ -1431,7 +1575,7 @@ export default {
           demandList: [],
         }, //当前项目
 
-        activeIndex: 0, // 默认选中的按钮索引为0
+        activeIndex: 2.2, // 默认选中的按钮索引为0
 
         //项目表
         tableData: [{
@@ -1682,108 +1826,305 @@ export default {
           realname: "刘兆丰",
           address: "326855092@qq.com",
           identity: "团队创建者",
+          tel: '114514'
         },
+
+        //申请列表
+        applicationTable:[{
+            user_id: '3',
+            user_name: 'shabi',
+            message: '快tm同意',
+            apply_time: "2023-08-26 16:10:40"
+        },]
 
       }
     },
   
     methods: {
 
-    loadInfo(){
-          //获取当前团队信息
-          this.currentTeam = this.$store.state.curTeam;
 
 
 
-          //获取用户的基本信息
-          this.$api.user.post_check_profile_self().then((response) => {
+      openEditDialog() {
+    // 打开对话框时，将当前用户信息填充到表单中
+    this.formData.realname = this.personInform.realname;
+    this.formData.nickname = this.personInform.nickname;
+    this.formData.tel = this.personInform.tel;
+
+    this.editPersonInformDialogVisible = true; // 打开对话框
+  },
+
+  saveUserInfo() {
+    // 执行保存逻辑，这里只是将表单中的数据赋值给原始数据，您可以根据实际需求进行处理
+    this.personInform.realname = this.formData.realname;
+    this.personInform.nickname = this.formData.nickname;
+    this.personInform.tel = this.formData.tel;
+
+    //上传后端
+    const tmp = {
+      "username": this.formData.nickname,
+      "signature": "没有签名捏",
+      "tel": this.formData.tel,
+      "expire_time": 60,
+      "real_name": this.formData.realname,
+      "visible": "False"
+    }
+    console.log("saveUserInfo input:",tmp)
+    this.$api.user.post_change_profile(tmp).then((response) => {
             // console.log(tmp)
             // console.log(response.data)
             if (response.data.errno == 0) {
-              console.log("获取用户信息成功")
-              console.log(response.data.user_info)
-              const tmObj = JSON.parse(response.data.user_info);
-              console.log(tmObj);
-
-              //赋值
-              this.personInform.nickname = tmObj.user_name;
-              this.personInform.realname = tmObj.user_real_name;
-              this.personInform.address = tmObj.user_email;
-              // this.personInform.identity = tmObj;
-              
-            }
-          }).catch(error => {
-            alert("获取用户信息失败")
-            console.log("用户基本信息error：\n");
-            console.log(error);
-          })
-
-          //获取用户identity : 输入 id ，teamid
-          const data1 = {
-            "team_id": this.currentTeam.team_id,
-            "user_id": this.$store.state.curUserID,
-          }
-          // console.log("identity input:",data1)
-          // console.log(data1)
-
-          this.$api.team.post_member_role(data1).then((response) => {
-            // console.log(tmp)
-
-            if (response.data.errno == 0) {
-              console.log("获取用户identity信息成功")
+              console.log("获取成功")
               console.log(response.data.msg)
-            
-              //赋值
-              if(response.data.role === 'creator')
-                this.personInform.identity = "团队创建者";
-              else if( response.data.role === 'member')
-                this.personInform.identity = "普通成员";
-              else if(response.data.role === 'manager')
-                this.personInform.identity ="管理员";
+              this.getPersonInfo();
+              this.getTeamPersonList();
+
             }
             else{
-              console.log("获取用户identity失败")
               console.log(response.data)
             }
           }).catch(error => {
-            alert("获取用户identity失败")
-            console.log("获取用户identity error：\n");
-            console.log(error);
+            alert("获取失败")
+            console.log("error：\n");
+            console.log(error)
           })
 
+    this.editPersonInformDialogVisible = false; // 关闭对话框
+  },
 
 
-
-          //获取用户加入的 团队列表
-          const tmp = {
-            "choose": "all",
-          }
-          this.$api.user.post_check_team_list(tmp).then((response) => {
+    handleApply (index,row,op){
+      const tmp = {
+        "team_id": this.currentTeam.team_id,
+        "user_id": row.user_id,
+        "choose": op,
+      }
+      console.log("handleApply input:",tmp)
+      this.$api.team.post_check_member(tmp).then((response) => {
             // console.log(tmp)
             // console.log(response.data)
             if (response.data.errno == 0) {
-              console.log("获取团队列表成功")
-              console.log(response.data.tm_info)
+              console.log("获取成功")
+              console.log(response.data.msg)
 
-              if(response.data.tm_info.length === 0){
-                    this.teamList = []
+              this.getTeamApplyList();
+              this.getTeamPersonList();
+
+            }
+          }).catch(error => {
+            alert("获取失败")
+            console.log("error：\n");
+            console.log(error)
+          })
+    },
+
+    showCreateTeamDialog() {
+      // 显示新建团队的弹窗
+      this.createTeamDialogVisible = true;
+      // console.log('this.createTeamDialogVisible ='+this.createTeamDialogVisible)
+    },
+
+    cancelCreateTeam() {
+      // 取消新建团队
+      this.createTeamDialogVisible = false;
+      // 清空输入框
+      this.newTeam.team_name = '';
+      this.newTeam.team_description = '';
+      this.newTeam.team_tel = '';
+    },
+    submitCreateTeam() {
+      // 提交新建团队
+      // 在这里发送请求，将新建团队的信息提交至后端保存
+      // 假设发送请求的方法名为createTeam，接收一个team对象作为参数
+      // this.createTeam(this.newTeam);
+      console.log('submitting...')
+      console.log(this.newTeam)
+      this.createTeam();
+      
+    },
+
+    createTeam(){
+      const tmp={
+        "name": this.newTeam.team_name,
+        "description": this.newTeam.team_description,
+        "tel": this.newTeam.team_tel
+      }
+      this.$api.team.post_create_team(tmp).then((response) => {
+          // console.log(tmp)
+          // console.log(response.data)
+          if (response.data.errno == 0) {
+            console.log("新建团队成功")
+            console.log(response.data.msg)
+            // 隐藏新建团队的弹窗，并清空输入框
+            this.createTeamDialogVisible = false;
+            this.getTeamList();
+          }
+        }).catch(error => {
+          alert("新建团队失败")
+          console.log("失败error：\n");
+          console.log(error)
+        });
+    
+      
+    },
+
+    deleteTeam(team_id){
+      event.stopPropagation(); // 阻止冒泡事件
+      this.$confirm('确定要删除团队吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+
+          // 在这里执行具体的删除逻辑
+          const tmp ={
+            "team_id": team_id,
+          }
+          this.$api.team.post_delete_team(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("删除成功")
+              console.log(response.data.msg)
+              this.getTeamList();
+            }
+          }).catch(error => {
+            alert("失败")
+            console.log("error：\n");
+            console.log(error)
+          })
+
+          
+
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+    },
+
+    changeRouter(){
+       this.$router.push({
+              path: `/Chat`,
+        });
+    },
+
+    saveData(row){
+      console.log("row:",row)
+      let tmpstatus = '';
+      if( row.status === '已完成')
+       tmpstatus = 'finished'
+      else 
+       tmpstatus = 'not_started'
+
+      const tmp = {
+    "project_id": this.currentProgram.project_id,
+    "requirement_id": row.requirement_id,
+    "name": row.name,
+    "status": tmpstatus,
+    "estimated_start_time": row.startTime,
+    "estimated_end_time": row.endTime
+    }
+    console.log("tmp:",tmp)
+    this.$api.project.post_change_profile_requirement(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取成功")
+              console.log(response.data.msg)
+              this.getRequirementList()
+            }
+          }).catch(error => {
+            alert("获取失败")
+            console.log("error：\n");
+            console.log(error)
+          })
+
+
+    },
+    //-- 基本项目列表
+   
+    getTeamProList(){
+      
+      const tmp2 = {
+            "team_id": this.currentTeam.team_id,
+            "recycle": "False",
+          }
+          console.log("获取项目列表输入：",tmp2)
+          this.$api.project.post_check_project_list_team(tmp2).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取团队项目列表成功")
+              console.log(response.data.p_info)
+
+              if(response.data.p_info.length === 0){
+                    this.tableData = []
                   }
               else{
-                  const tmInfoArray = response.data.tm_info.map((item) => JSON.parse(item.replace(/\\/g, '')));
+                  const tmInfoArray = response.data.p_info.map((item) => JSON.parse(item.replace(/\\/g, '')));
                   console.log(tmInfoArray);
                     //赋值
-                  this.teamList = tmInfoArray;
+                  this.tableData = tmInfoArray;
+                  this.tableData.forEach(program=>{
+                    program.editable = false;
+                  })
+                  // tmInfoArray.forEach(program =>{
+
+                  // });
                 }
               
             }
           }).catch(error => {
-            alert("获取团队列表失败")
-            console.log("团队列表error：\n");
+            alert("获取团队项目列表失败")
+            console.log("团队项目列表error：\n");
             console.log(error)
           })
+    },
 
-          //获取团队的人员列表
-          const tmp1 = {
+     //- 项目回收站列表
+    getTeamProRecycList(){
+      const tmp3 = {
+            "team_id": this.currentTeam.team_id,
+            "recycle": "True"
+          }
+          console.log("获取项目回收站列表输入：",tmp3)
+          this.$api.project.post_check_project_list_team(tmp3).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取团队项目回收站列表成功")
+              console.log(response.data.p_info)
+
+              if(response.data.p_info.length === 0){
+                    this.ProgRecycleTable = []
+                  }
+              else{
+                  const tmInfoArray = response.data.p_info.map((item) => JSON.parse(item.replace(/\\/g, '')));
+                  console.log(tmInfoArray);
+                    //赋值
+                  // this.tableData = tmInfoArray;
+                  this.ProgRecycleTable = tmInfoArray;
+                  this.ProgRecycleTable.forEach(program=>{
+                    program.editable = false;
+                  })
+                }
+              
+            }
+          }).catch(error => {
+            alert("获取团队项目回收站列表失败")
+            console.log("团队项目回收站列表error：\n");
+            console.log(error)
+          })
+    },
+
+    getTeamPersonList(){
+      const tmp1 = {
             "team_id": this.currentTeam.team_id,
             "type": "all",
           }
@@ -1824,79 +2165,202 @@ export default {
             console.log("团队人员列表error：\n");
             console.log(error)
           })
+    },
 
+    getTeamList(){
+      const tmp = {
+            "choose": "all",
+          }
+          this.$api.user.post_check_team_list(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取团队列表成功")
+              console.log(response.data.tm_info)
+
+              if(response.data.tm_info.length === 0){
+                    this.teamList = []
+                  }
+              else{
+                  const tmInfoArray = response.data.tm_info.map((item) => JSON.parse(item.replace(/\\/g, '')));
+                  console.log(tmInfoArray);
+                    //赋值
+                  this.teamList = tmInfoArray;
+                }
+              
+            }
+          }).catch(error => {
+            alert("获取团队列表失败")
+            console.log("团队列表error：\n");
+            console.log(error)
+          })
+    },
+
+    getProtoList(){
+        const tmp = {
+          "project_id": this.currentProgram.project_id,
+          "recycle": 'False',
+        }
+        console.log("获取原型列表 input：",tmp)
+        this.$api.document.post_show_prototype_list(tmp).then((response) => {
+          // console.log(tmp)
+          // console.log(response.data)
+          if (response.data.errno == 0) {
+            console.log("获取团队列表成功")
+            console.log("success",response.data.protoTable)
+
+            const tmInfoArray = response.data.protoTable.map((item) => JSON.parse(item.replace(/\\/g, '')));
+            console.log(tmInfoArray);
+              //赋值
+            this.protoTable = tmInfoArray;
+
+            this.protoTable.forEach(proto=>{
+              proto.editable = false
+            })
+            
+            
+          }
+        }).catch(error => {
+          // alert("获取失败")
+          console.log("error：\n");
+          console.log(error)
+        })
+    },
+
+    getProtoRecycleList(){
+      const tmp = {
+          "project_id": this.currentProgram.project_id,
+          "recycle": 'True',
+        }
+        console.log("获取原型回收站列表 input：",tmp)
+        this.$api.document.post_show_prototype_list(tmp).then((response) => {
+          // console.log(tmp)
+          // console.log(response.data)
+          if (response.data.errno == 0) {
+            console.log("获取成功")
+            console.log("success",response.data.protoTable)
+
+            const tmInfoArray = response.data.protoTable.map((item) => JSON.parse(item.replace(/\\/g, '')));
+            console.log(tmInfoArray);
+              //赋值
+            this.protoRecycleTable = tmInfoArray;
+            
+          }
+        }).catch(error => {
+          // alert("获取失败")
+          console.log("error：\n");
+          console.log(error)
+        })
+    },
+
+    getPersonIdentity(){
+      const data1 = {
+            "team_id": this.currentTeam.team_id,
+            "user_id": this.$store.state.curUserID,
+          }
+          // console.log("identity input:",data1)
+          // console.log(data1)
+
+          this.$api.team.post_member_role(data1).then((response) => {
+            // console.log(tmp)
+
+            if (response.data.errno == 0) {
+              console.log("获取用户identity信息成功")
+              console.log(response.data.msg)
+            
+              //赋值
+              if(response.data.role === 'creator')
+                this.personInform.identity = "团队创建者";
+              else if( response.data.role === 'member')
+                this.personInform.identity = "普通成员";
+              else if(response.data.role === 'manager')
+                this.personInform.identity ="管理员";
+            }
+            else{
+              console.log("获取用户identity失败")
+              console.log(response.data)
+            }
+          }).catch(error => {
+            alert("获取用户identity失败")
+            console.log("获取用户identity error：\n");
+            console.log(error);
+          })
+    },
+
+    getPersonInfo(){
+      this.$api.user.post_check_profile_self().then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取用户信息成功")
+              console.log(response.data.user_info)
+              const tmObj = JSON.parse(response.data.user_info);
+              console.log(tmObj);
+
+              //赋值
+              this.personInform.nickname = tmObj.user_name;
+              this.personInform.realname = tmObj.user_real_name;
+              this.personInform.address = tmObj.user_email;
+              this.personInform.tel = tmObj.user_tel;
+              // this.personInform.identity = tmObj;
+              
+            }
+          }).catch(error => {
+            alert("获取用户信息失败")
+            console.log("用户基本信息error：\n");
+            console.log(error);
+          })
+    },
+
+    getTeamApplyList(){
+
+      const tmp={
+        "team_id": this.currentTeam.team_id
+      }
+      this.$api.team.post_show_check(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取apply成功")
+              console.log(response.data.tm_info)
+              const tmInfoArray = response.data.tm_info.map((item) => JSON.parse(item.replace(/\\/g, '')));
+                  console.log(tmInfoArray);
+                    //赋值
+                  this.applicationTable = tmInfoArray;
+              
+            }
+          }).catch(error => {
+            alert("获取失败")
+            console.log("error：\n");
+            console.log(error);
+          })
+    },
+
+    loadInfo(){
+          //获取当前团队信息
+          this.currentTeam = this.$store.state.curTeam;
+
+          //获取用户的基本信息
+          this.getPersonInfo()
+          
+          //获取用户identity : 输入 id ，teamid
+          this.getPersonIdentity()
+
+          //获取用户加入的 团队列表
+          this.getTeamList()
+          
+          //获取团队的人员列表
+          //getTeamPersonList
+          this.getTeamPersonList();
 
           //获取团队的项目列表
           //check_project_list_team
-          const tmp2 = {
-            "team_id": this.currentTeam.team_id,
-            "recycle": "False"
-          }
-          console.log("获取项目列表输入：",tmp2)
-          this.$api.project.post_check_project_list_team(tmp2).then((response) => {
-            // console.log(tmp)
-            // console.log(response.data)
-            if (response.data.errno == 0) {
-              console.log("获取团队项目列表成功")
-              console.log(response.data.p_info)
-
-              if(response.data.p_info.length === 0){
-                    this.tableData = []
-                  }
-              else{
-                  const tmInfoArray = response.data.p_info.map((item) => JSON.parse(item.replace(/\\/g, '')));
-                  console.log(tmInfoArray);
-                    //赋值
-                  this.tableData = tmInfoArray;
-                  this.tableData.forEach(program=>{
-                    program.editable = false;
-                  })
-                  // tmInfoArray.forEach(program =>{
-
-                  // });
-                }
-              
-            }
-          }).catch(error => {
-            alert("获取团队项目列表失败")
-            console.log("团队项目列表error：\n");
-            console.log(error)
-          })
-
-
-          //获取团队的项目回收站列表
-          const tmp3 = {
-            "team_id": this.currentTeam.team_id,
-            "recycle": "True"
-          }
-          console.log("获取项目回收站列表输入：",tmp3)
-          this.$api.project.post_check_project_list_team(tmp3).then((response) => {
-            // console.log(tmp)
-            // console.log(response.data)
-            if (response.data.errno == 0) {
-              console.log("获取团队项目回收站列表成功")
-              console.log(response.data.p_info)
-
-              if(response.data.p_info.length === 0){
-                    this.ProgRecycleTable = []
-                  }
-              else{
-                  const tmInfoArray = response.data.p_info.map((item) => JSON.parse(item.replace(/\\/g, '')));
-                  console.log(tmInfoArray);
-                    //赋值
-                  // this.tableData = tmInfoArray;
-                  this.ProgRecycleTable = tmInfoArray;
-                  this.ProgRecycleTable.forEach(program=>{
-                    program.editable = false;
-                  })
-                }
-              
-            }
-          }).catch(error => {
-            alert("获取团队项目回收站列表失败")
-            console.log("团队项目回收站列表error：\n");
-            console.log(error)
-          })
+          this.getTeamProList();
+          //获取项目回收站列表
+          this.getTeamProRecycList()
+          
+          //获取团队申请列表
+          this.getTeamApplyList()
 
     },
 
@@ -1904,12 +2368,38 @@ export default {
     changeCurTeam(team){
         this.$store.state.curTeam = team;
         this.loadInfo();
+        this.changeContent(2.2);
+        this.isProgramChosen = false;
     },
 
     saveProInfo(){
       //303 change_profile 接口
       //.....
-      
+      const tmp = {
+        "team_id": this.currentTeam.team_id,
+        "project_id": this.currentProgram.project_id,
+        "name": this.currentProgram.name,
+        "description": this.currentProgram.project_description,
+        "estimated_start_time":this.currentProgram.estimated_start_time,
+        "estimated_end_time": this.currentProgram.estimated_end_time,
+        "editable": "False",
+        "status": "doing",
+        "recycle": "False"
+      }
+      this.$api.project.post_change_profile(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取成功")
+              console.log(response.data.msg)
+
+            }
+          }).catch(error => {
+            alert("获取失败")
+            console.log("error：\n");
+            console.log(error)
+          })
+
       this.isProgInfoEditting = false;
     },
 
@@ -1960,31 +2450,57 @@ export default {
   },
 
       generateLink(){
-        const link='wnacudamdawdacdna';
+        let link='';
         //link=..
-        const el = document.createElement("textarea");
-        el.value = link;
-        document.body.appendChild(el);
-        el.select();
-        document.execCommand("copy");
-        document.body.removeChild(el);
-        this.$message.success("链接已复制到剪贴板");
+        //invite_link
+        const tmp = {
+          "team_id": this.currentTeam.team_id,
+          "day": 3
+        }
+        this.$api.team.post_invite_link(tmp).then((response) => {
+          // console.log(tmp)
+          // console.log(response.data)
+          if (response.data.errno == 0) {
+            console.log("生成成功")
+            console.log(response.data.msg)
+            //赋值
+            link ='http://localhost:8080/Invite/'+ response.data.msg
 
-        this.$alert('链接已生成:'+link, '提示', {
-          confirmButtonText: '确定',
-          dangerouslyUseHTMLString: true,
-          callback: action => {
-            // this.$message({
-            //   type: 'info',
-            //   message: `action: ${ action }`
-            // });
+            //复制到剪贴板
+            const el = document.createElement("textarea");
+            el.value = link;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand("copy");
+            document.body.removeChild(el);
+            this.$message.success("链接已复制到剪贴板");
+
+            this.$alert('链接已生成:\n'+link, '提示', {
+              confirmButtonText: '确定',
+              dangerouslyUseHTMLString: true,
+              callback: action => {
+                // this.$message({
+                //   type: 'info',
+                //   message: `action: ${ action }`
+                // });
+              }
+            }); 
+
           }
-        }); 
-       
+          else{
+            console.log(response.data)
+          }
+        }).catch(error => {
+          alert("失败")
+          console.log("error：\n");
+          console.log(error);
+        })
+
       },
 
       handleStatusChange(row) {
       row.status = row.status === '已完成' ? '未完成' : '已完成';
+      this.saveData(row);
     },
 
 
@@ -1993,7 +2509,7 @@ export default {
         console.log(1);
         this.isProgramChosen = false;
         this.currentProgram = {};
-        this.changeContent(0)
+        this.changeContent(2.2)
       },
 
       async changeContent(index) {
@@ -2013,20 +2529,95 @@ export default {
     
       },
 
-      handleEdit(index, row) {
+      getRequirementList(){
+          //check_requirement_list
+        const tmp ={
+          "project_id": this.currentProgram.project_id,
+        }
+
+        this.$api.project.post_check_requirement_list(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取成功")
+              console.log(response.data.msg)
+
+              const rInfoArray = response.data.r_info.map((item) => JSON.parse(item.replace(/\\/g, '')));
+              console.log(rInfoArray);
+              this.demandTable = rInfoArray;
+              this.demandTable.forEach(demand=>{
+                if(demand.status === 'not_started')
+                  demand.status = '未完成'
+                else if(demand.status === 'finished')
+                  demand.status = '已完成'
+              })
+
+            }
+          }).catch(error => {
+            alert("获取失败")
+            console.log("error：\n");
+            console.log(error)
+          })
+      },
+
+
+      //选中特定project
+      handleEdit(index, row) { 
 
         console.log(index, row);
         this.isProgramChosen = true;
         this.currentProgram = row;
 
+        // document.documentElement.setAttribute('theme-mode', 'dark');
+        
+        //  前端
         //拷贝 documentTable
-        this.documentTable = row.documentList;
+        // this.documentTable = row.documentList;
+        //获取protoTable
+        // this.protoTable = row.protoList;
+        // this.demandTable =  row.demandList;
 
-        this.protoTable = row.protoList;
-        this.demandTable =  row.demandList;
+
+        //后端
+        this.getRequirementList();
+
+        this.getProtoList();
+        this.getProtoRecycleList();
+
 
         this.changeContent(3);//切换到项目信息页面
       },
+
+      handleCopy(index,row){
+
+        //copy_project
+        const tmp ={
+            "project_id": row.project_id,
+            "new_name": row.name+ '(copy)'
+          }
+          console.log("input:",tmp)
+          this.$api.project.post_copy_project(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取成功")
+              console.log(response.data.msg)
+
+              this.getTeamProList();
+              
+
+            }
+            else{
+              console.log("复制失败：",response.data)
+            }
+          }).catch(error => {
+            alert("获取失败")
+            console.log("error：\n");
+            console.log(error)
+          })
+  
+      },
+
 
       handleDelete(index, row) {
         console.log(index, row);
@@ -2042,26 +2633,29 @@ export default {
           //   this.tableData.splice(index, 1);
           //   this.ProgRecycleTable.push(row);
           // }
-
-          const tmp = {
+          const tmp ={
             "team_id": this.currentTeam.team_id,
             "project_id": row.project_id,
+            "status": "True"
           }
-          this.$api.project.post_delete_project(tmp).then((response) => {
+          this.$api.project.post_change_recycle_status(tmp).then((response) => {
             // console.log(tmp)
             // console.log(response.data)
             if (response.data.errno == 0) {
               console.log("获取成功")
               console.log(response.data.msg)
 
-              this.loadInfo();
-              
+              this.getTeamProList();
+              this.getTeamProRecycList();
+
             }
           }).catch(error => {
             alert("获取失败")
             console.log("error：\n");
             console.log(error)
           })
+
+          
 
           this.$message({
             type: 'success',
@@ -2133,6 +2727,26 @@ export default {
         }).then(() => {
 
           this.ProgRecycleTable.splice(index,1);
+          const tmp = {
+            "team_id": this.currentTeam.team_id,
+            "project_id": row.project_id,
+          }
+          console.log("tmp: ",tmp)
+          this.$api.project.post_delete_project(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取成功")
+              console.log(response.data.msg)
+
+              this.getTeamProRecycList();
+              
+            }
+          }).catch(error => {
+            alert("获取失败")
+            console.log("error：\n");
+            console.log(error)
+          })
 
           this.$message({
             type: 'success',
@@ -2161,6 +2775,27 @@ export default {
             this.protoTable.splice(index, 1);
             this.protoRecycleTable.push(row);
           }
+          
+          const tmp = {
+            "prototype_id": row.prototype_id
+          }
+          this.$api.document.post_delete_prototype(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("删除成功")
+              console.log(response.data.msg)
+
+              this.getProtoList();
+              this.getProtoRecycleList();
+
+            }
+          }).catch(error => {
+            alert("删除失败")
+            console.log("error：\n");
+            console.log(error)
+          })
+
           this.$message({
             type: 'success',
             message: '删除成功!'
@@ -2206,10 +2841,32 @@ export default {
         }).then(() => {
 
           // 在这里执行具体的删除逻辑
- 
-            this.demandTable.splice(index, 1);
-            this.demandRecycleTable.push(row);
-        
+
+          this.demandTable.splice(index, 1);
+          this.demandRecycleTable.push(row);
+
+
+
+          //post_delete_requirement
+          const tmp={
+            "project_id": this.currentProgram.project_id,
+            "requirement_id":  row.requirement_id
+          }
+          this.$api.project.post_delete_requirement(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取成功")
+              console.log(response.data.msg)
+
+            }
+          }).catch(error => {
+            alert("获取失败")
+            console.log("error：\n");
+            console.log(error)
+          })
+
+          
           this.$message({
             type: 'success',
             message: '删除成功!'
@@ -2249,11 +2906,14 @@ export default {
 
 
       startEdit(row) {
+
+    
     row.editable = true;
+    console.log("startEdit row:",row)
     // row.tempName = row.name;  // 将当前名称保存到 tempName 中
-    this.$nextTick(() => {  // 等待下一次 DOM 更新后自动聚焦输入框
-      this.$refs.nameInput[0].focus();
-    });
+    // this.$nextTick(() => {  // 等待下一次 DOM 更新后自动聚焦输入框
+    //   this.$refs.nameInput[0].focus();
+    // });
       },
 
 
@@ -2268,6 +2928,32 @@ export default {
     console.log(this.tableData)
     //上传后端
     // ...
+    console.log("row:",row)
+    const tmp = {
+        "team_id": this.currentTeam.team_id,
+        "project_id": row.project_id,
+        "name": row.name,
+        "description": row.description,
+        "estimated_start_time":row.estimated_start_time,
+        "estimated_end_time": row.estimated_end_time,
+        "editable": "False",
+        "status": "doing",
+        "recycle": "False"
+      }
+      this.$api.project.post_change_profile(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取成功")
+              console.log(response.data.msg)
+
+            }
+          }).catch(error => {
+            alert("获取失败")
+            console.log("error：\n");
+            console.log(error)
+          })
+
     
 
     this.$message({
@@ -2293,6 +2979,30 @@ export default {
     });
       },
 
+      saveEditProto(row){
+
+        const tmp = {
+          "prototype_id": row.prototype_id,
+          "prototype_name": row.name,
+          "prototype_recycle": 'False',
+        }
+        console.log("saveEditProto input:",tmp)
+        this.$api.document.post_change_prototype(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取成功")
+              console.log(response.data.msg)
+
+            }
+          }).catch(error => {
+            alert("获取失败")
+            console.log("error：\n");
+            console.log(error)
+          })
+
+          row.editable = false
+      },
 
       addNewProject() {
         // 验证表单数据
@@ -2324,7 +3034,7 @@ export default {
             if (response.data.errno == 0) {
               console.log("获取成功")
               console.log(response.data.msg)
-
+              this.getTeamProList();
             }
           }).catch(error => {
             alert("获取失败")
@@ -2333,7 +3043,7 @@ export default {
           })
 
             this.newProjectDialogVisible = false;  // 关闭对话框
-
+            
             this.$message.success('新项目添加成功');
             console.log(this.tableData)
           }
@@ -2341,18 +3051,48 @@ export default {
         },
       resetNewProject() {
 
-          this.loadInfo();
+          // this.loadInfo();
+          // this.getTeamProList();
+
           this.$refs.newProjectForm.resetFields();  // 重置表单数据
           this.newProjectDialogVisible = false;  // 关闭对话框
         },
       
       handleRecycle(index, row) {
-        // 将要移动到回收站的项目从 tableData 数组中删除
-        this.ProgRecycleTable.splice(index, 1);
+        // // 将要移动到回收站的项目从 tableData 数组中删除
+        // this.ProgRecycleTable.splice(index, 1);
 
-        // 在回收站表中添加被移动的项目
-        this.tableData.push(row);
+        // // 在回收站表中添加被移动的项目
+        // this.tableData.push(row);
 
+        const tmp ={
+            "team_id": this.currentTeam.team_id,
+            "project_id": row.project_id,
+            "status": "False"
+          }
+        console.log("handleRecycle input: ",tmp)
+        this.$api.project.post_change_recycle_status(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取成功")
+              console.log(response.data.msg)
+
+              this.getTeamProList();
+              this.getTeamProRecycList();
+
+            }
+            else{
+              console.log(response.data)
+            }
+          }).catch(error => {
+            alert("获取失败")
+            console.log("error：\n");
+            console.log(error)
+          })
+
+        
+        console.log("after recycling...")
         this.$message({
             type: 'success',
             message: '项目已成功回收'
@@ -2434,6 +3174,25 @@ export default {
           size: this.newProto.size,
           editable: false
         });
+        const tmp = {
+          "prototype_name":this.newProto.name,
+          "project_id": this.currentProgram.project_id
+        }
+        this.$api.document.post_create_prototype(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取成功")
+              console.log(response.data.msg)
+
+              this.getProtoList();
+
+            }
+          }).catch(error => {
+            alert("获取失败")
+            console.log("error：\n");
+            console.log(error)
+          })
 
         this.newProtoDialogVisible = false;  // 关闭对话框
 
@@ -2472,7 +3231,34 @@ export default {
           editable: false
         });
 
-          console.log(this.createForm);
+        const tmp = {
+          "project_id": this.currentProgram.project_id,
+          "name": this.createForm.name,
+          "estimated_start_time":  moment(this.createForm.startTime).format('YYYY-MM-DD HH:mm:ss'),
+          "estimated_end_time":moment(this.createForm.endTime).format('YYYY-MM-DD HH:mm:ss')
+        }
+        console.log("创建需求输入：",tmp)
+        this.$api.project.post_create_requirement(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取成功")
+              console.log(response.data.msg)
+              //刷新需求列表
+              this.getRequirementList();
+            }
+          }).catch(error => {
+            alert("获取失败")
+            console.log("error：\n");
+            console.log(error)
+          })
+
+
+
+        console.log(this.createForm);
+
+        
+
         // 提示用户创建成功或失败
         this.$message.success('创建成功');
         this.newDemandDialogVisible = false;
@@ -2481,7 +3267,8 @@ export default {
 
      
     },
-  
+    
+ 
 
 
       changeDisplay(a){
@@ -2624,7 +3411,33 @@ export default {
         }).then(() => {
 
           // 在这里执行具体的删除逻辑
+          //前端
           this.TeamPersonInform.splice(index,1);
+
+          //后端
+          //delete_member
+          const tmp ={
+          "user_id": row.user_id,
+          "team_id": this.currentTeam.team_id
+          }
+          this.$api.team.post_delete_member(tmp).then((response) => {
+              // console.log(tmp)
+              // console.log(response.data)
+              if (response.data.errno == 0) {
+                console.log("delete_member成功",response.data.msg)
+              
+              }
+              else{
+                console.log("delete_member失败")
+                console.log(response.data)
+              }
+            }).catch(error => {
+              alert("失败")
+              console.log("error：\n");
+              console.log(error)
+            })
+
+
 
           this.$message({
             type: 'success',
@@ -2666,7 +3479,62 @@ export default {
       // 在这里处理更新身份的逻辑，可以通过调用后端接口来实现更新
       // const { realname, newIdentity } = this.editIdentityForm;
       // 更新身份的代码...
-      this.TeamPersonInform[this.editIdentityForm.index].identity = this.editIdentityForm.newIdentity;
+     
+
+      console.log("this.TeamPersonInform[this.editIdentityForm.index].permission:",this.TeamPersonInform[this.editIdentityForm.index].permission)
+      console.log("this.editIdentityForm.newIdentity:",this.editIdentityForm.newIdentity)
+      if(this.TeamPersonInform[this.editIdentityForm.index].permission !== this.editIdentityForm.newIdentity){ //发生改变
+         if(this.editIdentityForm.newIdentity === '管理员' ){ //add manager
+        const tmp ={
+          "user_id": this.TeamPersonInform[this.editIdentityForm.index].user_id,
+          "team_id": this.currentTeam.team_id
+        }
+        this.$api.team.post_add_manager(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取团队人员列表成功",response.data.msg)
+            
+            }
+            else{
+              console.log("add manager失败")
+              console.log(response.data)
+            }
+          }).catch(error => {
+            alert("失败")
+            console.log("error：\n");
+            console.log(error)
+          })
+        }
+        else if(this.editIdentityForm.newIdentity === '普通成员' ){
+          //delete manager
+          const tmp ={
+          "user_id": this.TeamPersonInform[this.editIdentityForm.index].user_id,
+          "team_id": this.currentTeam.team_id
+        }
+        this.$api.team.post_delete_manager(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("delete manager成功",response.data.msg)
+            
+            }
+            else{
+              console.log("delete manager失败")
+              console.log(response.data)
+            }
+          }).catch(error => {
+            alert("失败")
+            console.log("error：\n");
+            console.log(error)
+          })
+        }
+      }
+
+      //前端
+      this.TeamPersonInform[this.editIdentityForm.index].permission = this.editIdentityForm.newIdentity;
+     
+
 
       // 关闭对话框
       this.closeEditIdentityDialog();
@@ -3098,10 +3966,28 @@ padding-left: 25px;
   
   .el-aside {
     color: #333;
+    background-color:#2a2d30 
   }
 
+  .pro-chosen {
+    /* background-color: rgb(153, 212, 224); */
+    /* color:  #333 !important;  */
+    /* background-image: linear-gradient(220.55deg, #5D85A6 0%, #0E2C5E 100%); */
+    /* background-image: linear-gradient(161.15deg, #6974DC 12.73%, #9679DD 72.95%); */
+    /* background-image: linear-gradient(161.15deg, #474e92 12.73%, #625090 72.95%); */
+    /* background-color: #dcd549 ; */
+
+  }
+
+  .pro-chosen-header{
+    /* background-image: linear-gradient(161.15deg, #6974DC 12.73%, #9679DD 72.95%); */
+    /* background-color: #c8c142 ; */
+  }
+
+
   .el-main{
-    background-color: #212427;
+    /* background-color: #212427; */
+    background-color: #e9e8e8;
     color: #e7e2e2;
   }
 
@@ -3114,7 +4000,7 @@ padding-left: 25px;
   }
 
   .inherited-styles-for-exported-element {
-  color: #e7e2e2;
+  color: #414040;
   font-family: "PingFang SC", "Microsoft YaHei", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
   font-size: 15px;
   font-weight: 600;

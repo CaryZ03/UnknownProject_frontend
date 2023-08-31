@@ -12,13 +12,23 @@ const Chat = () => import('../views/ChatView.vue')
 const Login = () => import('../views/LoginView.vue')
 const TiptapView = () => import('../views/Tiptap.vue') 
 
+const Invite = () => import('../views/InviteView.vue')
+
+const joinTeam = () => import('../views/JoinTeam.vue')
+
+const Preview = () =>  import('../views/Preview.vue')
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: HomeView
+    component: HomeView,
+    children: [
+      {
+        path: "/invite/:id",
+      }
+    ]
 
   },
   {
@@ -26,16 +36,17 @@ const routes = [
     name: 'Login',
     component: Login
   },
+  // {
+  //   path: '/Invite/:key',
+  //   name: 'Invite',
+  //   component: Invite
+  // },
   {
     path: '/Text',
     name: 'Text',
     component: Text
   },
-  {
-    path: '/Tiptap',
-    name: 'Tiptap',
-    component: TiptapView
-  },
+
   {
     path: '/about',
     name: 'about',
@@ -59,36 +70,31 @@ const routes = [
 
   },
   {
-    path: '/Design/:dishgnCode',
+    path: '/Design/:teamid/:ptid',
     name: 'design',
     component: Design,
 
   },
+  // preview 可以通过teamid进行跳转preview
+  {
+    path: '/Preview/:teamid/:ptid',
+    name: 'preview',
+    component: Preview,
+
+  },
+
+
+  
   {
     path: '/WorkSpace',
     name: 'workSpace',
     component: WorkSpace,
+  },
 
-    children: [
-      {
-        path: 'Star',
-        name: 'star',
-      },
-      {
-        path: 'Default',
-        name: 'default',
-      },
-      {
-        path: 'Recent',
-        name: 'recent',
-
-      },
-      {
-        path: 'OnlineDoc',
-        name: 'onlineDoc',
-      }
-    ]
-
+  {
+    path: '/Tiptap/:teamid/:docid',
+    name: 'Tiptap',
+    component: TiptapView
   },
   {
     path: '/Chat',
@@ -115,6 +121,7 @@ router.beforeEach((to, from, next) => {
   if (to.path === from.path && to.path !== '/') {  // 判断目标路径是否相同
     return next(false)  // 阻止路由跳转
   }
+
   next()  // 允许路由跳转
 })
 const routerRePush = VueRouter.prototype.push
