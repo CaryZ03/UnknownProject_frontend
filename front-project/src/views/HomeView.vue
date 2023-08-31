@@ -11,7 +11,7 @@
         <button v-if="!this.$store.state.isLogin" class="btnLogin-popup">
           Login
         </button>
-        <button v-else @click.prevent="logout" class="btnLogout-popup">
+        <button v-else @click="logout" class="btnLogout-popup">
           Logout
         </button>
       </nav>
@@ -545,6 +545,7 @@ export default {
       this.$api.user
         .post_logout()
         .then((res) => {
+          console.log("logout");
           this.$store.state.isLogin = false;
           this.$store.state.curUserID = -1;
           this.$store.state.curUserName = "";
