@@ -8,12 +8,10 @@
         <!-- <a href=""><router-link to="WorkSpace">WorkSpace</router-link></a> -->
         <a href="" @click.prevent="showTeamDialog">WorkSpace</a>
         <a href=""><router-link to="UML">UML</router-link></a>
-        <button v-if="!this.$store.state.isLogin" class="btnLogin-popup">
+        <button v-show="!this.$store.state.isLogin" class="btnLogin-popup">
           Login
         </button>
-        <button v-else @click="logout" class="btnLogout-popup">
-          Logout
-        </button>
+        <button v-show="this.$store.state.isLogin" @click="logout" class="btnLogout-popup">Logout</button>
       </nav>
     </header>
 
@@ -142,7 +140,6 @@
 
 
 <script>
-
 export default {
   components: {},
   props: {},
@@ -163,6 +160,13 @@ export default {
         password1: "",
         password2: "",
       },
+
+      wrapper: null,
+      loginLink: null,
+      registerLink: null,
+
+      btnLogin: null,
+      iconClose: null,
 
       vericode: "",
       isAgree: false,
@@ -236,7 +240,9 @@ export default {
 
     login() {
       const data = JSON.stringify(this.user);
+      console.log("login!!");
       console.log(data);
+      // this.wrapper.classList.add("active-popup");
 
       this.$api.user
         .post_user_login(data)
@@ -550,8 +556,8 @@ export default {
           this.$store.state.curUserID = -1;
           this.$store.state.curUserName = "";
           this.$store.state.token_key = "";
-          this.$store.state.curUserMail= "";
-          this.$store.state.curUserName= "";
+          this.$store.state.curUserMail = "";
+          this.$store.state.curUserName = "";
           localStorage.removeItem("isLogin");
           localStorage.removeItem("curUserID");
           localStorage.removeItem("curUserMail");
@@ -561,33 +567,33 @@ export default {
         .catch((err) => {
           alert("logout failed");
         });
+        
     },
-    
   },
   created() {},
   mounted() {
-    const wrapper = document.querySelector(".wrapper");
-    const loginLink = document.querySelector(".login-link");
-    const registerLink = document.querySelector(".register-link");
+    this.wrapper = document.querySelector(".wrapper");
+    this.loginLink = document.querySelector(".login-link");
+    this.registerLink = document.querySelector(".register-link");
 
-    const btnLogin = document.querySelector(".btnLogin-popup");
-    const iconClose = document.querySelector(".icon-close");
+    this.btnLogin = document.querySelector(".btnLogin-popup");
+    this.iconClose = document.querySelector(".icon-close");
 
-    registerLink.addEventListener("click", () => {
-      wrapper.classList.add("active");
+    this.registerLink.addEventListener("click", () => {
+      this.wrapper.classList.add("active");
       this.showVeriBox = false;
     });
 
-    loginLink.addEventListener("click", () => {
-      wrapper.classList.remove("active");
+    this.loginLink.addEventListener("click", () => {
+      this.wrapper.classList.remove("active");
     });
 
-    btnLogin.addEventListener("click", () => {
-      wrapper.classList.add("active-popup");
+    this.btnLogin.addEventListener("click", () => {
+      this.wrapper.classList.add("active-popup");
     });
 
-    iconClose.addEventListener("click", () => {
-      wrapper.classList.remove("active-popup");
+    this.iconClose.addEventListener("click", () => {
+      this.wrapper.classList.remove("active-popup");
       this.showVeriBox = false;
     });
 
