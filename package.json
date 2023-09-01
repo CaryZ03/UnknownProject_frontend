@@ -2,6 +2,7 @@
   "dependencies": {
     "@tiptap/extension-mention": "^2.1.7",
     "element-ui": "^2.15.13",
+    "remixicon": "^3.5.0",
     "three": "^0.155.0",
     "vue-ionicons": "^3.0.5",
     "vuedraggable": "^2.24.3"
