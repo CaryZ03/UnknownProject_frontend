@@ -1,6 +1,6 @@
 <template>
   <div class="container" v-if="editor">
-    <div class="editor" style="max-height: 50rem" v-if="editor">
+    <div class="editor" style="max-height: 45rem" v-if="editor">
       <menu-bar @upload="uploadDoc" @saveHTML="saveHTML" @saveMD="saveMD" @savePDF="downPDF" 
       @saveTXT="saveText" @saveWORD="saveWord"  class="editor__header" :editor="editor" />
       <editor-content class="editor__content" :editor="editor" />
@@ -308,13 +308,12 @@ export default {
         .then((res) => {
           console.log(res.data["msg"]);
           if (res.data["errno"] === 0) {
-            this.his = JSON.parse(res.data["s_info"]);
+            this.his =res.data["s_info"];
+            console.log(res.data["s_info"]);
             console.log("拿到了ids" + this.his);
           }
-        })
-        .catch((err) => {
-          console.log("err");
         });
+
     },
 
     saveJSON() {

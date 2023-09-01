@@ -44,6 +44,19 @@
               </template>
               表单项
             </t-menu-item>
+
+            <t-menu-item @click="cloneElement('mDropDown')" value="2-2">
+              <template #icon>
+                <icon name="testVue" />
+              </template>
+              表单项
+            </t-menu-item>
+            <t-menu-item @click="cloneElement('mTabs')" value="2-2">
+              <template #icon>
+                <icon name="testVue" />
+              </template>
+              tabs
+            </t-menu-item>
             <t-menu-item value="2-3">
               <template #icon>
                 <icon name="root-list" />

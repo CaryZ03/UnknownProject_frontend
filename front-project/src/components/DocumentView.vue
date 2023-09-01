@@ -132,13 +132,12 @@ padding: 4px 0; max-width: 600px;">
           <span style="float:right">
           <el-button
                 size="mini"
-                @click="handleEdit(scope.$index, scope.row)">查看
+                @click="handleEdit">查看
           </el-button>
 
           <el-button
                 size="mini"
-                type="danger"
-                @click="handleEdit(scope.$index, scope.row)">删除
+                type="danger">
           </el-button>
         </span>
     </div>
@@ -357,6 +356,18 @@ padding: 4px 0; max-width: 600px;">
         // return !node.data.isFolder || !node.data.isDropAllowed;
         return 1;
       },
+
+      handleEdit(index,row){
+        console.log()
+        this.$router.push({
+          name: "tiptap",
+          params:{
+            teamid: this.$store.state.curTeam.team_id,
+            projectid: this.project_id,
+            docid: this.curDocument.document_id,
+          }
+        })
+      }
     },
     props: {
     project_id: {

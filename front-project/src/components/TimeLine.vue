@@ -3,7 +3,7 @@
     <div id="progress-bar-container">
       <ul>
         <li class="step" v-for="(h, index) in his" :key="index">
-          <div class="step-inner" @click="this.$emit('child-event', h.sd_id);">{{ h.sd_saved_time }}</div>
+          <div class="step-inner" @click="this.$emit('child-event', h.sd_id);">{{ his[index]["sd_saved_time"] }}</div>
         </li>
       </ul>
       <div id="line">

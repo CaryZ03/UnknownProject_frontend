@@ -1,18 +1,28 @@
 import { VueRenderer } from '@tiptap/vue-2'
 import tippy from 'tippy.js'
-
+import request from '@/utils/request'
+import api from '@/api'
 import MentionList from './MentionList.vue'
 
 export default {
   items: ({ query }) => {
-    return [
-      "Pencil",
-      "Pencil2",
-      "Xeon",
-      "WEI",
-      "CR",
-      "W",
-    ].filter(item => item.toLowerCase().startsWith(query.toLowerCase())).slice(0, 5)
+    const data =JSON.stringify({
+      team_id : 5,
+      tm_user_id: 10
+    })
+    const nickNames = [];
+    api.chat.post_get_team_members_and_permissions(data).then((res)=>{
+      
+      res.data.members.forEach(element => {
+        const nickName = element.tm_user_nickname;
+        nickNames.push(nickName)
+      });
+      
+      console.log(nickNames);
+      console.log(nickNames.filter(item => item.toLowerCase().startsWith(query.toLowerCase())).slice(0, 5))
+      
+    })
+    return nickNames.filter(item => item.toLowerCase().startsWith(query.toLowerCase())).slice(0, 5)
   },
 
   render: () => {

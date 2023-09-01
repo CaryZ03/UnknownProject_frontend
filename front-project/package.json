@@ -54,6 +54,7 @@
     "vue-konva": "^2.1.7",
     "vue-moveable": "^2.0.0-beta.83",
     "vue-router": "^3.5.1",
+    "vue2-animate": "^2.1.4",
     "vuedraggable": "^2.24.3",
     "vuex": "^3.6.2",
     "y-prosemirror": "^1.0.20",

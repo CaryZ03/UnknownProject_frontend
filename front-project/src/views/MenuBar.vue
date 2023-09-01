@@ -169,11 +169,7 @@ export default {
           title: 'Redo',
           action: () => this.editor.chain().focus().redo().run(),
         },
-        {
-          icon: 'ri-save-line',
-          title: 'Save',
-          action: () => this.$emit('upload')
-        },
+
         {
           icon: 'ri-save-line',
           title: 'Save',
@@ -198,6 +194,12 @@ export default {
           icon: 'ri-save-line',
           title: 'Save',
           action: () => this.$emit('saveWORD')
+        },
+
+        {
+          icon: 'bold',
+          title: 'Save',
+          action: () => this.$emit('upload')
         },
       ],
     }

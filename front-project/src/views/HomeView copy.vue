@@ -1,80 +1,111 @@
 <template>
-  <div class="outcontainer" v-scroll="handleScroll">
-    <header>
-      <h2 class="logo">logo</h2>
-      <nav class="navigation">
-        <a href=""
-          ><router-link v-show="this.$store.state.isLogin" to=""
-            >Home</router-link
-          ></a
-        >
-        <a href=""
-          ><router-link v-show="this.$store.state.isLogin" to=""
-            >Community</router-link
-          ></a
-        >
-        <!-- <a href=""><router-link to="WorkSpace">WorkSpace</router-link></a> -->
-        <a
-          href=""
-          v-show="this.$store.state.isLogin"
-          @click.prevent="showTeamDialog"
-          >WorkSpace</a
-        >
-        <!-- <a href=""><router-link to="UML">UML</router-link></a> -->
-        <button v-show="!this.$store.state.isLogin" class="btnLogin-popup" @click="goDown">
-          Login
-        </button>
-        <button
-          v-show="this.$store.state.isLogin"
-          @click="logout"
-          class="btnLogout-popup"
-        >
-          Logout
-        </button>
-      </nav>
-    </header>
+  <div class="outcontainer">
+    <div class="container">
+      <header>
+        <h2 class="logo">logo</h2>
+        <nav class="navigation">
+          <a href=""><router-link to="">Home</router-link></a>
+          <a href=""><router-link to="">Community</router-link></a>
+          <!-- <a href=""><router-link to="WorkSpace">WorkSpace</router-link></a> -->
+          <a href="" @click.prevent="showTeamDialog">WorkSpace</a>
+          <a href=""><router-link to="UML">UML</router-link></a>
+          <button v-show="!this.$store.state.isLogin" class="btnLogin-popup">
+            Login
+          </button>
+          <button
+            v-show="this.$store.state.isLogin"
+            @click="logout"
+            class="btnLogout-popup"
+          >
+            Logout
+          </button>
+        </nav>
+      </header>
 
-    <section class="panel" id="1">
-      <transition name="slide-fade" mode="out-in">
-        <div v-if="show" ref="leftPic" class="leftPic"></div>
-      </transition>
+      <div class="wrapper">
+        <span class="icon-close"><i class="el-icon-close"></i></span>
 
-      <transition name="rlide-fade" mode="out-in">
-        <div v-if="show" class="rightTxt">HIHIHIHIHIHIH</div>
-      </transition>
-    </section>
+        <div class="form-box login">
+          <h2>Login</h2>
+          <form @submit.prevent="">
+            <div class="input-box">
+              <span class="icon"><i class="el-icon-edit"></i></span>
+              <input type="text" v-model="user.email" required />
+              <label>Email</label>
+            </div>
 
-    <section class="panel" id="2">
-      <transition name="slide-fade" mode="out-in">
-        <div v-if="!show" ref="leftPic" class="leftPic"></div>
-      </transition>
+            <div class="input-box">
+              <span class="icon"><i class="el-icon-lock"></i></span>
+              <input type="password" v-model="user.password" required />
+              <label>password</label>
+            </div>
 
-      <transition name="rlide-fade" mode="out-in">
-        <div v-if="!show" class="rightTxt">HIHIHIHIHIHIH</div>
-      </transition>
-    </section>
+            <div class="remember-forgot">
+              <label><input type="checkbox" />Remember Me</label>
+              <a href="">Forgot Password</a>
+            </div>
 
-    <section class="panel" id="3">
-      <transition name="slide-fade" mode="out-in">
-        <div v-if="show" ref="leftPic" class="leftPic"></div>
-      </transition>
+            <button @click="login" class="btn">Login</button>
 
-      <transition name="rlide-fade" mode="out-in">
-        <div v-if="show" class="rightTxt">HIHIHIHIHIHIH</div>
-      </transition>
-    </section>
+            <div class="login-register">
+              <p>
+                Don't have an account?<a href="#" class="register-link"
+                  >Register</a
+                >
+              </p>
+            </div>
+          </form>
+        </div>
 
-    <section class="panel" id="4">
-      <transition name="slide-fade" mode="out-in">
-        <div v-if="!show" ref="leftPic" class="leftPic"></div>
-      </transition>
+        <div class="form-box register">
+          <h2>Registeration</h2>
+          <form @submit.prevent="">
+            <div class="input-box">
+              <span class="icon"><i class="el-icon-edit"></i></span>
+              <input type="text" v-model="userR.email" required />
+              <label>Email</label>
+            </div>
 
-      <transition name="rlide-fade" mode="out-in">
-        <div v-if="!show" class="rightTxt">HIHIHIHIHIHIH</div>
-      </transition>
-    </section>
+            <div class="input-box">
+              <span class="icon"><i class="el-icon-lock"></i></span>
+              <input type="text" v-model="userR.password1" required />
+              <label>password</label>
+            </div>
 
-    <section class="panel" id="5">
+            <div class="input-box">
+              <span class="icon"><i class="el-icon-lock"></i></span>
+              <input type="password" v-model="userR.password2" required />
+              <label>repeat password</label>
+            </div>
+
+            <div v-show="showVeriBox" class="input-box">
+              <span class="icon"><i class="el-icon-lock"></i></span>
+              <input type="password" v-model="vericode" required />
+              <label>Vericode</label>
+            </div>
+
+            <div class="remember-forgot">
+              <label
+                ><input type="checkbox" />agree to the terms & conditions</label
+              >
+            </div>
+
+            <button v-if="!showVeriBox" @click="register" class="btn">
+              Register
+            </button>
+            <button v-else @click="ensureVericodeReg" class="btn">
+              Ensure
+            </button>
+
+            <div class="login-register">
+              <p>
+                Already have an account?<a href="#" class="login-link">Login</a>
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
+
       <!-- 选择团队界面 -->
       <el-dialog
         title="选择团队"
@@ -147,116 +178,32 @@
           <el-button type="primary" @click="submitCreateTeam">确定</el-button>
         </span>
       </el-dialog>
-      <div class="container">
-        <div class="wrapper active-popup">
-          <span class="icon-close"><i class="el-icon-close"></i></span>
+    </div>
 
-          <div class="form-box login">
-            <h2>Login</h2>
-            <form @submit.prevent="">
-              <div class="input-box">
-                <span class="icon"><i class="el-icon-edit"></i></span>
-                <input type="text" v-model="user.email" required />
-                <label>Email</label>
-              </div>
 
-              <div class="input-box">
-                <span class="icon"><i class="el-icon-lock"></i></span>
-                <input type="password" v-model="user.password" required />
-                <label>password</label>
-              </div>
+    <div class="container">
 
-              <div class="remember-forgot">
-                <label><input type="checkbox" />Remember Me</label>
-                <a href="">Forgot Password</a>
-              </div>
+    </div>
 
-              <button @click="login" class="btn">Login</button>
+    <div class="container">
+      <div class="leftPic"></div>
+      <div class="rightText"></div>
+    </div>
 
-              <div class="login-register">
-                <p>
-                  Don't have an account?<a href="#" @click="changeToRegister" class="register-link"
-                    >Register</a
-                  >
-                </p>
-              </div>
-            </form>
-          </div>
-
-          <div class="form-box register">
-            <h2>Registeration</h2>
-            <form @submit.prevent="">
-              <div class="input-box">
-                <span class="icon"><i class="el-icon-edit"></i></span>
-                <input type="text" v-model="userR.email" required />
-                <label>Email</label>
-              </div>
-
-              <div class="input-box">
-                <span class="icon"><i class="el-icon-lock"></i></span>
-                <input type="text" v-model="userR.password1" required />
-                <label>password</label>
-              </div>
-
-              <div class="input-box">
-                <span class="icon"><i class="el-icon-lock"></i></span>
-                <input type="password" v-model="userR.password2" required />
-                <label>repeat password</label>
-              </div>
-
-              <div v-show="showVeriBox" class="input-box">
-                <span class="icon"><i class="el-icon-lock"></i></span>
-                <input type="password" v-model="vericode" required />
-                <label>Vericode</label>
-              </div>
-
-              <div class="remember-forgot">
-                <label
-                  ><input type="checkbox" />agree to the terms &
-                  conditions</label
-                >
-              </div>
-
-              <button v-if="!showVeriBox" @click="register" class="btn">
-                Register
-              </button>
-              <button v-else @click="ensureVericodeReg" class="btn">
-                Ensure
-              </button>
-
-              <div class="login-register">
-                <p>
-                  Already have an account?<a href="#" @click="changeToLogin" class="login-link"
-                    >Login</a
-                  >
-                </p>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </section>
+    <div class="container">
+      <div class="leftPic"></div>
+      <div class="rightText"></div>
+    </div>
   </div>
 </template>
 
 
 
 <script>
-import "vue2-animate/dist/vue2-animate.min.css";
 export default {
-  directives: {
-    scroll: {
-      inserted(el, binding) {
-        // 滚动事件处理逻辑
-        el.addEventListener("scroll", binding.value);
-      },
-      unbind(el, binding) {
-        // 解绑滚动事件处理函数
-        el.removeEventListener("scroll", binding.value);
-      },
-    },
+  components: {
+    
   },
-  components: {},
   props: {},
   data() {
     return {
@@ -287,7 +234,6 @@ export default {
       isAgree: false,
       isRemember: false,
       showVeriBox: false,
-      sectionid: "1",
 
       //chooseTeam
       teamList: [
@@ -308,7 +254,6 @@ export default {
       },
 
       windowHeight: -1,
-      show: false,
     };
   },
   watch: {},
@@ -381,7 +326,7 @@ export default {
             localStorage.setItem("curUserMail", this.$store.state.curUserMail);
             localStorage.setItem("token", response.data["token_key"]);
             alert("登录成功");
-            // this.wrapper.classList.remove("active-popup");
+            this.wrapper.classList.remove("active-popup");
 
             this.flashTeamList();
             this.dialogVisible = true;
@@ -639,29 +584,19 @@ export default {
         });
     },
     handleScroll() {
-      // 获取页面正在展示的section逻辑
-      console.log("scroll!!!");
-      if (
-        this.sectionid == "1" ||
-        this.sectionid == "3" ||
-        this.sectionid == "5"
-      ) {
-        this.show = false;
-      } else {
-        this.show = true;
-      }
-      const sections = document.querySelectorAll("section");
-      sections.forEach((section) => {
-        const rect = section.getBoundingClientRect();
-        if (rect.top >= 0 && rect.bottom <= window.innerHeight) {
-          this.sectionid = section.id;
-          console.log("当前展示的section:", section.id);
-          if (section.id == "1" || section.id == "3" || this.sectionid == "5") {
-            this.show = true;
-          } else {
-            this.show = false;
-          }
-        }
+      // 获取当前滚动位置
+      const scrollTop =
+        window.pageYOffset || document.documentElement.scrollTop;
+
+      // 计算目标滚动位置
+      const targetScrollTop =
+        Math.floor(scrollTop / this.windowHeight) * this.windowHeight +
+        this.windowHeight;
+
+      // 使用 scrollTo 方法平滑滚动到目标位置
+      window.scrollTo({
+        top: targetScrollTop,
+        behavior: "smooth",
       });
     },
     //获取团队列表
@@ -720,44 +655,24 @@ export default {
           alert("logout failed");
         });
     },
-
-    changeToRegister(){
-      this.wrapper.classList.add("active");
-      this.showVeriBox = false;
-      
-    },
-    changeToLogin(){
-      this.wrapper.classList.remove("active");
-    },
-    goDown(){
-      window.scrollTo(0, document.body.scrollHeight);
-      console.log("goDown");
-    }
   },
   created() {},
   mounted() {
-    this.show = true;
-    // const box = this.$refs["panel"];
+    gsap.registerPlugin(ScrollTrigger);
 
-    // gsap.registerPlugin(ScrollTrigger);
-
-    // ScrollTrigger.defaults({
-    //   toggleActions: "restart pause resume pause",
-    //   scroller: ".outcontainer",
-    // });
-
-    // gsap.to(".leftPic", {rotation: 27, x: 100, duration: 1});
+    ScrollTrigger.defaults({
+      toggleActions: "restart pause resume pause",
+      scroller: ".outcontainer",
+    });
 
     this.windowHeight = window.innerHeight;
-    // window.addEventListener("scroll", this.handleScroll);
+    window.addEventListener("scroll", this.handleScroll);
     this.wrapper = document.querySelector(".wrapper");
     this.loginLink = document.querySelector(".login-link");
     this.registerLink = document.querySelector(".register-link");
 
     this.btnLogin = document.querySelector(".btnLogin-popup");
     this.iconClose = document.querySelector(".icon-close");
-
-    this.wrapper.classList.add("active-popup");
 
     this.registerLink.addEventListener("click", () => {
       this.wrapper.classList.add("active");
@@ -769,7 +684,6 @@ export default {
     });
 
     this.btnLogin.addEventListener("click", () => {
-      console.log("click Login ???");
       this.wrapper.classList.add("active-popup");
     });
 
@@ -782,12 +696,6 @@ export default {
     // if(this.$store.state.isLogin){
     this.flashTeamList();
     // }
-
-
-  },
-
-  destroyed() {
-    // window.removeEventListener('scroll', this.handleScroll);
   },
 };
 </script>
@@ -827,6 +735,7 @@ body {
   justify-content: center; /* 水平居中 */
   align-items: center; /* 垂直居中 */
 }
+
 
 body {
   display: flex;
@@ -929,7 +838,7 @@ header {
 }
 
 .wrapper {
-  position: relative;
+  position: absolute;
   width: 400px;
   height: 440px;
   background: transparent;
@@ -1103,97 +1012,5 @@ header {
 
 .login-register p a:hover {
   text-decoration: underline;
-}
-</style>
-
-<!-- gsap -->
-<style scoped>
-html,
-body {
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-}
-
-.container {
-  max-height: 100vh;
-  overflow-y: scroll;
-  scroll-snap-type: y mandatory;
-}
-
-.panel {
-  scroll-snap-align: start;
-  height: 100vh;
-  background-image: linear-gradient(222deg, #6a6767 0%, #181818 100%);
-}
-
-.red {
-  background-color: #cf3535;
-  background-image: none;
-}
-
-.blue {
-  background-color: #3f9fff;
-  background-image: none;
-}
-
-.orange {
-  background-color: #ff9500;
-  background-image: none;
-}
-
-.panel p {
-  font-size: 32px;
-}
-.rightTxt {
-  right: 10%;
-  top: 20vh;
-  width: 32vw;
-  height: 60vh;
-  background-color: antiquewhite;
-  float: right;
-  position: relative;
-}
-
-.leftPic {
-  left: 10%;
-  top: 20vh;
-  width: 32vw;
-  height: 60vh;
-  background-color: antiquewhite;
-  float: left;
-  position: relative;
-}
-</style>
-
-<style>
-.slide-fade-enter-active,
-.slide-fade-leave-active {
-  transition: all 2.5s;
-}
-
-.slide-fade-enter,
-.slide-fade-leave-to {
-  opacity: 0;
-  transform: translateX(-290px);
-  scale: 130%;
-}
-
-.rlide-fade-enter-active,
-.rlide-fade-leave-active {
-  transition: all 2.5s;
-}
-
-.rlide-fade-enter,
-.rlide-fade-leave-to {
-  opacity: 0;
-  transform: translateX(290px);
-}
-</style>
-
-<!-- hide scrollbar -->
-<style scoped>
-::-webkit-scrollbar {
-  display: none; /* Chrome Safari */
 }
 </style>
