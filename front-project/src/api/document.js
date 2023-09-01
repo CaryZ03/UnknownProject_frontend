@@ -65,7 +65,42 @@ export async function post_delete_prototype(data) {
     })
 }
 
+//show_directory_tree
+export async function post_show_directory_tree(data) {
+    return request({
+        method: 'POST',
+        url:  '/document/show_directory_tree',
+        data: data,
+    })
+}
 
+//search_document
+export async function post_search_document(data) {
+    return request({
+        method: 'POST',
+        url:  '/document/search_document',
+        data: data,
+    })
+}
+
+//create_document
+
+export async function post_create_document(data) {
+    return request({
+        method: 'POST',
+        url:  '/document/create_document',
+        data: data,
+    })
+}
+
+//move_document
+export async function post_move_document(data) {
+    return request({
+        method: 'POST',
+        url:  '/document/move_document',
+        data: data,
+    })
+}
 
 
 

@@ -621,6 +621,8 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
                   </div>
                   
                 </div>
+
+              <drag-tree :project_id="this.currentProgram.project_id"></drag-tree>
                                     
             </div>
               
@@ -1526,6 +1528,8 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
 
 <script>
 import moment from 'moment';
+
+import DragTree from '../components/DocumentView.vue';
 
 export default {
   data() {
@@ -3617,7 +3621,10 @@ export default {
       console.log('curTeam:',this.$store.state.curTeam)
       console.log('curUserID:',this.$store.state.curUserID)
       this.loadInfo();
-  }
+  },
+  components: {
+    DragTree
+  },
     
 }
 
