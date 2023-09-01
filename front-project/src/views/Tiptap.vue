@@ -1,157 +1,28 @@
 <template>
   <div class="container" v-if="editor">
-    <div class="header">
-      <!-- <t-button @click="editor.chain().focus().toggleBold().run()" :disabled="!editor.can().chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }" variant="text" ghost>幽灵按钮</t-button> -->
-      <t-button variant="text" @click="saveHTML" ghost>saveHTML</t-button>
-      <t-button variant="text" @click="saveMD" ghost>saveMD</t-button>
-      <t-button variant="text" @click="saveWord" ghost>saveWord</t-button>
-      <t-button variant="text" @click="saveText" ghost>saveText</t-button>
-      <t-button variant="text" @click="downPDF" ghost>downPDF</t-button>
-      <t-button
-        variant="text"
-        @click="editor.chain().focus().toggleBold().run()"
-        :disabled="!editor.can().chain().focus().toggleBold().run()"
-        :class="{ 'is-active': editor.isActive('bold') }"
-        ghost
-        >B</t-button
-      >
-      <t-button
-        variant="text"
-        @click="editor.chain().focus().toggleItalic().run()"
-        :disabled="!editor.can().chain().focus().toggleItalic().run()"
-        :class="{ 'is-active': editor.isActive('italic') }"
-        ghost
-        >Italic</t-button
-      >
-      <t-button
-        variant="text"
-        @click="editor.chain().focus().toggleStrike().run()"
-        :disabled="!editor.can().chain().focus().toggleStrike().run()"
-        :class="{ 'is-active': editor.isActive('strike') }"
-        ghost
-        >Strike</t-button
-      >
-      <t-button
-        variant="text"
-        @click="editor.chain().focus().toggleCode().run()"
-        :disabled="!editor.can().chain().focus().toggleCode().run()"
-        :class="{ 'is-active': editor.isActive('code') }"
-        ghost
-        >code</t-button
-      >
-      <t-button
-        variant="text"
-        @click="editor.chain().focus().unsetAllMarks().run()"
-        ghost
-        >UnsetMK</t-button
-      >
-      <t-button
-        variant="text"
-        @click="editor.chain().focus().clearNodes().run()"
-        ghost
-        >clearNode</t-button
-      >
-      <t-button
-        variant="text"
-        @click="editor.chain().focus().setParagraph().run()"
-        :class="{ 'is-active': editor.isActive('paragraph') }"
-        ghost
-        >Para</t-button
-      >
-      <t-button
-        variant="text"
-        @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
-        :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }"
-        ghost
-        >h1</t-button
-      >
-      <t-button
-        variant="text"
-        @click="editor.chain().focus().toggleHeading({ level: 2 }).run()"
-        :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }"
-        ghost
-        >h2</t-button
-      >
-      <t-button
-        variant="text"
-        @click="editor.chain().focus().toggleHeading({ level: 3 }).run()"
-        :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }"
-        ghost
-        >h3</t-button
-      >
-      <t-button
-        variant="text"
-        @click="editor.chain().focus().toggleHeading({ level: 4 }).run()"
-        :class="{ 'is-active': editor.isActive('heading', { level: 4 }) }"
-        ghost
-        >h4</t-button
-      >
-      <t-button
-        variant="text"
-        @click="editor.chain().focus().toggleHeading({ level: 5 }).run()"
-        :class="{ 'is-active': editor.isActive('heading', { level: 5 }) }"
-        ghost
-        >h5</t-button
-      >
-      <t-button
-        variant="text"
-        @click="editor.chain().focus().toggleHeading({ level: 6 }).run()"
-        :class="{ 'is-active': editor.isActive('heading', { level: 6 }) }"
-        ghost
-        >h6</t-button
-      >
-      <t-button
-        variant="text"
-        @click="editor.chain().focus().toggleBulletList().run()"
-        :class="{ 'is-active': editor.isActive('bulletList') }"
-        ghost
-        >Bull</t-button
-      >
-      <t-button
-        variant="text"
-        @click="editor.chain().focus().toggleOrderedList().run()"
-        :class="{ 'is-active': editor.isActive('orderedList') }"
-        ghost
-        >Ord</t-button
-      >
-      <t-button
-        variant="text"
-        @click="editor.chain().focus().toggleCodeBlock().run()"
-        :class="{ 'is-active': editor.isActive('codeBlock') }"
-        ghost
-        >CodeBlock</t-button
-      >
-      <t-button
-        variant="text"
-        @click="editor.chain().focus().setHorizontalRule().run()"
-        ghost
-        >H</t-button
-      >
-      <t-button
-        variant="text"
-        @click="editor.chain().focus().setHardBreak().run()"
-        ghost
-        >HdBrk</t-button
-      >
-      <t-button
-        variant="text"
-        @click="editor.chain().focus().undo().run()"
-        :disabled="!editor.can().chain().focus().undo().run()"
-        ghost
-        >Undo</t-button
-      >
-      <t-button
-        variant="text"
-        @click="editor.chain().focus().redo().run()"
-        :disabled="!editor.can().chain().focus().redo().run()"
-        ghost
-        >Redo</t-button
-      >
-
-      <t-button @click="generateLink" variant="text" ghost>分享链接</t-button>
-      <!-- <t-button variant="text" ghost>幽灵按钮</t-button> -->
+    <div class="editor" style="max-height: 50rem" v-if="editor">
+      <menu-bar @upload="uploadDoc" @saveHTML="saveHTML" @saveMD="saveMD" @savePDF="downPDF" 
+      @saveTXT="saveText" @saveWORD="saveWord"  class="editor__header" :editor="editor" />
+      <editor-content class="editor__content" :editor="editor" />
+      <div class="editor__footer">
+        <div :class="`editor__status editor__status--${status}`">
+          <template v-if="status === 'connected'">
+            {{ editor.storage.collaborationCursor.users.length }} user{{
+              editor.storage.collaborationCursor.users.length === 1 ? "" : "s"
+            }}
+            online in {{ room }}
+          </template>
+          <template v-else> offline </template>
+        </div>
+        <div class="editor__name">
+          <button @click="setName">
+            {{ currentUser.name }}
+          </button>
+        </div>
+      </div>
     </div>
 
+    <time-line :his="his" @child-event="handleChildEvent"></time-line>
     <floating-menu
       class="floating-menu"
       :tippy-options="{ duration: 100 }"
@@ -176,14 +47,11 @@
         Bullet List
       </button>
     </floating-menu>
-
-    <editor-content id="pdfDom" class="editor__content" :editor="editor" />
   </div>
 </template>
   
   <script>
-
-
+import { ChevronDownIcon } from "tdesign-icons-vue";
 import { TiptapCollabProvider } from "@hocuspocus/provider";
 import CharacterCount from "@tiptap/extension-character-count";
 import Collaboration from "@tiptap/extension-collaboration";
@@ -201,7 +69,7 @@ import { saveAs } from "file-saver";
 import htmlDocx from "html-docx-js/dist/html-docx";
 import TurndownService from "turndown";
 import suggestion from "./suggestion.js";
-
+import TimeLine from "@/components/TimeLine.vue";
 const getRandomElement = (list) => {
   return list[Math.floor(Math.random() * list.length)];
 };
@@ -219,6 +87,7 @@ export default {
     EditorContent,
     MenuBar,
     FloatingMenu,
+    TimeLine,
   },
 
   data() {
@@ -228,16 +97,28 @@ export default {
         color: this.getRandomColor(),
       },
       provider: null,
+      teamid: -1,
+      docid: -1,
       editor: null,
       status: "connecting",
-      room: "room1",
+      room: "-1",
+      his: [],
+
+      content: null,
+      tmpcontent: null,
     };
+  },
+  created() {
+    this.teamid = this.$route.params.teamid;
+    this.docid = this.$route.params.docid;
+    this.room = this.docid;
   },
 
   mounted() {
     const ydoc = new Y.Doc();
+
     this.provider = new TiptapCollabProvider({
-      appId: "7j9y6m10",
+      appId: "w9n1xdmo",
       name: this.room,
       document: ydoc,
     });
@@ -273,11 +154,23 @@ export default {
         }),
       ],
     });
-
     localStorage.setItem("currentUser", JSON.stringify(this.currentUser));
+
+    this.getHistory();
   },
 
   methods: {
+    clickHandler(data) {
+      this.$message.success(`选中【${data.value}】`);
+    },
+    getContent() {
+      return <div>操作四</div>;
+    },
+    handleChildEvent(data) {
+      console.log("Received data from child component:", data);
+      changeContent(data);
+    },
+
     setName() {
       const name = (window.prompt("Name") || "").trim().substring(0, 32);
 
@@ -391,6 +284,38 @@ export default {
       });
       saveAs(file);
     },
+    // //////////////////////////////////////////////////////////////
+    uploadDoc() {
+      const htmlstring = this.editor.getHTML();
+      const data = JSON.stringify({
+        document_id: this.docid,
+        document_content: htmlstring,
+      });
+      this.$api.doc.post_upload_saved_document(data).then((res) => {
+        console.log("UP load" + res.data["msg"]);
+      });
+
+      this.getHistory();
+    },
+
+    getHistory() {
+      const data = JSON.stringify({
+        document_id: this.docid,
+      });
+
+      this.$api.doc
+        .post_show_save(data)
+        .then((res) => {
+          console.log(res.data["msg"]);
+          if (res.data["errno"] === 0) {
+            this.his = JSON.parse(res.data["s_info"]);
+            console.log("拿到了ids" + this.his);
+          }
+        })
+        .catch((err) => {
+          console.log("err");
+        });
+    },
 
     saveJSON() {
       var file = new File([this.editor.getJSON()], this.title + ".json", {
@@ -405,29 +330,46 @@ export default {
       });
       saveAs(file);
     },
+    //  see the history
+    changeContent(sdid) {
+      const data = {
+        save_id: sdid,
+      };
+      this.$api.doc.post_search_save(data).then((res) => {
+        console.log(index);
+        console.log(res.data["errno"]);
+        if (res.data["errno"] === 0) {
+          this.content = res.data["content_message"];
+          this.editor.commands.setContent(this.content);
+        }
+      });
+      // TODO 差点逻辑
+      // 目标是能看以往的同时能回退当前版本
+      // this.content =
+      // document_content
+    },
 
+    //   generateLink() {
+    //   const link = "http://localhost:8080/Tiptap/w9n1xdmo/1"; //link=..
+    //   const el = document.createElement("textarea");
+    //   el.value = link;
+    //   document.body.appendChild(el);
+    //   el.select();
+    //   document.execCommand("copy");
+    //   document.body.removeChild(el);
+    //   this.$message.success("链接已复制到剪贴板");
 
-  //   generateLink() {
-  //   const link = "http://localhost:8080/Tiptap/w9n1xdmo/1"; //link=..
-  //   const el = document.createElement("textarea");
-  //   el.value = link;
-  //   document.body.appendChild(el);
-  //   el.select();
-  //   document.execCommand("copy");
-  //   document.body.removeChild(el);
-  //   this.$message.success("链接已复制到剪贴板");
-
-  //   this.$alert("链接已生成:" + link, "提示", {
-  //     confirmButtonText: "确定",
-  //     dangerouslyUseHTMLString: true,
-  //     callback: (action) => {
-  //       // this.$message({
-  //       //   type: 'info',
-  //       //   message: `action: ${ action }`
-  //       // });
-  //     },
-  //   });
-  // },
+    //   this.$alert("链接已生成:" + link, "提示", {
+    //     confirmButtonText: "确定",
+    //     dangerouslyUseHTMLString: true,
+    //     callback: (action) => {
+    //       // this.$message({
+    //       //   type: 'info',
+    //       //   message: `action: ${ action }`
+    //       // });
+    //     },
+    //   });
+    // },
 
     // -----------------------关于导出----------------------------------------
     // upload_saved_document(){
@@ -440,7 +382,6 @@ export default {
     // download_saved_document(){
     // }
   },
-
 
   beforeUnmount() {
     this.editor.destroy();
@@ -480,7 +421,7 @@ export default {
 }
 .editor {
   background-color: #fff;
-  border: 3px solid #0d0d0d;
+  border: 8px solid #000000;
   border-radius: 0.75rem;
   color: #0d0d0d;
   display: flex;
@@ -617,7 +558,13 @@ export default {
     background-color: rgba(#616161, 0.1);
     color: #616161;
   }
-
+  .el-dropdown-link {
+    cursor: pointer;
+    color: #409eff;
+  }
+  .el-icon-arrow-down {
+    font-size: 12px;
+  }
   pre {
     background: #0d0d0d;
     border-radius: 0.5rem;
