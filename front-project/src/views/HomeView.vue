@@ -457,7 +457,18 @@ export default {
       this.dialogVisible = false; // 关闭弹窗
       this.$store.state.curTeam = row;
       
-      localStorage.setItem("curTeam",  JSON.stringify(this.$store.state.curTeam));
+      if(localStorage.getItem("curTeam") === null)
+        localStorage.setItem("curTeam",  JSON.stringify(this.$store.state.curTeam));
+      else{
+        if(this.$store.state.curTeam !== JSON.parse(localStorage.getItem("curTeam"))){
+          localStorage.setItem("curTeam",  JSON.stringify(this.$store.state.curTeam));
+          localStorage.removeItem("currentProgram")
+          localStorage.removeItem('isProgramChosen')
+        }
+          
+      }
+      
+      
       
       this.$router.push('/WorkSpace'); // 进行页面跳转
     },
@@ -570,6 +581,10 @@ export default {
           localStorage.removeItem("curUserMail");
           localStorage.removeItem("curUserName");
           localStorage.removeItem("token");
+
+          //
+          localStorage.removeItem("currentProgram");
+          localStorage.removeItem("isProgramChosen");
         })
         .catch((err) => {
           alert("logout failed");
