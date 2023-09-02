@@ -30,7 +30,11 @@
       </div>
     </div>
 
-    <time-line :his="his" @child-event="handleChildEvent" @click="returnNow"></time-line>
+    <time-line
+      :his="his"
+      @child-event="handleChildEvent"
+      @click="returnNow"
+    ></time-line>
     <floating-menu
       class="floating-menu"
       :tippy-options="{ duration: 100 }"
@@ -99,8 +103,8 @@ export default {
 
   data() {
     return {
-      currentUser: JSON.parse(localStorage.getItem("currentUser")) || {
-        name: this.$store.state.curUserName,
+      currentUser: JSON.parse(localStorage.getItem('currentUser')) || {
+        name: this.getRandomName(),
         color: this.getRandomColor(),
       },
       provider: null,
@@ -124,46 +128,96 @@ export default {
   mounted() {
     const ydoc = new Y.Doc();
 
-    this.provider = new TiptapCollabProvider({
-      appId: "w9n1xdmo",
-      name: this.room,
-      document: ydoc,
-    });
+      this.provider = new TiptapCollabProvider({
+        appId: "w9n1xdmo",
+        name: this.room,
+        document: ydoc,
+      });
 
-    this.provider.on("status", (event) => {
-      this.status = event.status;
-    });
+      this.provider.on("status", (event) => {
+        this.status = event.status;
+      });
 
-    this.editor = new Editor({
-      extensions: [
-        StarterKit.configure({
-          history: false,
-        }),
-        Mention.configure({
-          HTMLAttributes: {
-            class: "mention",
-          },
-          suggestion,
-        }),
+      this.editor = new Editor({
+        extensions: [
+          StarterKit.configure({
+            history: false,
+          }),
+          Mention.configure({
+            HTMLAttributes: {
+              class: "mention",
+            },
+            suggestion,
+          }),
 
-        Highlight,
-        TaskList,
-        TaskItem,
-        Collaboration.configure({
-          document: ydoc,
-        }),
-        CollaborationCursor.configure({
-          provider: this.provider,
-          user: this.currentUser,
-        }),
-        CharacterCount.configure({
-          limit: 10000,
-        }),
-      ],
-    });
-    localStorage.setItem("currentUser", JSON.stringify(this.currentUser));
+          Highlight,
+          TaskList,
+          TaskItem,
+          Collaboration.configure({
+            document: ydoc,
+          }),
+          CollaborationCursor.configure({
+            provider: this.provider,
+            user: this.currentUser,
+          }),
+          CharacterCount.configure({
+            limit: 10000,
+          }),
+        ],
+      });
+      const cusr = {
+        name: this.$store.state.curUserName,
+        color: this.getRandomColor(),
+      }
+      localStorage.setItem("currentUser", JSON.stringify(cusr));
 
-    this.getHistory();
+      this.getHistory();
+    setTimeout(() => {
+      // 在此处添加需要延迟执行的代码
+      // ...
+      const ydoc = new Y.Doc();
+
+      this.provider = new TiptapCollabProvider({
+        appId: "w9n1xdmo",
+        name: this.room,
+        document: ydoc,
+      });
+
+      this.provider.on("status", (event) => {
+        this.status = event.status;
+      });
+
+      this.editor = new Editor({
+        extensions: [
+          StarterKit.configure({
+            history: false,
+          }),
+          Mention.configure({
+            HTMLAttributes: {
+              class: "mention",
+            },
+            suggestion,
+          }),
+
+          Highlight,
+          TaskList,
+          TaskItem,
+          Collaboration.configure({
+            document: ydoc,
+          }),
+          CollaborationCursor.configure({
+            provider: this.provider,
+            user: this.currentUser,
+          }),
+          CharacterCount.configure({
+            limit: 10000,
+          }),
+        ],
+      });
+      localStorage.setItem("currentUser", JSON.stringify(this.currentUser));
+
+      this.getHistory();
+    }, 500); // 延迟时间为0.5秒，即500毫秒
   },
 
   methods: {
@@ -303,8 +357,6 @@ export default {
         console.log("UP load" + res.data["msg"]);
         this.getHistory();
       });
-
-      
     },
 
     getHistory() {
@@ -352,7 +404,7 @@ export default {
       });
     },
 
-    returnNow(){
+    returnNow() {
       this.editor.commands.setContent(this.content);
     },
   },
