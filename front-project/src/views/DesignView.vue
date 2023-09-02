@@ -280,7 +280,7 @@
             :y="y_off[index]"
             @activated="onSelected($event, index)"
             style="
-              background-color: green;
+              /* background-color: green; */
               border: 1px solid rgb(255, 255, 255);
               -webkit-transition: background-color 200ms linear;
               -ms-transition: background-color 200ms linear;
