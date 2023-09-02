@@ -71,7 +71,6 @@
               <t-menu-item value="3-1-10" @click="cloneElement('testVue')"
                 >iPad(1024×768)</t-menu-item
               >
-              
             </t-submenu>
 
             <t-submenu title="Button" value="4-1">
@@ -108,7 +107,6 @@
               <t-menu-item value="4-1-10" @click="cloneElement('testVue')"
                 >iPad(1024×768)</t-menu-item
               >
-              
             </t-submenu>
 
             <t-submenu title="Divider" value="5-1">
@@ -195,7 +193,6 @@
               >
             </t-submenu>
 
-
             <t-submenu title="Pagination" value="9-1">
               <template #icon>
                 <icon name="server" />
@@ -216,7 +213,7 @@
                 >极简版迷你分页</t-menu-item
               >
             </t-submenu>
-          
+
             <t-submenu title="Steps" value="10-1">
               <template #icon>
                 <icon name="server" />
@@ -376,7 +373,6 @@ import domToImage from "dom-to-image";
 import testVue from "./test.vue";
 import { Icon } from "tdesign-icons-vue";
 
-
 import SideBar from "@/components/Layouts/SideBar.vue";
 import VueRulerTool from "vue-ruler-tool";
 // import TumblrButton from '../components/Buttons/TumblrButton.vue';
@@ -397,15 +393,51 @@ export default {
       selectComponent: null,
       selectedIndex: -1,
       ws: null,
-      x_point: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      x_point: [
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0,],
-      y_point: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0,],
-      p_vis: [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
-      false,false,false,false,false,false,false,false,false,false,false,
-      false,false,false,false,false,false,false],
+        0, 0, 0, 0, 0, 0,
+      ],
+      y_point: [
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0,
+      ],
+      p_vis: [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+      ],
       collapsed: false,
       x_off: [
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
