@@ -480,7 +480,7 @@
                       </span>
                     </div>
                     <div v-else-if="message.message_type === 'image'" class="chat-bubble received">
-                      <img :src="message.content" alt="接收的图片">
+                      <el-image :src="message.content" fit="scale-down"></el-image>
                     </div>
                     <div v-else-if="message.message_type === 'file'" class="chat-bubble received file"
                       @click="downloadFile(message)">
@@ -530,7 +530,7 @@
                       </span>
                     </div>
                     <div v-else-if="message.message_type === 'image'" class="chat-bubble sent">
-                      <img :src="message.content" alt="发送的图片">
+                      <el-image :src="message.content" fit="scale-down"></el-image>
                     </div>
                     <div v-else-if="message.message_type === 'file'" class="chat-bubble sent file"
                       @click="downloadFile(message)">
@@ -795,7 +795,7 @@ export default {
       self.departmentList.forEach((element, index) => {
         // console.log("abc11111");
         // console.log(element.team_id);
-        const socketURL = 'ws://182.92.86.71:4514/ws/red/' + '1' + index + '/';
+        const socketURL = 'ws://182.92.86.71:4514/ws/red/' + '1' + element.team_id + '/';
         // console.log("socketURL: " + socketURL);
         self.teamRedWebSocket[index] = new WebSocket(socketURL);
         self.teamRedWebSocket[index].onmessage = self.handleRed;
@@ -803,7 +803,7 @@ export default {
       self.createGroupChatList.forEach((element, index) => {
         // console.log("abc11111");
         // console.log(element.team_id);
-        const socketURL = 'ws://182.92.86.71:4514/ws/red/' + '2' + index + '/';
+        const socketURL = 'ws://182.92.86.71:4514/ws/red/' + '2' + element.gc_id + '/';
         // console.log("socketURL: " + socketURL);
         self.createGroupRedWebSocket[index] = new WebSocket(socketURL);
         self.createGroupRedWebSocket[index].onmessage = self.handleRed;
@@ -811,7 +811,7 @@ export default {
       self.joinGroupChatList.forEach((element, index) => {
         // console.log("abc11111");
         // console.log(element.team_id);
-        const socketURL = 'ws://182.92.86.71:4514/ws/red/' + '3' + index + '/';
+        const socketURL = 'ws://182.92.86.71:4514/ws/red/' + '3' + element.gc_id + '/';
         // console.log("socketURL: " + socketURL);
         self.joinGroupRedWebSocket[index] = new WebSocket(socketURL);
         self.joinGroupRedWebSocket[index].onmessage = self.handleRed;
@@ -819,7 +819,7 @@ export default {
       self.privateChatList.forEach((element, index) => {
         // console.log("abc11111");
         // console.log(element.team_id);
-        const socketURL = 'ws://182.92.86.71:4514/ws/red/' + '4' + index + '/';
+        const socketURL = 'ws://182.92.86.71:4514/ws/red/' + '4' + element.pc_id + '/';
         // console.log("socketURL: " + socketURL);
         self.privateRedWebSocket[index] = new WebSocket(socketURL);
         self.privateRedWebSocket[index].onmessage = self.handleRed;
@@ -829,43 +829,43 @@ export default {
       console.log(self.joinGroupRedWebSocket);
       console.log(self.privateRedWebSocket);
     },
-    sendRed(index){
+    sendRed(index) {
       let sendString = '';
-      if(this.activeSelectName === 'first')
-      {
+      if (this.activeSelectName === 'first') {
         sendString += '1';
-        sendString += index;
+        sendString += this.curDepartmentId;
         const send_message_to_backend = JSON.stringify({
           'room_id': sendString,
         })
         this.teamRedWebSocket[index].send(send_message_to_backend);
+        // console.log(this.teamRedWebSocket[index]);
       }
-      else if(this.activeSelectName === 'second')
-      {
+      else if (this.activeSelectName === 'second') {
         sendString += '2';
-        sendString += index;
+        sendString += this.curDepartmentId;
         const send_message_to_backend = JSON.stringify({
           'room_id': sendString,
         })
         this.createGroupRedWebSocket[index].send(send_message_to_backend);
+        // console.log(this.createGroupRedWebSocket[index]);
       }
-      else if(this.activeSelectName === 'third')
-      {
+      else if (this.activeSelectName === 'third') {
         sendString += '3';
-        sendString += index;
+        sendString += this.curDepartmentId;
         const send_message_to_backend = JSON.stringify({
           'room_id': sendString,
         })
         this.joinGroupRedWebSocket[index].send(send_message_to_backend);
+        // console.log(this.joinGroupRedWebSocket[index]);
       }
-      else if(this.activeSelectName === 'forth')
-      {
+      else if (this.activeSelectName === 'forth') {
         sendString += '4';
-        sendString += index;
+        sendString += this.curDepartmentId;
         const send_message_to_backend = JSON.stringify({
           'room_id': sendString,
         })
         this.privateRedWebSocket[index].send(send_message_to_backend);
+        // console.log(this.privateRedWebSocket[index]);
       }
       console.log("Send red success");
     },
@@ -874,23 +874,51 @@ export default {
       // console.log(event);
       console.log(data.room_id);
       const chat_type = parseInt(data.room_id[0]);
-      const chat_index = parseInt(data.room_id.slice(1));
+      const chat_id = parseInt(data.room_id.slice(1));
       console.log(chat_type);
-      console.log(chat_index);
-      if(chat_type === 1)
-      {
+      // console.log(chat_index);
+      if (chat_type === 1) {
+        let chat_index = 0;
+        for(var i = 0; i < this.departmentList.length; i++)
+        {
+          if(this.departmentList[i].team_id === chat_id)
+          {
+            chat_index = i;
+          }
+        }
         this.teamRedDotNum[chat_index] += 1;
       }
-      else if(chat_type === 2)
-      {
+      else if (chat_type === 2) {
+        let chat_index = 0;
+        for(var i = 0; i < this.createGroupChatList.length; i++)
+        {
+          if(this.createGroupChatList[i].gc_id === chat_id)
+          {
+            chat_index = i;
+          }
+        }
         this.createGroupRedDotNum[chat_index] += 1;
       }
-      else if(chat_type === 3)
-      {
+      else if (chat_type === 3) {
+        let chat_index = 0;
+        for(var i = 0; i < this.joinGroupChatList.length; i++)
+        {
+          if(this.joinGroupChatList[i].gc_id === chat_id)
+          {
+            chat_index = i;
+          }
+        }
         this.joinGroupRedDotNum[chat_index] += 1;
       }
-      else if(chat_type === 4)
-      {
+      else if (chat_type === 4) {
+        let chat_index = 0;
+        for(var i = 0; i < this.privateChatList.length; i++)
+        {
+          if(this.privateChatList[i].pc_id === chat_id)
+          {
+            chat_index = i;
+          }
+        }
         this.privateRedDotNum[chat_index] += 1;
       }
       console.log(this.teamRedDotNum);
@@ -1487,7 +1515,7 @@ export default {
           console.log(error);
         });
 
-        this.sendRed(this.curentChatIndex);
+      this.sendRed(this.curentChatIndex);
     },
     async sendGroupMessage() {
       const self = this;
@@ -2768,6 +2796,7 @@ body>.el-container {
 .chat-bubble {
   display: inline-block;
   max-width: 80%;
+  max-height: 60%;
   margin-bottom: 10px;
   padding: 10px;
   border-radius: 20px;
@@ -2910,9 +2939,11 @@ body {
   background-repeat: initial;
   height: 1045px;
 }
+
 ::v-deep.select-tab.el-tabs .el-tabs__item {
   color: #ffffff !important;
 }
+
 ::v-deep.select-tab.el-tabs .el-tabs__item.is-active {
   color: #3f9eff !important;
 }
