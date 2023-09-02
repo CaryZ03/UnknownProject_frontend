@@ -23,7 +23,7 @@
     </header>
 
     <div class="wrapper">
-      <span class="icon-close"><i class="el-icon-close"></i></span>
+      <span class="icon-close"><i class="el-icon-close" style="color: black;"></i></span>
 
       <div class="form-box login">
         <h2 v-if="!IsLoginFinished">Login</h2>
