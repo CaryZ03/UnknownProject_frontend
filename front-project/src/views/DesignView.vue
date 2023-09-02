@@ -305,6 +305,7 @@
         <div ref="elementToCapture" :style="computedStyle">
           <vue-draggable-resizable
             :parent="true"
+            @deactivated="onDeselect($event, index)"
             v-for="(item, index) in clonedComponents"
             ref="draggableRes"
             :key="index"
@@ -328,11 +329,12 @@
               transition: background-color 200ms linear;
             "
           >
+          <div slot="" style="float: right;">{{  }}</div>
             <div slot="tl">😀</div>
             <div slot="tm">😀</div>
             <div slot="tr">😀</div>
             <div slot="mr">😀</div>
-            <div slot="br">😀</div>
+            <div slot="br">Name</div>
             <div slot="bm">😀</div>
             <div slot="bl">😀</div>
             <div slot="ml">😀</div>
@@ -440,6 +442,8 @@ export default {
         false,
       ],
       collapsed: false,
+      index_name: [],
+      name: '',
       x_off: [
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -501,11 +505,19 @@ export default {
     this.ws = new WebSocket("ws://182.92.86.71:4514/ws/editor/"+this.ptid+"/");
     this.ws.onmessage = this.handleMessage;
 
-    this.ws.onopen = () => {
-      this.sendMessage();
-    };
+    // this.ws.onopen = () => {
+    //   this.sendMessage();
+    // };
   },
   computed: {
+    computedStyle() {
+      return {
+        backgroundColor: this.canvasColor,
+        width: this.canvasX,
+        height: this.canvasY,
+      };
+    },
+
     computedStyle() {
       return {
         backgroundColor: this.canvasColor,
@@ -551,6 +563,7 @@ export default {
         this.x_point = data.x_point;
         this.y_point = data.y_point;
         this.p_vis = data.p_vis;
+        this.index_name = data.index_name;
       } else {
         this.sendMessage();
       }
@@ -571,6 +584,7 @@ export default {
         y_point: this.y_point,
         p_vis: this.p_vis,
         new_join_info: this.new_join_info,
+        index_name: this.index_name,
       });
       this.ws.send(sendData);
       this.new_join_info = "old";
@@ -614,6 +628,25 @@ export default {
         console.log("esc");
       } else if (event.keyCode === 46 || event.keyCode === 8) {
         this.clonedComponents.splice(this.selectedIndex, 1);
+        this.x_off.splice(this.selectedIndex, 1);
+        this.y_off.splice(this.selectedIndex, 1);
+        this.x_scale.splice(this.selectedIndex, 1);
+        this.y_scale.splice(this.selectedIndex, 1);
+
+        this.index_name = this.index_name.filter(item => item.id!==this.selectedIndex);
+
+        this.index_name.forEach((item)=>{
+          if(item.index>this.selectedIndex){
+            item.index--;
+          }
+        })
+        /*
+        
+        x_off: this.x_off,
+        y_off: this.y_off,
+        x_scale: this.x_scale,
+        y_scale: this.y_scale,
+        */
         console.log("delete");
         this.sendMessage();
       }
@@ -651,6 +684,21 @@ export default {
     },
     onSelected(event, index) {
       this.selectedIndex = index;
+
+      const data = {
+        index: this.selectedIndex,
+        name: this.$store.state.curUserID,
+      };
+
+      this.index_name.push(data);
+
+      this.sendMessage();
+    },
+    onDesected(event, index) {
+      this.selectedIndex = index;
+
+      this.index_name =  this.index_name.filter(item => item.index !== this.selectedIndex);
+      this.sendMessage();
     },
 
     changeHandler(active) {
@@ -718,6 +766,8 @@ export default {
           console.log("获得error");
         });
     },
+
+
   },
 
   created() {
