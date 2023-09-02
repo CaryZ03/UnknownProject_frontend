@@ -767,10 +767,13 @@ export default {
       }],
       selectedRelayMethodOptions: '逐条转发',
       chat_type: 'team_chat',
-
+      timer: null,
     };
   },
   mounted() {
+    document.body.style.backgroundColor = 'initial';
+    // document.body.style.backgroundImage = 'conic-gradient(from 90deg at 50% 50%, #090B1E 0%, transparent 100%)';
+    
     this.scrollToBottom();
     this.check_profile_self();
     this.getDepartments();
@@ -781,6 +784,9 @@ export default {
   },
   updated() {
     // this.scrollToBottom();
+  },
+  beforeDestroy() {
+    this.stopTimer();
   },
   methods: {
     async check_profile_self() {
@@ -2415,7 +2421,10 @@ export default {
         });
     },
     startTimer() {
-      setInterval(this.acquireUnreadMessage, 1000);
+      // this.timer = setInterval(this.acquireUnreadMessage, 1000);
+    },
+    stopTimer() {
+      clearInterval(this.timer);
     },
     async acquireUnreadMessage() {
       const self = this;
@@ -2677,11 +2686,13 @@ body>.el-container {
 .department-avatar {
   margin-left: 18px;
   margin-top: 15px;
+  font-size: 20px;
 }
 
 .department-avatar-red {
   margin-left: 18px;
   margin-top: 5px;
+  font-size: 30px;
 }
 
 .department-name {
