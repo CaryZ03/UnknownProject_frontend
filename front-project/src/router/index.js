@@ -17,6 +17,9 @@ const Invite = () => import('../views/InviteView.vue')
 const joinTeam = () => import('../views/JoinTeam.vue')
 
 const Preview = () =>  import('../views/Preview.vue')
+
+const Document = () => import('../views/DocumentView.vue')
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -36,11 +39,11 @@ const routes = [
     name: 'Login',
     component: Login
   },
-  // {
-  //   path: '/Invite/:key',
-  //   name: 'Invite',
-  //   component: Invite
-  // },
+  {
+    path: '/Document',
+    name: 'Document',
+    component: Document
+  },
   {
     path: '/Text',
     name: 'Text',
@@ -92,7 +95,7 @@ const routes = [
   },
 
   {
-    path: '/tiptap/:teamid/:docid',
+    path: '/tiptap/:teamid/:projectid/:docid',
     name: 'tiptap',
     component: TiptapView
   },

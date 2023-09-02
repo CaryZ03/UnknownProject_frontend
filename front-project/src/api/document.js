@@ -65,8 +65,96 @@ export async function post_delete_prototype(data) {
     })
 }
 
+//show_directory_tree
+export async function post_show_directory_tree(data) {
+    return request({
+        method: 'POST',
+        url:  '/document/show_directory_tree',
+        data: data,
+    })
+}
 
+//search_document
+export async function post_search_document(data) {
+    return request({
+        method: 'POST',
+        url:  '/document/search_document',
+        data: data,
+    })
+}
 
+//create_document
+
+export async function post_create_document(data) {
+    return request({
+        method: 'POST',
+        url:  '/document/create_document',
+        data: data,
+    })
+}
+
+//move_document
+export async function post_move_document(data) {
+    return request({
+        method: 'POST',
+        url:  '/document/move_document',
+        data: data,
+    })
+}
+
+// change_directory_recycle
+export async function post_change_directory_recycle(data) {
+    return request({
+        method: 'POST',
+        url:  '/document/change_directory_recycle',
+        data: data,
+    })
+}
+
+//change_document_recycle
+export async function post_change_document_recycle(data) {
+    return request({
+        method: 'POST',
+        url:  '/document/change_document_recycle',
+        data: data,
+    })
+}
+
+//421 create_directory
+export async function post_create_directory(data) {
+    return request({
+        method: 'POST',
+        url:  '/document/create_directory',
+        data: data,
+    })
+}
+
+//show_recycle_tree
+export async function post_show_recycle_tree(data) {
+    return request({
+        method: 'POST',
+        url:  '/document/show_recycle_tree',
+        data: data,
+    })
+}
+
+//delete_directory
+export async function post_delete_directory(data) {
+    return request({
+        method: 'POST',
+        url:  '/document/delete_directory',
+        data: data,
+    })
+}
+
+//delete_document
+export async function post_delete_document(data) {
+    return request({
+        method: 'POST',
+        url:  '/document/delete_document',
+        data: data,
+    })
+}
 
 
 
