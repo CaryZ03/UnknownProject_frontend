@@ -157,8 +157,8 @@
               <template #icon>
                 <icon name="server" />
               </template>
-              <t-menu-item value="7-1-1" @click="cloneElement('testVue')"
-                >IPONE
+              <t-menu-item value="7-1-1" @click="cloneElement('Dropdown1')"
+                >文字下拉菜单
               </t-menu-item>
               <t-menu-item value="7-1-2" @click="cloneElement('testVue')"
                 >7寸平板电脑(600×1024)</t-menu-item
@@ -178,20 +178,20 @@
               <template #icon>
                 <icon name="server" />
               </template>
-              <t-menu-item value="8-1-1" @click="cloneElement('testVue')"
-                >IPONE
+              <t-menu-item value="8-1-1" @click="cloneElement('Menu1')"
+                >顶部单层导航
               </t-menu-item>
-              <t-menu-item value="8-1-2" @click="cloneElement('testVue')"
-                >7寸平板电脑(600×1024)</t-menu-item
+              <t-menu-item value="8-1-2" @click="cloneElement('Menu2')"
+                >顶部双层导航</t-menu-item
               >
-              <t-menu-item value="8-1-3" @click="cloneElement('testVue')"
-                >10寸平板电脑(720×1280)</t-menu-item
+              <t-menu-item value="8-1-3" @click="cloneElement('Menu3')"
+                >顶部多层收纳导航</t-menu-item
               >
-              <t-menu-item value="8-1-4" @click="cloneElement('testVue')"
-                >iPad(1024×768)</t-menu-item
+              <t-menu-item value="8-1-4" @click="cloneElement('Menu4')"
+                >侧边单层导航</t-menu-item
               >
-              <t-menu-item value="8-1-5" @click="cloneElement('testVue')"
-                >iPad(1024×768)</t-menu-item
+              <t-menu-item value="8-1-5" @click="cloneElement('Menu5')"
+                >平铺式侧边导航</t-menu-item
               >
             </t-submenu>
 
@@ -358,6 +358,12 @@ import mLinkComponent from "../components/Prototype/Components/mLinkComponent.vu
 import mPagination from "../components/Prototype/Components/mPagination.vue";
 import mTabs from "../components/Prototype/Components/mTabs.vue";
 import mToolBar from "../components/Prototype/Components/mToolBar.vue";
+import Dropdown1 from "../components/Prototype/Components/Dropdown1.vue"
+import Menu1 from "../components/Prototype/Components/Menu1.vue"
+import Menu2 from "../components/Prototype/Components/Menu2.vue"
+import Menu3 from "../components/Prototype/Components/Menu3.vue"
+import Menu4 from "../components/Prototype/Components/Menu4.vue"
+import Menu5 from "../components/Prototype/Components/Menu5.vue"
 import domToImage from "dom-to-image";
 import testVue from "./test.vue";
 import { Icon } from "tdesign-icons-vue";
@@ -431,6 +437,12 @@ export default {
     testVue,
     SideBar,
     Icon,
+    Dropdown1,
+    Menu1,
+    Menu2,
+    Menu3,
+    Menu4,
+    Menu5,
   },
   mounted() {
     this.teamid = this.$route.params.teamid;
