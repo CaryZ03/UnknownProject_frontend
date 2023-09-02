@@ -452,7 +452,7 @@
         <el-main id="scrollContainer" class="scrollContainer">
           <div>
             <div v-for="(message, index) in chatMessages" :key="index" :id="'div-' + index" :ref="'div-' + index">
-              <div v-if="isRelayMode">
+              <div v-if="isRelayMode && (typeof message.private_connect_id === 'undefined' || message.private_connect_id === uid || message.private_connect_id === 0)">
                 <el-checkbox @change="handleCheckboxChange(index)"></el-checkbox>
               </div>
               <div class="recv-message"
@@ -512,7 +512,7 @@
                   </el-col>
                 </el-row>
               </div>
-              <div class="send-message" v-else-if="message.private_connect_id === uid">
+              <div class="send-message" v-else-if="message.isSentByCurrentUser">
                 <el-row>
                   <el-col :span="23">
                     <div class="send-member">{{ uname }}</div>
@@ -2268,6 +2268,7 @@ export default {
         title: '通知',
         message: h('i', { style: 'color: teal' }, '邀请成员成功！')
       });
+      this.getGroupChat();
     },
     async deleteMember() {
       const self = this;
