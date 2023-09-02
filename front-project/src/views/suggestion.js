@@ -14,7 +14,7 @@ export default {
 
       console.log("@@@@@@@"+store.state.curTeamID + "xx" + store.state.curUserID);
       const data = JSON.stringify({
-        team_id: store.state.curTeamID,
+        team_id: store.state.curTeam.team_id,
         tm_user_id: store.state.curUserID
       })
       console.log(data)
@@ -24,7 +24,7 @@ export default {
           const nickName = element.tm_user_nickname+' @'+element.tm_user_id;
           nickNames.push(nickName)
         });
-        const filteredItems = nickNames.filter(item => item.toLowerCase().startsWith(query.toLowerCase())).slice(0, 5);
+        const filteredItems = nickNames.filter(item => item.toLowerCase().startsWith(query.toLowerCase())).slice(0, 10);
         resolve(filteredItems);
       }).catch(error => {
         console.log(error)

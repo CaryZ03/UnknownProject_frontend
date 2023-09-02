@@ -101,11 +101,13 @@ export default {
         // const uid = this.$store.state.curUserID ;
         receiver_list.push(numberPart);
 
+        console.log("STORE ID"+ store.state.curUserID);
+
         const jsonString=JSON.stringify({
           'notification':{
             'name': '有人@了你',
             'content': "@@@",
-            'creater_id': store.state.curUserID,
+            'creator_id': store.state.curUserID,
             'type': 'document',
             'cm_id': 0,
           },

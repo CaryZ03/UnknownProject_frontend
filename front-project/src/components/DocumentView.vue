@@ -172,7 +172,7 @@ padding: 4px 0; max-width: 600px;" v-if="this.isDocumentChosen">
           <span style="float:right">
           <el-button
                 size="mini"
-                @click="handleEdit(scope.$index, scope.row)">查看
+                @click="handleEdit()">查看
           </el-button>
 
           <el-button
@@ -352,6 +352,16 @@ padding: 4px 0; max-width: 600px;" v-if="this.isDocumentChosen">
       resetNewDirectory(){
         this.$refs.newDocumentForm.resetFields();  // 重置表单数据
     this.newDirectoryDialogVisible = false;  // 关闭对话框
+      },
+      handleEdit(){
+        this.$router.push({
+          name: "tiptap",
+          params:{
+            "teamid": this.$store.state.curTeam.team_id,
+            "projectid": this.project_id,
+            "docid": this.curDocument.document_id
+          }
+        })
       },
 
       
