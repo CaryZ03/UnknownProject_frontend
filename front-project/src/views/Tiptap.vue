@@ -347,7 +347,6 @@ export default {
         console.log(res.data["errno"] + "changeContent");
         if (res.data["errno"] === 0) {
           this.content = this.editor.getHTML;
-          console.log(res.data["content_message"]);
           this.editor.commands.setContent(res.data["document_content"]);
         }
       });
