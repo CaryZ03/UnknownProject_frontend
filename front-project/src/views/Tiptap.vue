@@ -346,10 +346,7 @@ export default {
         console.log(res.data["document_content"]);
         console.log(res.data["errno"] + "changeContent");
         if (res.data["errno"] === 0) {
-          if(this.contentIsNow==false){
-            this.content = this.editor.getHTML;
-            this.contentIsNow=true;
-          }
+          this.content = this.editor.getHTML;
           console.log(res.data["content_message"]);
           this.editor.commands.setContent(res.data["document_content"]);
         }
@@ -358,7 +355,6 @@ export default {
 
     returnNow(){
       this.editor.commands.setContent(this.content);
-      this.contentIsNow=true;
     },
   },
 

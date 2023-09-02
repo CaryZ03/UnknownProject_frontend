@@ -20,8 +20,6 @@ const Preview = () =>  import('../views/Preview.vue')
 
 const Document = () => import('../views/DocumentView.vue')
 
-
-
 Vue.use(VueRouter)
 
 const routes = [
@@ -29,12 +27,11 @@ const routes = [
     path: '/',
     name: 'Home',
     component: HomeView,
-    // children: [
-    //   {
-    //     path: "/invite/:id",
-    //     component: Invite
-    //   }
-    // ]
+    children: [
+      {
+        path: "/invite/:id",
+      }
+    ]
 
   },
   {
@@ -51,11 +48,6 @@ const routes = [
     path: '/Text',
     name: 'Text',
     component: Text
-  },
-  {
-    path: "/Invite/:id",
-    name: 'Invite',
-    component: Invite
   },
 
   {

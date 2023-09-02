@@ -41,22 +41,6 @@ export async function post_search_chat_message(data) {
     })
 }
 
-export async function post_search_group_chat_message(data) {
-    return request({
-        method: 'POST',
-        url:  '/chat/search_group_chat_message',
-        data: data
-    })
-}
-
-export async function post_search_private_chat_message(data) {
-    return request({
-        method: 'POST',
-        url:  '/chat/search_private_chat_message',
-        data: data
-    })
-}
-
 export async function post_create_private_chat(data) {
     return request({
         method: 'POST',
@@ -125,54 +109,6 @@ export async function post_store_group_message(data) {
     return request({
         method: 'POST',
         url:  '/chat/store_group_message',
-        data: data
-    })
-}
-
-export async function post_group_invite_member(data) {
-    return request({
-        method: 'POST',
-        url:  '/chat/group_invite_member',
-        data: data
-    })
-}
-
-export async function post_group_delete_member(data) {
-    return request({
-        method: 'POST',
-        url:  '/chat/group_delete_member',
-        data: data
-    })
-}
-
-export async function post_delete_group(data) {
-    return request({
-        method: 'POST',
-        url:  '/chat/delete_group',
-        data: data
-    })
-}
-
-export async function post_acquire_message_block(data) {
-    return request({
-        method: 'POST',
-        url:  '/chat/acquire_message_block',
-        data: data
-    })
-}
-
-export async function post_update_leave_message(data) {
-    return request({
-        method: 'POST',
-        url:  '/chat/update_leave_message',
-        data: data
-    })
-}
-
-export async function post_acquire_unread_message(data) {
-    return request({
-        method: 'POST',
-        url:  '/chat/acquire_unread_message',
         data: data
     })
 }
