@@ -35,7 +35,7 @@
           </div>
         </el-popover>
         <div class="newChat">
-          <el-button type="success" round @click="createChatVisible = true"><i
+          <el-button type="info" round @click="createChatVisible = true"><i
               class="el-icon-circle-plus"></i>新建群聊</el-button>
         </div>
         <el-dialog title="新建群聊" :visible.sync="createChatVisible" width="30%" :before-close="handleClose">
