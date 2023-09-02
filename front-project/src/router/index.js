@@ -67,33 +67,24 @@ const routes = [
         path: 'author/:authorID',
         name: 'author'
       },
-
-
     ]
-
   },
   {
     path: '/Design/:teamid/:ptid',
     name: 'design',
     component: Design,
-
   },
   // preview 可以通过teamid进行跳转preview
   {
     path: '/Preview/:teamid/:ptid',
     name: 'preview',
     component: Preview,
-
   },
-
-
-  
   {
     path: '/WorkSpace',
     name: 'workSpace',
     component: WorkSpace,
   },
-
   {
     path: '/tiptap/:teamid/:projectid/:docid',
     name: 'tiptap',
@@ -103,7 +94,6 @@ const routes = [
     path: '/Chat',
     name: 'chat',
     component: Chat,
-
     children: [
       {
         path: 'Coop',

@@ -74,7 +74,7 @@
       </transition>
     </section>
 
-    <section class="panel" id="5">
+    <section  class="panel" id="5">
       <!-- 选择团队界面 -->
       <el-dialog
         title="选择团队"
@@ -148,7 +148,7 @@
         </span>
       </el-dialog>
       <div class="container">
-        <div class="wrapper active-popup">
+        <div v-show="!this.$store.state.isLogin" class="wrapper active-popup">
           <span class="icon-close"><i class="el-icon-close"></i></span>
 
           <div class="form-box login">
@@ -941,7 +941,7 @@ header {
   justify-content: center;
   align-items: center;
   overflow: hidden;
-
+  display: flex;
   transform: scale(0);
   transition: transform 0.5s ease, height 0.2s ease;
 }

@@ -3,26 +3,33 @@ import tippy from 'tippy.js'
 import request from '@/utils/request'
 import api from '@/api'
 import MentionList from './MentionList.vue'
+import Vue from 'vue'
+import router from '@/router'
+import store from '@/store'
+
 
 export default {
   items: ({ query }) => {
-    const data =JSON.stringify({
-      team_id : 5,
-      tm_user_id: 10
-    })
-    const nickNames = [];
-    api.chat.post_get_team_members_and_permissions(data).then((res)=>{
-      
-      res.data.members.forEach(element => {
-        const nickName = element.tm_user_nickname;
-        nickNames.push(nickName)
-      });
-      
-      console.log(nickNames);
-      console.log(nickNames.filter(item => item.toLowerCase().startsWith(query.toLowerCase())).slice(0, 5))
-      
-    })
-    return nickNames.filter(item => item.toLowerCase().startsWith(query.toLowerCase())).slice(0, 5)
+    return new Promise((resolve, reject) => {
+
+      console.log("@@@@@@@"+store.state.curTeamID + "xx" + store.state.curUserID);
+      const data = JSON.stringify({
+        team_id: store.state.curTeamID,
+        tm_user_id: store.state.curUserID
+      })
+      console.log(data)
+      const nickNames = [];
+      api.chat.post_get_team_members_and_permissions(data).then((res) => {
+        res.data.members.forEach(element => {
+          const nickName = element.tm_user_nickname+' @'+element.tm_user_id;
+          nickNames.push(nickName)
+        });
+        const filteredItems = nickNames.filter(item => item.toLowerCase().startsWith(query.toLowerCase())).slice(0, 5);
+        resolve(filteredItems);
+      }).catch(error => {
+        console.log(error)
+      })
+    });
   },
 
   render: () => {

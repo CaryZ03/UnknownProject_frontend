@@ -12,97 +12,279 @@
           <template #logo>
             <!-- <img :width="collapsed ? 35 : 136" :src="iconUrl" alt="logo" /> -->
           </template>
-          <t-menu-group title="主导航">
-            <t-menu-item value="item1">
-              <template #icon>
-                <icon name="app" />
-              </template>
-              仪表盘
-            </t-menu-item>
-          </t-menu-group>
           <t-menu-group title="组件">
             <t-submenu title="画布大小" value="2-1">
               <template #icon>
                 <icon name="server" />
               </template>
-              <t-menu-item value="2-1-1" @click="changeCanvas('500px', '500')"
+              <t-menu-item value="2-1-1" @click="changeCanvas('500px', '500px')"
                 >IPONE
               </t-menu-item>
-              <t-menu-item value="2-1-2" @click="changeCanvas('600', '1024')"
+              <t-menu-item
+                value="2-1-2"
+                @click="changeCanvas('600px', '1024px')"
                 >7寸平板电脑(600×1024)</t-menu-item
               >
-              <t-menu-item value="2-1-3" @click="changeCanvas('720', '1280')"
+              <t-menu-item
+                value="2-1-3"
+                @click="changeCanvas('720px', '1280px')"
                 >10寸平板电脑(720×1280)</t-menu-item
               >
-              <t-menu-item value="2-1-4" @click="changeCanvas('1024', '768')"
+              <t-menu-item
+                value="2-1-4"
+                @click="changeCanvas('1024px', '768px')"
                 >iPad(1024×768)</t-menu-item
               >
             </t-submenu>
-            <t-menu-item @click="cloneElement('testVue')" value="2-2">
-              <template #icon>
-                <icon name="testVue" />
-              </template>
-              表单项
-            </t-menu-item>
 
-            <t-menu-item @click="cloneElement('mDropDown')" value="2-2">
+            <t-submenu title="Layout" value="3-1">
               <template #icon>
-                <icon name="testVue" />
+                <icon name="server" />
               </template>
-              表单项
-            </t-menu-item>
-            <t-menu-item @click="cloneElement('mTabs')" value="2-2">
+              <t-menu-item value="3-1-1" @click="cloneElement('testVue')"
+                >IPONE
+              </t-menu-item>
+              <t-menu-item value="3-1-2" @click="cloneElement('testVue')"
+                >7寸平板电脑(600×1024)</t-menu-item
+              >
+              <t-menu-item value="3-1-3" @click="cloneElement('testVue')"
+                >10寸平板电脑(720×1280)</t-menu-item
+              >
+              <t-menu-item value="3-1-4" @click="cloneElement('testVue')"
+                >iPad(1024×768)</t-menu-item
+              >
+              <t-menu-item value="3-1-5" @click="cloneElement('testVue')"
+                >iPad(1024×768)</t-menu-item
+              >
+              <t-menu-item value="3-1-6" @click="cloneElement('testVue')"
+                >iPad(1024×768)</t-menu-item
+              >
+              <t-menu-item value="3-1-7" @click="cloneElement('testVue')"
+                >iPad(1024×768)</t-menu-item
+              >
+              <t-menu-item value="3-1-8" @click="cloneElement('testVue')"
+                >iPad(1024×768)</t-menu-item
+              >
+              <t-menu-item value="3-1-9" @click="cloneElement('testVue')"
+                >iPad(1024×768)</t-menu-item
+              >
+              <t-menu-item value="3-1-10" @click="cloneElement('testVue')"
+                >iPad(1024×768)</t-menu-item
+              >
+              
+            </t-submenu>
+
+            <t-submenu title="Button" value="4-1">
               <template #icon>
-                <icon name="testVue" />
+                <icon name="server" />
               </template>
-              tabs
-            </t-menu-item>
-            <t-menu-item value="2-3">
+              <t-menu-item value="4-1-1" @click="cloneElement('testVue')"
+                >IPONE
+              </t-menu-item>
+              <t-menu-item value="4-1-2" @click="cloneElement('testVue')"
+                >7寸平板电脑(600×1024)</t-menu-item
+              >
+              <t-menu-item value="4-1-3" @click="cloneElement('testVue')"
+                >10寸平板电脑(720×1280)</t-menu-item
+              >
+              <t-menu-item value="4-1-4" @click="cloneElement('testVue')"
+                >iPad(1024×768)</t-menu-item
+              >
+              <t-menu-item value="4-1-5" @click="cloneElement('testVue')"
+                >iPad(1024×768)</t-menu-item
+              >
+              <t-menu-item value="4-1-6" @click="cloneElement('testVue')"
+                >iPad(1024×768)</t-menu-item
+              >
+              <t-menu-item value="4-1-7" @click="cloneElement('testVue')"
+                >iPad(1024×768)</t-menu-item
+              >
+              <t-menu-item value="4-1-8" @click="cloneElement('testVue')"
+                >iPad(1024×768)</t-menu-item
+              >
+              <t-menu-item value="4-1-9" @click="cloneElement('testVue')"
+                >iPad(1024×768)</t-menu-item
+              >
+              <t-menu-item value="4-1-10" @click="cloneElement('testVue')"
+                >iPad(1024×768)</t-menu-item
+              >
+              
+            </t-submenu>
+
+            <t-submenu title="Divider" value="5-1">
               <template #icon>
-                <icon name="root-list" />
+                <icon name="server" />
               </template>
-              详情页
-            </t-menu-item>
-            <t-menu-item value="2-4">
+              <t-menu-item value="5-1-1" @click="cloneElement('testVue')"
+                >IPONE
+              </t-menu-item>
+              <t-menu-item value="5-1-2" @click="cloneElement('testVue')"
+                >7寸平板电脑(600×1024)</t-menu-item
+              >
+              <t-menu-item value="5-1-3" @click="cloneElement('testVue')"
+                >10寸平板电脑(720×1280)</t-menu-item
+              >
+              <t-menu-item value="5-1-4" @click="cloneElement('testVue')"
+                >iPad(1024×768)</t-menu-item
+              >
+              <t-menu-item value="5-1-5" @click="cloneElement('testVue')"
+                >iPad(1024×768)</t-menu-item
+              >
+            </t-submenu>
+
+            <t-submenu title="Breadcrumb" value="6-1">
               <template #icon>
-                <icon name="check" />
+                <icon name="server" />
               </template>
-              结果页
-            </t-menu-item>
+              <t-menu-item value="6-1-1" @click="cloneElement('testVue')"
+                >IPONE
+              </t-menu-item>
+              <t-menu-item value="6-1-2" @click="cloneElement('testVue')"
+                >7寸平板电脑(600×1024)</t-menu-item
+              >
+              <t-menu-item value="6-1-3" @click="cloneElement('testVue')"
+                >10寸平板电脑(720×1280)</t-menu-item
+              >
+              <t-menu-item value="6-1-4" @click="cloneElement('testVue')"
+                >iPad(1024×768)</t-menu-item
+              >
+              <t-menu-item value="6-1-5" @click="cloneElement('testVue')"
+                >iPad(1024×768)</t-menu-item
+              >
+            </t-submenu>
+
+            <t-submenu title="DropDown" value="7-1">
+              <template #icon>
+                <icon name="server" />
+              </template>
+              <t-menu-item value="7-1-1" @click="cloneElement('testVue')"
+                >IPONE
+              </t-menu-item>
+              <t-menu-item value="7-1-2" @click="cloneElement('testVue')"
+                >7寸平板电脑(600×1024)</t-menu-item
+              >
+              <t-menu-item value="7-1-3" @click="cloneElement('testVue')"
+                >10寸平板电脑(720×1280)</t-menu-item
+              >
+              <t-menu-item value="7-1-4" @click="cloneElement('testVue')"
+                >iPad(1024×768)</t-menu-item
+              >
+              <t-menu-item value="7-1-5" @click="cloneElement('testVue')"
+                >iPad(1024×768)</t-menu-item
+              >
+            </t-submenu>
+
+            <t-submenu title="Menu" value="8-1">
+              <template #icon>
+                <icon name="server" />
+              </template>
+              <t-menu-item value="8-1-1" @click="cloneElement('testVue')"
+                >IPONE
+              </t-menu-item>
+              <t-menu-item value="8-1-2" @click="cloneElement('testVue')"
+                >7寸平板电脑(600×1024)</t-menu-item
+              >
+              <t-menu-item value="8-1-3" @click="cloneElement('testVue')"
+                >10寸平板电脑(720×1280)</t-menu-item
+              >
+              <t-menu-item value="8-1-4" @click="cloneElement('testVue')"
+                >iPad(1024×768)</t-menu-item
+              >
+              <t-menu-item value="8-1-5" @click="cloneElement('testVue')"
+                >iPad(1024×768)</t-menu-item
+              >
+            </t-submenu>
+
+
+            <t-submenu title="Pagination" value="9-1">
+              <template #icon>
+                <icon name="server" />
+              </template>
+              <t-menu-item value="9-1-1" @click="cloneElement('testVue')"
+                >IPONE
+              </t-menu-item>
+              <t-menu-item value="9-1-2" @click="cloneElement('testVue')"
+                >7寸平板电脑(600×1024)</t-menu-item
+              >
+              <t-menu-item value="9-1-3" @click="cloneElement('testVue')"
+                >10寸平板电脑(720×1280)</t-menu-item
+              >
+              <t-menu-item value="9-1-4" @click="cloneElement('testVue')"
+                >iPad(1024×768)</t-menu-item
+              >
+              <t-menu-item value="9-1-5" @click="cloneElement('testVue')"
+                >iPad(1024×768)</t-menu-item
+              >
+            </t-submenu>
+          
+            <t-submenu title="Steps" value="10-1">
+              <template #icon>
+                <icon name="server" />
+              </template>
+              <t-menu-item value="10-1-1" @click="cloneElement('testVue')"
+                >IPONE
+              </t-menu-item>
+              <t-menu-item value="10-1-2" @click="cloneElement('testVue')"
+                >7寸平板电脑(600×1024)</t-menu-item
+              >
+              <t-menu-item value="10-1-3" @click="cloneElement('testVue')"
+                >10寸平板电脑(720×1280)</t-menu-item
+              >
+              <t-menu-item value="10-1-4" @click="cloneElement('testVue')"
+                >iPad(1024×768)</t-menu-item
+              >
+              <t-menu-item value="10-1-5" @click="cloneElement('testVue')"
+                >iPad(1024×768)</t-menu-item
+              >
+            </t-submenu>
+
+            <t-submenu title="Steps" value="11-1">
+              <template #icon>
+                <icon name="server" />
+              </template>
+              <t-menu-item value="11-1-1" @click="cloneElement('testVue')"
+                >IPONE
+              </t-menu-item>
+              <t-menu-item value="11-1-2" @click="cloneElement('testVue')"
+                >7寸平板电脑(600×1024)</t-menu-item
+              >
+              <t-menu-item value="11-1-3" @click="cloneElement('testVue')"
+                >10寸平板电脑(720×1280)</t-menu-item
+              >
+              <t-menu-item value="11-1-4" @click="cloneElement('testVue')"
+                >iPad(1024×768)</t-menu-item
+              >
+              <t-menu-item value="11-1-5" @click="cloneElement('testVue')"
+                >iPad(1024×768)</t-menu-item
+              >
+            </t-submenu>
           </t-menu-group>
-          <t-menu-group title="更多">
-            <t-menu-item value="item3">
-              <template #icon>
-                <icon name="user" />
-              </template>
-              个人页
-            </t-menu-item>
+          <t-menu-group title="导出">
             <t-menu-item @click="downloadHtmlFile" value="item4">
               <template #icon>
                 <icon name="login" />
               </template>
               导出HTML
             </t-menu-item>
-            <t-menu-item @click="createPreview" value="item4">
+            <t-menu-item @click="createPreview" value="item5">
               <template #icon>
                 <icon name="login" />
               </template>
               预览HTML
             </t-menu-item>
 
-            <t-menu-item @click="captureAndSave" value="item4">
+            <t-menu-item @click="captureAndSave" value="item6">
               <template #icon>
                 <icon name="login" />
               </template>
               下载图片
             </t-menu-item>
-            <t-menu-item @click="saveProto" value="item4">
+            <t-menu-item @click="saveProto" value="item47">
               <template #icon>
                 <icon name="login" />
               </template>
               保存该原型
             </t-menu-item>
-            
           </t-menu-group>
           <template #operations>
             <t-button
@@ -118,49 +300,50 @@
       </template>
     </div>
 
-    <div
-      ref="elementToCapture"
-      style="background-color: aliceblue; width: 800px; height: 825px"
-    >
-      hihihi
-      <vue-draggable-resizable
-        :parent="true"
-        v-for="(item, index) in clonedComponents"
-        ref="draggableRes"
-        :key="index"
-        @resizing="
-          (x, y, width, height) => innerResize(x, y, width, height, index)
-        "
-        @dragging="(x, y) => innerDrag(x, y, index)"
-        @resizestop="innerResizeStop"
-        :snap="true"
-        @dragstop="innerDragStop"
-        :w="x_scale[index]"
-        :h="y_scale[index]"
-        :x="x_off[index]"
-        :y="y_off[index]"
-        @activated="onSelected($event, index)"
-        style="
-          background-color: green;
-          border: 1px solid rgb(255, 255, 255);
-          -webkit-transition: background-color 200ms linear;
-          -ms-transition: background-color 200ms linear;
-          transition: background-color 200ms linear;
-        "
+    <div class="main" style="width: 68.5%; height: 100%; padding: 20px">
+      <vue-ruler-tool
+        :content-layout="{ left: 0, top: 0 }"
+        :is-scale-revise="true"
       >
-        <div slot="tl">😀</div>
-        <div slot="tm">😀</div>
-        <div slot="tr">😀</div>
-        <div slot="mr">😀</div>
-        <div slot="br">😀</div>
-        <div slot="bm">😀</div>
-        <div slot="bl">😀</div>
-        <div slot="ml">😀</div>
-        <component-with-item :is="item"></component-with-item>
-      </vue-draggable-resizable>
+        <div ref="elementToCapture" :style="computedStyle">
+          <vue-draggable-resizable
+            :parent="true"
+            v-for="(item, index) in clonedComponents"
+            ref="draggableRes"
+            :key="index"
+            @resizing="
+              (x, y, width, height) => innerResize(x, y, width, height, index)
+            "
+            @dragging="(x, y) => innerDrag(x, y, index)"
+            @resizestop="innerResizeStop"
+            :snap="true"
+            @dragstop="innerDragStop"
+            :w="x_scale[index]"
+            :h="y_scale[index]"
+            :x="x_off[index]"
+            :y="y_off[index]"
+            @activated="onSelected($event, index)"
+            style="
+              background-color: green;
+              border: 1px solid rgb(255, 255, 255);
+              -webkit-transition: background-color 200ms linear;
+              -ms-transition: background-color 200ms linear;
+              transition: background-color 200ms linear;
+            "
+          >
+            <div slot="tl">😀</div>
+            <div slot="tm">😀</div>
+            <div slot="tr">😀</div>
+            <div slot="mr">😀</div>
+            <div slot="br">😀</div>
+            <div slot="bm">😀</div>
+            <div slot="bl">😀</div>
+            <div slot="ml">😀</div>
+            <component-with-item :is="item"></component-with-item>
+          </vue-draggable-resizable>
+        </div>
+      </vue-ruler-tool>
     </div>
-
-    <div></div>
   </div>
 </template>
   
@@ -179,15 +362,16 @@ import domToImage from "dom-to-image";
 import testVue from "./test.vue";
 import { Icon } from "tdesign-icons-vue";
 
-import SideBar from "@/components/Layouts/SideBar.vue";
 
+import SideBar from "@/components/Layouts/SideBar.vue";
+import VueRulerTool from "vue-ruler-tool";
 // import TumblrButton from '../components/Buttons/TumblrButton.vue';
 export default {
   data() {
     return {
-      canvasX: 500,
-      canvasY: 500,
-      canvasColor: "red",
+      canvasX: "500px",
+      canvasY: "500px",
+      canvasColor: "white",
       previewContent: "",
       teamid: -1,
       ptid: -1,
@@ -199,6 +383,8 @@ export default {
       selectComponent: null,
       selectedIndex: -1,
       ws: null,
+      x_point: [],
+      y_point: [],
       collapsed: false,
       x_off: [
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -247,7 +433,15 @@ export default {
     this.ws = new WebSocket("ws://182.92.86.71:4514/ws/editor/1145/");
     this.ws.onmessage = this.handleMessage;
   },
-  computed() {},
+  computed: {
+    computedStyle() {
+      return {
+        backgroundColor: this.canvasColor,
+        width: this.canvasX,
+        height: this.canvasY,
+      };
+    },
+  },
   destroyed() {
     document.removeEventListener("keydown", this.handleKeyDown);
   },
@@ -425,16 +619,18 @@ export default {
         prototype_components: saveData,
       };
 
-      this.$api.doc.post_save_prototype_components(sdmsg).then((res)=>{
-        if(res.data["errno"]===0){
-          console.log("参数保存成功");
-        }
-        else{
-          console.log("参数保存失败："+res.data["errno"]);
-        }
-      }).catch((err)=>{
-        console.log("获得error");
-      });
+      this.$api.doc
+        .post_save_prototype_components(sdmsg)
+        .then((res) => {
+          if (res.data["errno"] === 0) {
+            console.log("参数保存成功");
+          } else {
+            console.log("参数保存失败：" + res.data["errno"]);
+          }
+        })
+        .catch((err) => {
+          console.log("获得error");
+        });
     },
   },
 
