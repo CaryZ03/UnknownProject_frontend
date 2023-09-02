@@ -13,6 +13,8 @@ export default new Vuex.Store({
     curUserID: '1',
     curUserName: 'Xenon',
     notificationRedNum: 5,
+    curDocName: '',
+    curDocID: -1
   },
   getters: {
   },

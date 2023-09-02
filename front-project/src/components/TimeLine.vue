@@ -3,7 +3,12 @@
     <div id="progress-bar-container">
       <ul>
         <li class="step" v-for="(h, index) in his" :key="index">
-          <div class="step-inner" @click="this.$emit('child-event', h.sd_id);">{{ h.sd_saved_time }}</div>
+          <div class="step-inner" @click="handleChildEvent(h.sd_id)">
+            {{ his[index]["sd_saved_time"] }}
+          </div>
+        </li>
+        <li class="step">
+          <div class="step-inner"  @click="handleReturnNow()" >当前版本</div>
         </li>
       </ul>
       <div id="line">
@@ -13,16 +18,14 @@
   </div>
 </template>
   
-  <script>
+<script>
 export default {
   created() {
     this.teamid = this.$route.params.teamid;
     this.docid = this.$route.params.docid;
   },
 
-  mounted() {
-    this.getHistory();
-  },
+  mounted() {},
   data() {
     return {
       teamid: -1,
@@ -30,26 +33,32 @@ export default {
     };
   },
 
-  props:{
-    his:{
-        type: [],
-        required: true
-    }
+  props: {
+    his: {
+      type: [],
+      required: true,
+    },
   },
 
   methods: {
     sendDataToParent() {
-      const data = 'Hello, parent!';
-      this.$emit('child-event', data);
+      const data = "Hello, parent!";
+      this.$emit("child-event", data);
+    },
+    handleChildEvent(sdId) {
+      this.$emit('child-event', sdId);
+    },
+    handleReturnNow(){
+      this.$emit('returnNow');
     }
   },
 };
 </script>
   
-  <style scoped>
+<style scoped>
 .process-wrapper {
   margin: auto;
-  max-width: 1080px;
+  max-width: 2080px;
 }
 
 #progress-bar-container {
@@ -138,16 +147,15 @@ export default {
 }
 
 #progress-bar-container #line {
-  width: 80%;
+  width: 100%;
   margin: auto;
   background: #eee;
   height: 6px;
   position: absolute;
-  left: 10%;
+  left: 0;
   top: 57px;
   z-index: 1;
   border-radius: 50px;
   transition: all ease 0.9s;
 }
 </style>
-  
