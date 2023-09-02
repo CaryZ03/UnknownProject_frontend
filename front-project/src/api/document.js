@@ -156,6 +156,17 @@ export async function post_delete_document(data) {
     })
 }
 
+//change_document
+
+export async function post_change_document(data) {
+    return request({
+        method: 'POST',
+        url:  '/document/change_document',
+        data: data,
+    })
+}
+
+
 
 
 

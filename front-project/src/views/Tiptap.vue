@@ -1,8 +1,16 @@
 <template>
   <div class="container" v-if="editor">
-    <div class="editor" style="max-height: 50rem" v-if="editor">
-      <menu-bar @upload="uploadDoc" @saveHTML="saveHTML" @saveMD="saveMD" @savePDF="downPDF" 
-      @saveTXT="saveText" @saveWORD="saveWord"  class="editor__header" :editor="editor" />
+    <div class="editor" style="max-height: 45rem" v-if="editor">
+      <menu-bar
+        @upload="uploadDoc"
+        @saveHTML="saveHTML"
+        @saveMD="saveMD"
+        @savePDF="downPDF"
+        @saveTXT="saveText"
+        @saveWORD="saveWord"
+        class="editor__header"
+        :editor="editor"
+      />
       <editor-content class="editor__content" :editor="editor" />
       <div class="editor__footer">
         <div :class="`editor__status editor__status--${status}`">
@@ -22,7 +30,7 @@
       </div>
     </div>
 
-    <time-line :his="his" @child-event="handleChildEvent"></time-line>
+    <time-line :his="his" @child-event="handleChildEvent" @click="returnNow"></time-line>
     <floating-menu
       class="floating-menu"
       :tippy-options="{ duration: 100 }"
@@ -51,7 +59,6 @@
 </template>
   
   <script>
-import { ChevronDownIcon } from "tdesign-icons-vue";
 import { TiptapCollabProvider } from "@hocuspocus/provider";
 import CharacterCount from "@tiptap/extension-character-count";
 import Collaboration from "@tiptap/extension-collaboration";
@@ -103,7 +110,7 @@ export default {
       status: "connecting",
       room: "-1",
       his: [],
-
+      contentIsNow: false,
       content: null,
       tmpcontent: null,
     };
@@ -168,7 +175,7 @@ export default {
     },
     handleChildEvent(data) {
       console.log("Received data from child component:", data);
-      changeContent(data);
+      this.changeContent(data);
     },
 
     setName() {
@@ -287,15 +294,17 @@ export default {
     // //////////////////////////////////////////////////////////////
     uploadDoc() {
       const htmlstring = this.editor.getHTML();
+      console.log(htmlstring);
       const data = JSON.stringify({
         document_id: this.docid,
         document_content: htmlstring,
       });
       this.$api.doc.post_upload_saved_document(data).then((res) => {
         console.log("UP load" + res.data["msg"]);
+        this.getHistory();
       });
 
-      this.getHistory();
+      
     },
 
     getHistory() {
@@ -303,18 +312,14 @@ export default {
         document_id: this.docid,
       });
 
-      this.$api.doc
-        .post_show_save(data)
-        .then((res) => {
-          console.log(res.data["msg"]);
-          if (res.data["errno"] === 0) {
-            this.his = JSON.parse(res.data["s_info"]);
-            console.log("拿到了ids" + this.his);
-          }
-        })
-        .catch((err) => {
-          console.log("err");
-        });
+      this.$api.doc.post_show_save(data).then((res) => {
+        console.log(res.data["msg"]);
+        if (res.data["errno"] === 0) {
+          this.his = res.data["s_info"];
+          console.log(res.data["s_info"]);
+          console.log("拿到了ids" + this.his);
+        }
+      });
     },
 
     saveJSON() {
@@ -332,55 +337,25 @@ export default {
     },
     //  see the history
     changeContent(sdid) {
+      console.log("changeContent");
       const data = {
         save_id: sdid,
       };
       this.$api.doc.post_search_save(data).then((res) => {
-        console.log(index);
-        console.log(res.data["errno"]);
+        // console.log(index);
+        console.log(res.data["document_content"]);
+        console.log(res.data["errno"] + "changeContent");
         if (res.data["errno"] === 0) {
-          this.content = res.data["content_message"];
-          this.editor.commands.setContent(this.content);
+          this.content = this.editor.getHTML;
+          console.log(res.data["content_message"]);
+          this.editor.commands.setContent(res.data["document_content"]);
         }
       });
-      // TODO 差点逻辑
-      // 目标是能看以往的同时能回退当前版本
-      // this.content =
-      // document_content
     },
 
-    //   generateLink() {
-    //   const link = "http://localhost:8080/Tiptap/w9n1xdmo/1"; //link=..
-    //   const el = document.createElement("textarea");
-    //   el.value = link;
-    //   document.body.appendChild(el);
-    //   el.select();
-    //   document.execCommand("copy");
-    //   document.body.removeChild(el);
-    //   this.$message.success("链接已复制到剪贴板");
-
-    //   this.$alert("链接已生成:" + link, "提示", {
-    //     confirmButtonText: "确定",
-    //     dangerouslyUseHTMLString: true,
-    //     callback: (action) => {
-    //       // this.$message({
-    //       //   type: 'info',
-    //       //   message: `action: ${ action }`
-    //       // });
-    //     },
-    //   });
-    // },
-
-    // -----------------------关于导出----------------------------------------
-    // upload_saved_document(){
-    //   const data = {
-    //   }
-    //   this.$api.doc.post_upload_saved_document()
-    // },
-    // create_document(){
-    // },
-    // download_saved_document(){
-    // }
+    returnNow(){
+      this.editor.commands.setContent(this.content);
+    },
   },
 
   beforeUnmount() {

@@ -8,6 +8,12 @@ import api from './api';
 
 import { gsap } from 'gsap';
 import { CSSPlugin } from 'gsap/CSSPlugin';
+import VueRulerTool from 'vue-ruler-tool'
+
+Vue.component('vue-ruler-tool', VueRulerTool)
+
+
+
 
 gsap.registerPlugin(CSSPlugin);
 

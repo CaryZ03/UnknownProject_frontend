@@ -156,7 +156,8 @@
                     <i class="el-icon-user"></i>
                     文件名
                   </template>
-                  {{curDocument.name}}
+                  <p>{{curDocument.name}}</p>
+                  
                 </el-descriptions-item>
                 <el-descriptions-item>
                   <template slot="label">
@@ -172,7 +173,12 @@ padding: 4px 0; max-width: 600px;" v-if="this.isDocumentChosen">
           <span style="float:right">
           <el-button
                 size="mini"
-                @click="handleEdit(scope.$index, scope.row)">查看
+                @click="handleEdit()">查看
+          </el-button>
+
+          <el-button
+                size="mini"
+                @click="openDialog()">重命名
           </el-button>
 
           <el-button
@@ -181,6 +187,16 @@ padding: 4px 0; max-width: 600px;" v-if="this.isDocumentChosen">
                 @click="handleDeleteDocument1()">删除
           </el-button>
         </span>
+
+        <el-dialog :visible.sync="dialogVisible" title="重命名" @close="closeDialog">
+      <el-input v-model="newName" placeholder="请输入新名称"></el-input>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleChange">确定</el-button>
+        <el-button @click="closeDialog">取消</el-button>
+      </span>
+    </el-dialog>
+
+
     </div>
     </el-main>
   </el-container>
@@ -195,6 +211,11 @@ padding: 4px 0; max-width: 600px;" v-if="this.isDocumentChosen">
   export default {
     data() {
       return {
+        dialogVisible:false,
+        newName: '',
+
+        curNode: '',
+
         data: [{
             parent_id: 1 ,
             id: 1,
@@ -254,6 +275,47 @@ padding: 4px 0; max-width: 600px;" v-if="this.isDocumentChosen">
       };
     },
     methods: {
+
+      openDialog() {
+      this.dialogVisible = true;
+      this.newName = "";
+    },
+    closeDialog() {
+      this.dialogVisible = false;
+      this.newName = "";
+    },
+
+
+      handleChange(){
+        const tmp ={
+          "document_id": this.curDocument.document_id,
+          "document_name":this.newName
+        }
+
+        this.$api.document.post_change_document(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取成功")
+              console.log(response.data.msg)
+
+              this.showDirectoryTree();
+              this.chooseDocument(this.curNode);
+
+            }
+            else{
+	            console.log(response.data)
+            }
+          }).catch(error => {
+            alert("获取失败")
+            console.log("error：\n");
+            console.log(error)
+          })
+        
+        // 关闭对话框
+        this.dialogVisible = false;
+        this.newName = "";
+      },
 
       showDialog(id){
         event.stopPropagation(); // 阻止冒泡事件
@@ -353,10 +415,22 @@ padding: 4px 0; max-width: 600px;" v-if="this.isDocumentChosen">
         this.$refs.newDocumentForm.resetFields();  // 重置表单数据
     this.newDirectoryDialogVisible = false;  // 关闭对话框
       },
+      handleEdit(){
+        this.$router.push({
+          name: "tiptap",
+          params:{
+            "teamid": this.$store.state.curTeam.team_id,
+            "projectid": this.project_id,
+            "docid": this.curDocument.document_id
+          }
+        })
+      },
 
       
       chooseDocument(node){
         event.stopPropagation(); // 阻止冒泡事件
+
+        this.curNode = node
         this.isDocumentChosen =true
         console.log("node:",node)
         if( node.data.isFolder)
