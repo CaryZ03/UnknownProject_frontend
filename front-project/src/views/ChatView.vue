@@ -480,7 +480,7 @@
                       </span>
                     </div>
                     <div v-else-if="message.message_type === 'image'" class="chat-bubble received">
-                      <img :src="message.content" alt="接收的图片">
+                      <el-image :src="message.content" fit="scale-down"></el-image>
                     </div>
                     <div v-else-if="message.message_type === 'file'" class="chat-bubble received file"
                       @click="downloadFile(message)">
@@ -530,7 +530,7 @@
                       </span>
                     </div>
                     <div v-else-if="message.message_type === 'image'" class="chat-bubble sent">
-                      <img :src="message.content" alt="发送的图片">
+                      <el-image :src="message.content" fit="scale-down"></el-image>
                     </div>
                     <div v-else-if="message.message_type === 'file'" class="chat-bubble sent file"
                       @click="downloadFile(message)">
@@ -764,6 +764,12 @@ export default {
       selectedRelayMethodOptions: '逐条转发',
       chat_type: 'team_chat',
       timer: null,
+      teamRedWebSocket: [null, null, null, null, null, null, null, null, null, null],
+      createGroupRedWebSocket: [null, null, null, null, null, null, null, null, null, null],
+      joinGroupRedWebSocket: [null, null, null, null, null, null, null, null, null, null],
+      privateRedWebSocket: [null, null, null, null, null, null, null, null, null, null],
+      curentChatIndex: 0,
+
     };
   },
   mounted() {
@@ -773,15 +779,153 @@ export default {
     this.getPrivateChat();
     this.getGroupChat();
     this.checkSystemMessage();
-    this.startTimer();
+    this.createRedWebSocket();
+    // this.startTimer();
   },
   updated() {
     // this.scrollToBottom();
   },
   beforeDestroy() {
-    this.stopTimer();
+    // this.stopTimer();
   },
   methods: {
+    async createRedWebSocket() {
+      await this.sleep(2000);
+      const self = this;
+      self.departmentList.forEach((element, index) => {
+        // console.log("abc11111");
+        // console.log(element.team_id);
+        const socketURL = 'ws://182.92.86.71:4514/ws/red/' + '1' + element.team_id + '/';
+        // console.log("socketURL: " + socketURL);
+        self.teamRedWebSocket[index] = new WebSocket(socketURL);
+        self.teamRedWebSocket[index].onmessage = self.handleRed;
+      });
+      self.createGroupChatList.forEach((element, index) => {
+        // console.log("abc11111");
+        // console.log(element.team_id);
+        const socketURL = 'ws://182.92.86.71:4514/ws/red/' + '2' + element.gc_id + '/';
+        // console.log("socketURL: " + socketURL);
+        self.createGroupRedWebSocket[index] = new WebSocket(socketURL);
+        self.createGroupRedWebSocket[index].onmessage = self.handleRed;
+      });
+      self.joinGroupChatList.forEach((element, index) => {
+        // console.log("abc11111");
+        // console.log(element.team_id);
+        const socketURL = 'ws://182.92.86.71:4514/ws/red/' + '3' + element.gc_id + '/';
+        // console.log("socketURL: " + socketURL);
+        self.joinGroupRedWebSocket[index] = new WebSocket(socketURL);
+        self.joinGroupRedWebSocket[index].onmessage = self.handleRed;
+      });
+      self.privateChatList.forEach((element, index) => {
+        // console.log("abc11111");
+        // console.log(element.team_id);
+        const socketURL = 'ws://182.92.86.71:4514/ws/red/' + '4' + element.pc_id + '/';
+        // console.log("socketURL: " + socketURL);
+        self.privateRedWebSocket[index] = new WebSocket(socketURL);
+        self.privateRedWebSocket[index].onmessage = self.handleRed;
+      });
+      console.log(self.teamRedWebSocket);
+      console.log(self.createGroupRedWebSocket);
+      console.log(self.joinGroupRedWebSocket);
+      console.log(self.privateRedWebSocket);
+    },
+    sendRed(index) {
+      let sendString = '';
+      if (this.activeSelectName === 'first') {
+        sendString += '1';
+        sendString += this.curDepartmentId;
+        const send_message_to_backend = JSON.stringify({
+          'room_id': sendString,
+        })
+        this.teamRedWebSocket[index].send(send_message_to_backend);
+        // console.log(this.teamRedWebSocket[index]);
+      }
+      else if (this.activeSelectName === 'second') {
+        sendString += '2';
+        sendString += this.curDepartmentId;
+        const send_message_to_backend = JSON.stringify({
+          'room_id': sendString,
+        })
+        this.createGroupRedWebSocket[index].send(send_message_to_backend);
+        // console.log(this.createGroupRedWebSocket[index]);
+      }
+      else if (this.activeSelectName === 'third') {
+        sendString += '3';
+        sendString += this.curDepartmentId;
+        const send_message_to_backend = JSON.stringify({
+          'room_id': sendString,
+        })
+        this.joinGroupRedWebSocket[index].send(send_message_to_backend);
+        // console.log(this.joinGroupRedWebSocket[index]);
+      }
+      else if (this.activeSelectName === 'forth') {
+        sendString += '4';
+        sendString += this.curDepartmentId;
+        const send_message_to_backend = JSON.stringify({
+          'room_id': sendString,
+        })
+        this.privateRedWebSocket[index].send(send_message_to_backend);
+        // console.log(this.privateRedWebSocket[index]);
+      }
+      console.log("Send red success");
+    },
+    handleRed(event) {
+      const data = JSON.parse(event.data);
+      // console.log(event);
+      console.log(data.room_id);
+      const chat_type = parseInt(data.room_id[0]);
+      const chat_id = parseInt(data.room_id.slice(1));
+      console.log(chat_type);
+      // console.log(chat_index);
+      if (chat_type === 1) {
+        let chat_index = 0;
+        for(var i = 0; i < this.departmentList.length; i++)
+        {
+          if(this.departmentList[i].team_id === chat_id)
+          {
+            chat_index = i;
+          }
+        }
+        this.teamRedDotNum[chat_index] += 1;
+      }
+      else if (chat_type === 2) {
+        let chat_index = 0;
+        for(var i = 0; i < this.createGroupChatList.length; i++)
+        {
+          if(this.createGroupChatList[i].gc_id === chat_id)
+          {
+            chat_index = i;
+          }
+        }
+        this.createGroupRedDotNum[chat_index] += 1;
+      }
+      else if (chat_type === 3) {
+        let chat_index = 0;
+        for(var i = 0; i < this.joinGroupChatList.length; i++)
+        {
+          if(this.joinGroupChatList[i].gc_id === chat_id)
+          {
+            chat_index = i;
+          }
+        }
+        this.joinGroupRedDotNum[chat_index] += 1;
+      }
+      else if (chat_type === 4) {
+        let chat_index = 0;
+        for(var i = 0; i < this.privateChatList.length; i++)
+        {
+          if(this.privateChatList[i].pc_id === chat_id)
+          {
+            chat_index = i;
+          }
+        }
+        this.privateRedDotNum[chat_index] += 1;
+      }
+      console.log(this.teamRedDotNum);
+      console.log(this.createGroupRedDotNum);
+      console.log(this.joinGroupRedDotNum);
+      console.log(this.privateRedDotNum);
+    },
     async check_profile_self() {
       const self = this;
       await this.$api.user.post_check_profile_self()
@@ -865,9 +1009,9 @@ export default {
     },
 
     async checkSystemMessage() {
-      if (this.curDepartmentId !== 0) {
-        this.updateLeaveMessage();
-      }
+      // if (this.curDepartmentId !== 0) {
+      //   this.updateLeaveMessage();
+      // }
       this.curDepartmentId = 0;
       this.isInCreateGroup = false;
       this.isPrivateChat = false;
@@ -904,9 +1048,9 @@ export default {
     },
 
     async checkTeamMessage(index) {
-      if (this.curDepartmentId !== 0) {
-        this.updateLeaveMessage();
-      }
+      // if (this.curDepartmentId !== 0) {
+      //   this.updateLeaveMessage();
+      // }
       for (let i = 0; i < this.isInTheChat.length; i++) {
         this.isInTheChat[i] = false;
       }
@@ -915,6 +1059,7 @@ export default {
       this.isInCreateGroup = false;
       this.isPrivateChat = false;
       this.teamRedDotNum[index] = 0;
+      this.curentChatIndex = index;
 
       this.curDepartment = this.departmentList[index].team_name;
       this.curDepartmentId = this.departmentList[index].team_id;
@@ -985,11 +1130,12 @@ export default {
     },
 
     async checkGroupMessage(index) {
-      if (this.curDepartmentId !== 0) {
-        this.updateLeaveMessage();
-      }
+      // if (this.curDepartmentId !== 0) {
+      //   this.updateLeaveMessage();
+      // }
       this.chat_type = 'group_chat';
       this.isPrivateChat = false;
+      this.curentChatIndex = index;
       for (let i = 0; i < this.isInTheChat.length; i++) {
         this.isInTheChat[i] = false;
       }
@@ -1093,12 +1239,13 @@ export default {
 
 
     async checkPrivateMessage(index) {
-      if (this.curDepartmentId !== 0) {
-        this.updateLeaveMessage();
-      }
+      // if (this.curDepartmentId !== 0) {
+      //   this.updateLeaveMessage();
+      // }
       for (let i = 0; i < this.isInTheChat.length; i++) {
         this.isInTheChat[i] = false;
       }
+      this.curentChatIndex = index;
       this.isInTheChat[index] = true;
       this.chat_type = 'private_chat';
       this.isInCreateGroup = false;
@@ -1192,7 +1339,8 @@ export default {
     },
     handleMessage(event) {
       const data = JSON.parse(event.data);
-      console.log("111111111");
+      // console.log("111111111");
+      // console.log(event);
       let content = data.message;
       let recv_message_used = {
         content: content,
@@ -1312,6 +1460,8 @@ export default {
 
       }
 
+      this.sendRed(this.curentChatIndex);
+
       this.atList.splice(0, this.atList.length);
       this.isAtAll = false;
       // await self.sleep(1300);
@@ -1365,6 +1515,7 @@ export default {
           console.log(error);
         });
 
+      this.sendRed(this.curentChatIndex);
     },
     async sendGroupMessage() {
       const self = this;
@@ -1447,6 +1598,9 @@ export default {
 
       }
 
+
+      this.sendRed(this.curentChatIndex);
+
       this.atList.splice(0, this.atList.length);
       this.isAtAll = false;
       // await self.sleep(1300);
@@ -1466,6 +1620,8 @@ export default {
     },
 
     async send_file(event) {
+      this.sendRed(this.curentChatIndex);
+
       const self = this;
       let file_id;
       const selectedFile = event.target.files[0];
@@ -1574,6 +1730,7 @@ export default {
       self.scrollToBottom();
     },
     async send_image(event) {
+      this.sendRed(this.curentChatIndex);
       const self = this;
       let file_id;
       const selectedFile = event.target.files[0];
@@ -2639,6 +2796,7 @@ body>.el-container {
 .chat-bubble {
   display: inline-block;
   max-width: 80%;
+  max-height: 60%;
   margin-bottom: 10px;
   padding: 10px;
   border-radius: 20px;
@@ -2781,9 +2939,11 @@ body {
   background-repeat: initial;
   height: 1045px;
 }
+
 ::v-deep.select-tab.el-tabs .el-tabs__item {
   color: #ffffff !important;
 }
+
 ::v-deep.select-tab.el-tabs .el-tabs__item.is-active {
   color: #3f9eff !important;
 }

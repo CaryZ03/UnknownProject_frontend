@@ -6,7 +6,9 @@
     </nav>     -->
   <el-menu class="el-menu-demo" mode="horizontal" background-color="#222427" text-color="#fff"
     active-text-color="#ffd04b">
-    <el-menu-item index="1" class="menu-item-custom"><img :src="logoUrl" alt="接收的图片"></el-menu-item>
+    <el-menu-item index="1" class="menu-item-custom">
+      <router-link to="/" class="menu-item-custom"><img :src="logoUrl" alt="接收的图片"></router-link>
+    </el-menu-item>
     <el-menu-item index="2" class="menu-item-custom"><router-link to="/WorkSpace" class="menu-item-custom">我的工作台</router-link></el-menu-item>
     <div class="menu-right-top">
       <el-menu-item index="5" class="menu-avatar">
