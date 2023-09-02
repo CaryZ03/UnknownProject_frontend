@@ -344,6 +344,8 @@ export default {
   props: {},
   data() {
     return {
+      isDeleteButtonPressed: false,
+
       user: {
         email: "",
         password: "",
