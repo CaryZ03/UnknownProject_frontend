@@ -2303,7 +2303,7 @@ export default {
             console.log("生成成功")
             console.log(response.data.msg)
             //赋值
-            link ='http://localhost:8080/Invite/'+ response.data.msg
+            link ='http://unknown.blablablabla.fun/Invite/'+ response.data.msg
 
             //复制到剪贴板
             const el = document.createElement("textarea");

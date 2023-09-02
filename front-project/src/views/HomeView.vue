@@ -842,7 +842,7 @@ export default {
     this.btnLogin.addEventListener("click", () => {
       console.log("click Login ???");
       this.wrapper.classList.add("active-popup");
-      this.show=false;
+      this.show = false;
     });
 
     this.iconClose.addEventListener("click", () => {
@@ -1308,4 +1308,25 @@ body {
 
 <!-- hide scrollbar -->
 <style scoped>
+/* 隐藏所有滚动条，包括垂直和水平滚动条 */
+::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+/* Edge浏览器的滚动条样式 */
+/* 注意：Edge浏览器可能需要单独的样式 */
+/* 这是Edge浏览器中隐藏滚动条的方式 */
+* {
+  scrollbar-width: none; /* Firefox */
+}
+
+/* 隐藏滚动条的轨道 */
+*::-webkit-scrollbar-track {
+  display: none; /* Chrome, Safari */
+}
+
+/* 隐藏滚动条的滑块 */
+*::-webkit-scrollbar-thumb {
+  display: none; /* Chrome, Safari */
+}
 </style>
