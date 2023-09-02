@@ -72,12 +72,12 @@
                   circle>
                 </el-button>
 
-                <el-button
+                <!-- <el-button
                   size="mini"
                   type="primary" class="bottom-button"
                   icon="el-icon-upload2"
                   circle>
-                </el-button>
+                </el-button> -->
               </div>
 
               <!-- 新建文档对话框 -->
@@ -479,8 +479,13 @@ padding: 4px 0; max-width: 600px;" v-if="this.isDocumentChosen">
         this.curNode = node
         this.isDocumentChosen =true
         console.log("node:",node)
-        if( node.data.isFolder)
+        if( node.data.isFolder){
           console.log('is Folder,over...')
+          this.curDocument.name = '-----';
+          this.curDocument.lastChangeTime = '-----';
+          this.isDocumentChosen = false
+          console.log("curDocument:",this.curDocument)
+        }
         else{
           const tmp = {
             "document_id":node.data.id,

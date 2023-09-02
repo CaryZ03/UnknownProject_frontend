@@ -831,12 +831,12 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
                   >新建原型
               </el-button>
 
-              <el-button
+              <!-- <el-button
                   size="mini"
                   type="primary" class="bottom-button"
                   icon="el-icon-upload2"
                   >上传
-              </el-button>
+              </el-button> -->
 
               <!-- 新建文档对话框 -->
               <el-dialog
@@ -1028,12 +1028,12 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
                   >新建需求
               </el-button>
 
-              <el-button
+              <!-- <el-button
                   size="mini"
                   type="primary" class="bottom-button"
                   icon="el-icon-upload2"
                   >上传
-              </el-button>
+              </el-button> -->
 
               <!-- 新建需求对话框 -->
               <el-dialog
@@ -1051,9 +1051,9 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
                     <el-form-item label="预计完成时间">
                       <el-date-picker v-model="createForm.endTime" type="date" placeholder="请选择预计完成时间"></el-date-picker>
                     </el-form-item>
-                    <el-form-item label="负责人">
+                    <!-- <el-form-item label="负责人">
                       <el-input v-model="createForm.person" placeholder="请输入负责人"></el-input>
-                    </el-form-item>
+                    </el-form-item> -->
                     <!-- <el-form-item label="完成状况">
                       <el-input v-model="createForm.status" placeholder="请输入完成状况"></el-input>
                     </el-form-item> -->
@@ -1108,7 +1108,7 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
                     <!-- 负责人 -->
                     <el-table-column label="负责人" prop="person" sortable>
                       <template slot-scope="scope">
-                        <el-input v-model="scope.row.person" @blur="saveData(scope.row)"></el-input>
+                        <el-input v-model="scope.row.person" :disabled="true"></el-input>
                       </template>
                     </el-table-column>
 
