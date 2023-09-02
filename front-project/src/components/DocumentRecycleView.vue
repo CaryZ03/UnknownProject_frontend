@@ -95,8 +95,8 @@
   
   
       <!-- main -->
-      <el-main>
-        <el-descriptions class="margin-top"  :column="1" :size="size" style="max-width: 600px;" border>
+      <el-main style="background-color:#fffcd7;">
+        <el-descriptions class="margin-top"  :column="1" :size="size" style="max-width: 600px;box-shadow: 0px 0px 16px rgba(17, 17, 26, 0.1);" border>
                   
                   <el-descriptions-item>
                     <template slot="label">
@@ -722,6 +722,13 @@
   </script>
   
   <style scoped>
+
+.bottom-button{
+  color: #1b1913;
+  background-color: #faec4e;
+  border-color: #1b1913;
+}
+
   .document-list{
     /* width: 300px; */
     margin-left: 5px;
