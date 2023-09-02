@@ -50,27 +50,7 @@
               <t-menu-item value="3-1-3" @click="cloneElement('Layout3')"
                 >组合导航布局</t-menu-item
               >
-              <!-- <t-menu-item value="3-1-4" @click="cloneElement('Layout4')"
-                >Layout4</t-menu-item
-              > -->
-              <t-menu-item value="3-1-5" @click="cloneElement('testVue')"
-                >iPad(1024×768)</t-menu-item
-              >
-              <t-menu-item value="3-1-6" @click="cloneElement('testVue')"
-                >iPad(1024×768)</t-menu-item
-              >
-              <t-menu-item value="3-1-7" @click="cloneElement('testVue')"
-                >iPad(1024×768)</t-menu-item
-              >
-              <t-menu-item value="3-1-8" @click="cloneElement('testVue')"
-                >iPad(1024×768)</t-menu-item
-              >
-              <t-menu-item value="3-1-9" @click="cloneElement('testVue')"
-                >iPad(1024×768)</t-menu-item
-              >
-              <t-menu-item value="3-1-10" @click="cloneElement('testVue')"
-                >iPad(1024×768)</t-menu-item
-              >
+             
             </t-submenu>
 
             <t-submenu title="Button" value="4-1">
@@ -89,24 +69,7 @@
               <t-menu-item value="4-1-4" @click="cloneElement('Button4')"
                 >文字按钮</t-menu-item
               >
-              <t-menu-item value="4-1-5" @click="cloneElement('testVue')"
-                >iPad(1024×768)</t-menu-item
-              >
-              <t-menu-item value="4-1-6" @click="cloneElement('testVue')"
-                >iPad(1024×768)</t-menu-item
-              >
-              <t-menu-item value="4-1-7" @click="cloneElement('testVue')"
-                >iPad(1024×768)</t-menu-item
-              >
-              <t-menu-item value="4-1-8" @click="cloneElement('testVue')"
-                >iPad(1024×768)</t-menu-item
-              >
-              <t-menu-item value="4-1-9" @click="cloneElement('testVue')"
-                >iPad(1024×768)</t-menu-item
-              >
-              <t-menu-item value="4-1-10" @click="cloneElement('testVue')"
-                >iPad(1024×768)</t-menu-item
-              >
+              
             </t-submenu>
 
             <t-submenu title="Divider" value="5-1">
@@ -125,9 +88,7 @@
               <t-menu-item value="5-1-4" @click="cloneElement('Divider4')"
                 >带文字的分割线</t-menu-item
               >
-              <t-menu-item value="5-1-5" @click="cloneElement('testVue')"
-                >iPad(1024×768)</t-menu-item
-              >
+              
             </t-submenu>
 
             <t-submenu title="Breadcrumb" value="6-1">
@@ -146,9 +107,7 @@
               <t-menu-item value="6-1-4" @click="cloneElement('Breadcrumb4')"
                 >带跳转/点击的面包屑</t-menu-item
               >
-              <t-menu-item value="6-1-5" @click="cloneElement('testVue')"
-                >iPad(1024×768)</t-menu-item
-              >
+              
             </t-submenu>
 
             <t-submenu title="DropDown" value="7-1">
