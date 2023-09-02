@@ -17,7 +17,8 @@
   
 
   <script>
-import store from '@/store';
+import store from "@/store";
+
 export default {
   props: {
     items: {
@@ -101,23 +102,26 @@ export default {
         // const uid = this.$store.state.curUserID ;
         receiver_list.push(numberPart);
 
-        console.log("STORE ID"+ store.state.curUserID);
+        console.log("STORE ID" + store.state.curUserID);
 
-        const jsonString=JSON.stringify({
-          'notification':{
-            'name': '有人@了你',
-            'content': "@@@",
-            'creator_id': store.state.curUserID,
-            'type': 'document',
-            'cm_id': 0,
+        const currentPath = 'http://localhost:8080'+ window.location.pathname;
+        console.log(currentPath);
+
+        const jsonString = JSON.stringify({
+          notification: {
+            name: "有人@了你",
+            content:  currentPath,
+            creator_id: store.state.curUserID,
+            type: "document",
+            cm_id: 0,
           },
-          'receiver_list': receiver_list
-        })
-        this.$api.message.post_group_send_notification_to_user(jsonString).then((res)=>{
-          console.log(res);
-        })
-
-        
+          receiver_list: receiver_list,
+        });
+        this.$api.message
+          .post_group_send_notification_to_user(jsonString)
+          .then((res) => {
+            console.log(res);
+          });
       }
     },
   },
