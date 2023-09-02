@@ -515,6 +515,7 @@ export default {
             localStorage.setItem("curUserID", this.$store.state.curUserID);
             localStorage.setItem("curUserMail", this.$store.state.curUserMail);
             localStorage.setItem("token", response.data["token_key"]);
+            localStorage.setItem("curUserName", response.data["user_name"]);
             alert("登录成功");
             // this.wrapper.classList.remove("active-popup");
 

@@ -50,7 +50,6 @@
               <t-menu-item value="3-1-3" @click="cloneElement('Layout3')"
                 >组合导航布局</t-menu-item
               >
-             
             </t-submenu>
 
             <t-submenu title="Button" value="4-1">
@@ -69,7 +68,6 @@
               <t-menu-item value="4-1-4" @click="cloneElement('Button4')"
                 >文字按钮</t-menu-item
               >
-              
             </t-submenu>
 
             <t-submenu title="Divider" value="5-1">
@@ -88,7 +86,6 @@
               <t-menu-item value="5-1-4" @click="cloneElement('Divider4')"
                 >带文字的分割线</t-menu-item
               >
-              
             </t-submenu>
 
             <t-submenu title="Breadcrumb" value="6-1">
@@ -107,7 +104,6 @@
               <t-menu-item value="6-1-4" @click="cloneElement('Breadcrumb4')"
                 >带跳转/点击的面包屑</t-menu-item
               >
-              
             </t-submenu>
 
             <t-submenu title="DropDown" value="7-1">
@@ -288,7 +284,9 @@
               transition: background-color 200ms linear;
             "
           >
-          <div slot="" style="float: right;">{{  }}</div>
+            <div slot="" :style="computeColorStyle">
+              {{ getName(index) }}
+            </div>
             <div slot="tl">😀</div>
             <div slot="tm">😀</div>
             <div slot="tr">😀</div>
@@ -316,16 +314,16 @@ import mLinkComponent from "../components/Prototype/Components/mLinkComponent.vu
 import mPagination from "../components/Prototype/Components/mPagination.vue";
 import mTabs from "../components/Prototype/Components/mTabs.vue";
 import mToolBar from "../components/Prototype/Components/mToolBar.vue";
-import Dropdown1 from "../components/Prototype/Components/Dropdown1.vue"
+import Dropdown1 from "../components/Prototype/Components/Dropdown1.vue";
 import Dropdown2 from "../components/Prototype/Components/Dropdown2.vue";
 import Dropdown3 from "../components/Prototype/Components/Dropdown3.vue";
 import Dropdown4 from "../components/Prototype/Components/Dropdown4.vue";
 import Dropdown5 from "../components/Prototype/Components/Dropdown5.vue";
-import Menu1 from "../components/Prototype/Components/Menu1.vue"
-import Menu2 from "../components/Prototype/Components/Menu2.vue"
-import Menu3 from "../components/Prototype/Components/Menu3.vue"
-import Menu4 from "../components/Prototype/Components/Menu4.vue"
-import Menu5 from "../components/Prototype/Components/Menu5.vue"
+import Menu1 from "../components/Prototype/Components/Menu1.vue";
+import Menu2 from "../components/Prototype/Components/Menu2.vue";
+import Menu3 from "../components/Prototype/Components/Menu3.vue";
+import Menu4 from "../components/Prototype/Components/Menu4.vue";
+import Menu5 from "../components/Prototype/Components/Menu5.vue";
 import Pagination1 from "../components/Prototype/Components/Pagination1.vue";
 import Pagination2 from "../components/Prototype/Components/Pagination2.vue";
 import Pagination3 from "../components/Prototype/Components/Pagination3.vue";
@@ -341,29 +339,25 @@ import testVue from "./test.vue";
 import { Icon } from "tdesign-icons-vue";
 
 //new component
-import Button1 from "../components/Prototype/Components/Button1.vue"
-import Button2 from "../components/Prototype/Components/Button2.vue"
-import Button3 from "../components/Prototype/Components/Button3.vue"
-import Button4 from "../components/Prototype/Components/Button4.vue"
+import Button1 from "../components/Prototype/Components/Button1.vue";
+import Button2 from "../components/Prototype/Components/Button2.vue";
+import Button3 from "../components/Prototype/Components/Button3.vue";
+import Button4 from "../components/Prototype/Components/Button4.vue";
 
-import Layout1 from "../components/Prototype/Components/Layout1.vue"
-import Layout2 from "../components/Prototype/Components/Layout2.vue"
-import Layout3 from "../components/Prototype/Components/Layout3.vue"
-import Layout4 from "../components/Prototype/Components/Layout4.vue"
+import Layout1 from "../components/Prototype/Components/Layout1.vue";
+import Layout2 from "../components/Prototype/Components/Layout2.vue";
+import Layout3 from "../components/Prototype/Components/Layout3.vue";
+import Layout4 from "../components/Prototype/Components/Layout4.vue";
 
-import Divider1 from "../components/Prototype/Components/Divider1.vue"
-import Divider2 from "../components/Prototype/Components/Divider2.vue"
-import Divider3 from "../components/Prototype/Components/Divider3.vue"
-import Divider4 from "../components/Prototype/Components/Divider4.vue"
+import Divider1 from "../components/Prototype/Components/Divider1.vue";
+import Divider2 from "../components/Prototype/Components/Divider2.vue";
+import Divider3 from "../components/Prototype/Components/Divider3.vue";
+import Divider4 from "../components/Prototype/Components/Divider4.vue";
 
 import Breadcrumb1 from "../components/Prototype/Components/Bread1.vue";
 import Breadcrumb2 from "../components/Prototype/Components/Bread2.vue";
 import Breadcrumb3 from "../components/Prototype/Components/Bread3.vue";
 import Breadcrumb4 from "../components/Prototype/Components/Bread4.vue";
-
-
-
-
 
 import SideBar from "@/components/Layouts/SideBar.vue";
 import VueRulerTool from "vue-ruler-tool";
@@ -433,7 +427,7 @@ export default {
       ],
       collapsed: false,
       index_name: [],
-      name: '',
+      name: "",
       x_off: [
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -512,16 +506,15 @@ export default {
     Breadcrumb2,
     Breadcrumb3,
     Breadcrumb4,
-
-
-
   },
   mounted() {
     this.teamid = this.$route.params.teamid;
     this.ptid = this.$route.params.ptid;
     // TODO 添加检测
     document.addEventListener("keydown", this.handleKeyDown);
-    this.ws = new WebSocket("ws://182.92.86.71:4514/ws/editor/"+this.ptid+"/");
+    this.ws = new WebSocket(
+      "ws://182.92.86.71:4514/ws/editor/" + this.ptid + "/"
+    );
     this.ws.onmessage = this.handleMessage;
 
     // this.ws.onopen = () => {
@@ -537,11 +530,17 @@ export default {
       };
     },
 
-    computedStyle() {
+    computeColorStyle() {
+      var randomColor = this.getRandomColor(); // 使用之前提供的获取随机颜色的函数
+
+      // 生成包含随机颜色和 float: right 样式的字符串
+      var style = "float: right; background: " + randomColor + ";";
+
       return {
-        backgroundColor: this.canvasColor,
-        width: this.canvasX,
-        height: this.canvasY,
+        // float: right,
+        backgroundColor: randomColor,
+        width: "20px",
+        height: "auto",
       };
     },
   },
@@ -566,6 +565,31 @@ export default {
           console.error("oops, something went wrong!", error);
         })
         .finally(this.close);
+    },
+
+    getRandomColor() {
+      // 生成三个随机的 0 到 255 之间的整数作为 RGB 值
+      var r = Math.floor(Math.random() * 256);
+      var g = Math.floor(Math.random() * 256);
+      var b = Math.floor(Math.random() * 256);
+
+      // 将 RGB 值转换为十六进制，并补全至 2 位
+      var hexR = r.toString(16).padStart(2, "0");
+      var hexG = g.toString(16).padStart(2, "0");
+      var hexB = b.toString(16).padStart(2, "0");
+
+      // 拼接成十六进制颜色字符串并返回
+      var color = "#" + hexR + hexG + hexB;
+      return color;
+    },
+    getName(index) {
+      const tmp = this.index_name.filter((item) => item.index === index);
+      console.log(tmp[0]);
+      if (tmp[0] !== undefined && tmp[0] !== null) {
+        return tmp[0].name;
+      } else {
+        return "";
+      }
     },
 
     handleMessage(event) {
@@ -652,13 +676,15 @@ export default {
         this.x_scale.splice(this.selectedIndex, 1);
         this.y_scale.splice(this.selectedIndex, 1);
 
-        this.index_name = this.index_name.filter(item => item.id!==this.selectedIndex);
+        this.index_name = this.index_name.filter(
+          (item) => item.id !== this.selectedIndex
+        );
 
-        this.index_name.forEach((item)=>{
-          if(item.index>this.selectedIndex){
+        this.index_name.forEach((item) => {
+          if (item.index > this.selectedIndex) {
             item.index--;
           }
-        })
+        });
         /*
         
         x_off: this.x_off,
@@ -706,17 +732,19 @@ export default {
 
       const data = {
         index: this.selectedIndex,
-        name: this.$store.state.curUserID,
+        name: this.$store.state.curUserName,
       };
 
       this.index_name.push(data);
 
       this.sendMessage();
     },
-    onDesected(event, index) {
+    onDeselect(event, index) {
       this.selectedIndex = index;
 
-      this.index_name =  this.index_name.filter(item => item.index !== this.selectedIndex);
+      this.index_name = this.index_name.filter(
+        (item) => item.index !== this.selectedIndex
+      );
       this.sendMessage();
     },
 
@@ -785,8 +813,6 @@ export default {
           console.log("获得error");
         });
     },
-
-
   },
 
   created() {
