@@ -218,19 +218,19 @@
               <template #icon>
                 <icon name="server" />
               </template>
-              <t-menu-item value="10-1-1" @click="cloneElement('testVue')"
+              <t-menu-item value="10-1-1" @click="cloneElement('Steps1')"
                 >不带序的水平步骤条
               </t-menu-item>
-              <t-menu-item value="10-1-2" @click="cloneElement('testVue')"
+              <t-menu-item value="10-1-2" @click="cloneElement('Steps2')"
                 >不带序号的垂直步骤条</t-menu-item
               >
-              <t-menu-item value="10-1-3" @click="cloneElement('testVue')"
+              <t-menu-item value="10-1-3" @click="cloneElement('Steps3')"
                 >带状态的步骤条</t-menu-item
               >
-              <t-menu-item value="10-1-4" @click="cloneElement('testVue')"
+              <t-menu-item value="10-1-4" @click="cloneElement('Steps4')"
                 >带图标的步骤条</t-menu-item
               >
-              <t-menu-item value="10-1-5" @click="cloneElement('testVue')"
+              <t-menu-item value="10-1-5" @click="cloneElement('Steps5')"
                 >带额外内容的步骤条</t-menu-item
               >
             </t-submenu>
