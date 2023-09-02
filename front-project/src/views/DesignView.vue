@@ -41,18 +41,18 @@
               <template #icon>
                 <icon name="server" />
               </template>
-              <t-menu-item value="3-1-1" @click="cloneElement('testVue')"
-                >IPONE
+              <t-menu-item value="3-1-1" @click="cloneElement('Layout1')"
+                >侧边导航布局
               </t-menu-item>
-              <t-menu-item value="3-1-2" @click="cloneElement('testVue')"
-                >7寸平板电脑(600×1024)</t-menu-item
+              <t-menu-item value="3-1-2" @click="cloneElement('Layout2')"
+                >顶部导航布局</t-menu-item
               >
-              <t-menu-item value="3-1-3" @click="cloneElement('testVue')"
-                >10寸平板电脑(720×1280)</t-menu-item
+              <t-menu-item value="3-1-3" @click="cloneElement('Layout3')"
+                >组合导航布局</t-menu-item
               >
-              <t-menu-item value="3-1-4" @click="cloneElement('testVue')"
-                >iPad(1024×768)</t-menu-item
-              >
+              <!-- <t-menu-item value="3-1-4" @click="cloneElement('Layout4')"
+                >Layout4</t-menu-item
+              > -->
               <t-menu-item value="3-1-5" @click="cloneElement('testVue')"
                 >iPad(1024×768)</t-menu-item
               >
@@ -78,17 +78,17 @@
               <template #icon>
                 <icon name="server" />
               </template>
-              <t-menu-item value="4-1-1" @click="cloneElement('testVue')"
-                >IPONE
+              <t-menu-item value="4-1-1" @click="cloneElement('Button1')"
+                >填充按钮
               </t-menu-item>
-              <t-menu-item value="4-1-2" @click="cloneElement('testVue')"
-                >7寸平板电脑(600×1024)</t-menu-item
+              <t-menu-item value="4-1-2" @click="cloneElement('Button2')"
+                >描边按钮</t-menu-item
               >
-              <t-menu-item value="4-1-3" @click="cloneElement('testVue')"
-                >10寸平板电脑(720×1280)</t-menu-item
+              <t-menu-item value="4-1-3" @click="cloneElement('Button3')"
+                >虚框按钮</t-menu-item
               >
-              <t-menu-item value="4-1-4" @click="cloneElement('testVue')"
-                >iPad(1024×768)</t-menu-item
+              <t-menu-item value="4-1-4" @click="cloneElement('Button4')"
+                >文字按钮</t-menu-item
               >
               <t-menu-item value="4-1-5" @click="cloneElement('testVue')"
                 >iPad(1024×768)</t-menu-item
@@ -115,17 +115,17 @@
               <template #icon>
                 <icon name="server" />
               </template>
-              <t-menu-item value="5-1-1" @click="cloneElement('testVue')"
-                >IPONE
+              <t-menu-item value="5-1-1" @click="cloneElement('Divider1')"
+                >基础分割线
               </t-menu-item>
-              <t-menu-item value="5-1-2" @click="cloneElement('testVue')"
-                >7寸平板电脑(600×1024)</t-menu-item
+              <t-menu-item value="5-1-2" @click="cloneElement('Divider2')"
+                >水平分割线</t-menu-item
               >
-              <t-menu-item value="5-1-3" @click="cloneElement('testVue')"
-                >10寸平板电脑(720×1280)</t-menu-item
+              <t-menu-item value="5-1-3" @click="cloneElement('Divider3')"
+                >垂直分割线</t-menu-item
               >
-              <t-menu-item value="5-1-4" @click="cloneElement('testVue')"
-                >iPad(1024×768)</t-menu-item
+              <t-menu-item value="5-1-4" @click="cloneElement('Divider4')"
+                >带文字的分割线</t-menu-item
               >
               <t-menu-item value="5-1-5" @click="cloneElement('testVue')"
                 >iPad(1024×768)</t-menu-item
@@ -136,17 +136,17 @@
               <template #icon>
                 <icon name="server" />
               </template>
-              <t-menu-item value="6-1-1" @click="cloneElement('testVue')"
-                >IPONE
+              <t-menu-item value="6-1-1" @click="cloneElement('Breadcrumb1')"
+                >基础面包屑
               </t-menu-item>
-              <t-menu-item value="6-1-2" @click="cloneElement('testVue')"
-                >7寸平板电脑(600×1024)</t-menu-item
+              <t-menu-item value="6-1-2" @click="cloneElement('Breadcrumb2')"
+                >带图标的面包屑</t-menu-item
               >
-              <t-menu-item value="6-1-3" @click="cloneElement('testVue')"
-                >10寸平板电脑(720×1280)</t-menu-item
+              <t-menu-item value="6-1-3" @click="cloneElement('Breadcrumb3')"
+                >自定义分隔符的面包屑</t-menu-item
               >
-              <t-menu-item value="6-1-4" @click="cloneElement('testVue')"
-                >iPad(1024×768)</t-menu-item
+              <t-menu-item value="6-1-4" @click="cloneElement('Breadcrumb4')"
+                >带跳转/点击的面包屑</t-menu-item
               >
               <t-menu-item value="6-1-5" @click="cloneElement('testVue')"
                 >iPad(1024×768)</t-menu-item
@@ -362,6 +362,31 @@ import domToImage from "dom-to-image";
 import testVue from "./test.vue";
 import { Icon } from "tdesign-icons-vue";
 
+//new component
+import Button1 from "../components/Prototype/Components/Button1.vue"
+import Button2 from "../components/Prototype/Components/Button2.vue"
+import Button3 from "../components/Prototype/Components/Button3.vue"
+import Button4 from "../components/Prototype/Components/Button4.vue"
+
+import Layout1 from "../components/Prototype/Components/Layout1.vue"
+import Layout2 from "../components/Prototype/Components/Layout2.vue"
+import Layout3 from "../components/Prototype/Components/Layout3.vue"
+import Layout4 from "../components/Prototype/Components/Layout4.vue"
+
+import Divider1 from "../components/Prototype/Components/Divider1.vue"
+import Divider2 from "../components/Prototype/Components/Divider2.vue"
+import Divider3 from "../components/Prototype/Components/Divider3.vue"
+import Divider4 from "../components/Prototype/Components/Divider4.vue"
+
+import Breadcrumb1 from "../components/Prototype/Components/Bread1.vue";
+import Breadcrumb2 from "../components/Prototype/Components/Bread2.vue";
+import Breadcrumb3 from "../components/Prototype/Components/Bread3.vue";
+import Breadcrumb4 from "../components/Prototype/Components/Bread4.vue";
+
+
+
+
+
 
 import SideBar from "@/components/Layouts/SideBar.vue";
 import VueRulerTool from "vue-ruler-tool";
@@ -431,6 +456,29 @@ export default {
     testVue,
     SideBar,
     Icon,
+
+    Button1,
+    Button2,
+    Button3,
+    Button4,
+
+    Layout1,
+    Layout2,
+    Layout3,
+    Layout4,
+
+    Divider1,
+    Divider2,
+    Divider3,
+    Divider4,
+
+    Breadcrumb1,
+    Breadcrumb2,
+    Breadcrumb3,
+    Breadcrumb4,
+
+
+
   },
   mounted() {
     this.teamid = this.$route.params.teamid;
