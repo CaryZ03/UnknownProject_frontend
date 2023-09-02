@@ -4,9 +4,10 @@
     <!-- 侧边 -->
   <el-aside width="300px" style="border: 1px solid #eee; ">
     <span  class="inherited-styles-for-exported-element">文档目录</span>
-      <div >
+      <div  >
               
-              <div class="document-list" style="border: 1px solid #eee; height: 400px; overflow: auto; ">
+              <div class="document-list" style="border: 1.5px solid #eee; height: 400px; overflow: auto;
+               ">
                 <!-- 目录树 -->
               <el-tree
               ref="tree"
@@ -26,7 +27,7 @@
               <span class="custom-tree-node" slot-scope="{ node, data }" style="display: flex;align-items: center;margin-left: 8px;" @click="chooseDocument(node)">
                 <span v-if="data.isFolder" class="folder-icon">
                   <i class="el-icon-folder">{{ node.label }}</i>
-                  <i class="el-icon-circle-plus-outline" style="background-color: rgb(50, 208, 252);margin-left: 5px;border-radius: 13px;" @click="showDialog(node.data.id)"></i>
+                  <i class="el-icon-circle-plus-outline" style="background-color: rgb(165, 231, 249);margin-left: 5px;border-radius: 13px;" @click="showDialog(node.data.id)"></i>
                    <!-- <el-button icon="el-icon-plus" type="primary" size="mini" circle></el-button> -->
                 </span>
                 <span v-else class="file-icon"><i class="el-icon-document">{{ node.label }}</i>  </span>
@@ -146,8 +147,9 @@
 
 
     <!-- main -->
-    <el-main>
-      <el-descriptions class="margin-top"  :column="1" :size="size" style="max-width: 600px;" border>
+    <el-main style="background-color:#fffcd7;">
+      <el-descriptions class="margin-top"  :column="1" :size="size" style="max-width: 600px;
+      box-shadow: 0px 0px 16px rgba(17, 17, 26, 0.1);" border>
                 
                 <el-descriptions-item>
                   <template slot="label">
@@ -658,6 +660,25 @@ padding: 4px 0; max-width: 600px;" v-if="this.isDocumentChosen">
 </script>
 
 <style scoped>
+
+
+.bottom-button{
+  color: #1b1913;
+  background-color: #faec4e;
+  border-color: #1b1913;
+}
+
+/* .bottom-button :hover{
+  background-color: #FE83C6; 
+  border-color: #FE83C6;
+}
+
+.bottom-button :focus{
+  background-color:  #FE83C6;
+  border-color:  #FE83C6;
+} */
+
+
 .document-list{
   /* width: 300px; */
   margin-left: 5px;
@@ -702,8 +723,8 @@ padding: 4px 0; max-width: 600px;" v-if="this.isDocumentChosen">
     
     /* el-tree 背景 */
     .el-tree {
-      background: #fefefe;
-      
+      /* background: #fefefe; */
+      background:transparent;
     }
     .el-tree-node__content {
       height: 50px;

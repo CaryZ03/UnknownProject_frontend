@@ -511,7 +511,8 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
               <el-table
              :data="TeamPersonInform.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
              :default-sort = "{prop: 'date', order: 'descending'}"
-             style="width: 100%" >
+             height="300"
+             style="width: 100%; " >
 
           
                 <!-- column 1 -->
@@ -2331,6 +2332,7 @@ export default {
    
     console.log(`切换到按钮${index + 1}的内容`);
     localStorage.setItem('activeIndex:',this.activeIndex)
+    this.getTeamApplyList()
 
     
       },
