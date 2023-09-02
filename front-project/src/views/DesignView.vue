@@ -291,7 +291,7 @@
             <div slot="tm">😀</div>
             <div slot="tr">😀</div>
             <div slot="mr">😀</div>
-            <div slot="br">Name</div>
+            <div slot="br">😀</div>
             <div slot="bm">😀</div>
             <div slot="bl">😀</div>
             <div slot="ml">😀</div>
@@ -539,8 +539,9 @@ export default {
       return {
         // float: right,
         backgroundColor: randomColor,
-        width: "20px",
+        width: "50px",
         height: "auto",
+
       };
     },
   },
