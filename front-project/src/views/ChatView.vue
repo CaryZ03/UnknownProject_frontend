@@ -512,7 +512,7 @@
                   </el-col>
                 </el-row>
               </div>
-              <div class="send-message" v-else>
+              <div class="send-message" v-else-if="message.private_connect_id === uid">
                 <el-row>
                   <el-col :span="23">
                     <div class="send-member">{{ uname }}</div>
@@ -781,12 +781,14 @@ export default {
     this.checkSystemMessage();
     this.createRedWebSocket();
     // this.startTimer();
+    this.acquireUnreadMessage();
   },
   updated() {
     // this.scrollToBottom();
   },
   beforeDestroy() {
     // this.stopTimer();
+    this.updateLeaveMessage();
   },
   methods: {
     async createRedWebSocket() {
@@ -2183,7 +2185,8 @@ export default {
         message: h('i', { style: 'color: teal' }, '创建私聊成功')
       });
       self.privateVisible_first = false;
-      self.activeSelectName = 'third';
+      self.activeSelectName = 'forth';
+      self.getPrivateChat();
       // 跳转到私聊界面
     },
     async getPrivateChat() {
@@ -2554,21 +2557,67 @@ export default {
     },
     async updateLeaveMessage() {
       const self = this;
-      const send_message_to_backend = JSON.stringify({
-        'user_id': self.uid,
-        'chat_type': self.chat_type,
-        'chat_id': self.curDepartmentId
-      })
-      console.log("hello");
-      console.log(send_message_to_backend);
-      await this.$api.chat.post_update_leave_message(send_message_to_backend)
-        .then(function (response) {
-          console.log("hihihihi");
-          console.log(response);
+      for (var i = 0; i < self.departmentList.length; i++) {
+        const send_message_to_backend = JSON.stringify({
+          'user_id': self.uid,
+          'chat_type': "team_chat",
+          'chat_id': self.departmentList[i].team_id
         })
-        .catch(function (error) {
-          console.log(error);
-        });
+        console.log(i);
+        console.log(send_message_to_backend);
+        await this.$api.chat.post_update_leave_message(send_message_to_backend)
+          .then(function (response) {
+            console.log(i);
+            self.teamRedDotNum[i] = response.data.unread_message_count;
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
+      for (var j = 0; j < self.createGroupChatList.length; j++) {
+        const send_message_to_backend = JSON.stringify({
+          'user_id': self.uid,
+          'chat_type': "group_chat",
+          'chat_id': self.createGroupChatList[j].gc_id
+        })
+        await this.$api.chat.post_update_leave_message(send_message_to_backend)
+          .then(function (response) {
+            self.createGroupRedDotNum[j] = response.data.unread_message_count;
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
+      for (var i = 0; i < self.joinGroupChatList.length; i++) {
+        const send_message_to_backend = JSON.stringify({
+          'user_id': self.uid,
+          'chat_type': "group_chat",
+          'chat_id': self.joinGroupChatList[i].gc_id
+        })
+        await this.$api.chat.post_update_leave_message(send_message_to_backend)
+          .then(function (response) {
+            self.joinGroupRedDotNum[i] = response.data.unread_message_count;
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
+      for (var i = 0; i < self.privateChatList.length; i++) {
+        const send_message_to_backend = JSON.stringify({
+          'user_id': self.uid,
+          'chat_type': "private_chat",
+          'chat_id': self.privateChatList[i].pc_id
+        })
+        console.log("111");
+        console.log(send_message_to_backend);
+        await this.$api.chat.post_update_leave_message(send_message_to_backend)
+          .then(function (response) {
+            self.privateRedDotNum[i] = response.data.unread_message_count;
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
     },
     startTimer() {
       // this.timer = setInterval(this.acquireUnreadMessage, 1000);
@@ -2577,6 +2626,7 @@ export default {
       clearInterval(this.timer);
     },
     async acquireUnreadMessage() {
+      await this.sleep(2000);
       const self = this;
       for (var i = 0; i < self.departmentList.length; i++) {
         const send_message_to_backend = JSON.stringify({
