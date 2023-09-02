@@ -225,7 +225,7 @@
       </el-dialog>
       <div class="container">
         <div v-show="!this.$store.state.isLogin" class="wrapper active-popup">
-          <span class="icon-close" style="ab"
+          <span class="icon-close" style="color: black;"
             ><i class="el-icon-close"></i
           ></span>
 
@@ -1302,7 +1302,296 @@ body {
 
 <!-- hide scrollbar -->
 <style scoped>
+
+
+
 ::-webkit-scrollbar {
   display: none; /* Chrome Safari */
+}
+</style>
+
+
+<style scoped>
+/* 上方展开栏的专属样式*/
+body {
+  background: #eee;
+  /* This is just a helper in case the element has a transparent background or white colors. */
+}
+
+/* * {
+  outline: 0;
+  transition: background-color .1s ease-out;
+}
+
+*, ::after, ::before {
+  border-style: solid;
+  border-width: 0;
+  box-sizing: border-box;
+} */
+
+.inherited-styles-for-exported-element2 {
+  font-family: "PingFang SC", "Microsoft YaHei", ui-sans-serif,
+   -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, 
+   "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+  tab-size: 4;
+  width: 100%;
+}
+
+svg {
+  vertical-align: middle;
+}
+
+*, ::after, ::before {
+  -webkit-font-smoothing: subpixel-antialiased;
+  border-color: #e5e5e5;
+}
+
+::selection {
+  background: rgba(24, 160, 251, .12);
+}
+
+:disabled {
+  cursor: default;
+}
+
+.text-t2, .text-t4 {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.text-t4 {
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.text-h4 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.text-ellipsis {
+  overflow: hidden;
+  text-wrap: nowrap;
+  white-space-collapse: collapse;
+}
+
+.animate-hover {
+  transition-duration: .1s;
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(.4, 0, .2, 1);
+  user-select: none;
+}
+
+.next-modal {
+  background-clip: padding-box;
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: rgba(0, 0, 0, .03) 0 0 0 1px, rgba(0, 0, 0, .1) 0 3px 6px, rgba(0, 0, 0, .1) 0 12px 20px;
+  color: #000;
+}
+
+.relative {
+  position: relative;
+}
+
+.mx-2 {
+  margin-left: .5rem;
+  margin-right: .5rem;
+}
+
+.mr-1 {
+  margin-right: .25rem;
+}
+
+.mr-2 {
+  margin-right: .5rem;
+}
+
+.mt-px {
+  margin-top: 1px;
+}
+
+.block {
+  display: block;
+}
+
+.inline {
+  display: inline;
+}
+
+.flex {
+  display: flex;
+}
+
+.h-full {
+  height: 100%;
+}
+
+.h-9 {
+  height: 2.25rem;
+}
+
+.h-5 {
+  height: 1.25rem;
+}
+
+.h-10 {
+  height: 2.5rem;
+}
+
+.h-\[34px\] {
+  height: 34px;
+}
+
+.h-\[58px\] {
+  height: 58px;
+}
+
+.h-\[1em\] {
+  height: 1em;
+}
+
+.max-h-\[70vh\] {
+  max-height: 70vh;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.w-5 {
+  width: 1.25rem;
+}
+
+.w-10\/12 {
+  width: 83.3333%;
+}
+
+.w-64 {
+  width: 16rem;
+}
+
+.w-\[34px\] {
+  width: 34px;
+}
+
+.w-\[1em\] {
+  width: 1em;
+}
+
+.flex-shrink-0 {
+  flex-shrink: 0;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-\[grab\] {
+  cursor: grab;
+}
+
+.select-none {
+  user-select: none;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.overflow-y-auto {
+  overflow-y: auto;
+}
+
+.text-ellipsis {
+  text-overflow: ellipsis;
+}
+
+.rounded {
+  border-radius: .25rem;
+}
+
+.border-t {
+  border-top-width: 1px;
+}
+
+.border-grey6 {
+  border-color: #e5e5e5;
+}
+
+.fill-current {
+  fill: currentcolor;
+}
+
+.p-2 {
+  padding: .5rem;
+}
+
+.px-2 {
+  padding-left: .5rem;
+  padding-right: .5rem;
+}
+
+.pb-1 {
+  padding-bottom: .25rem;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+.leading-none {
+  line-height: 1;
+}
+
+.text-grey4 {
+  color: #bdbdbd;
+}
+
+.text-grey3 {
+  color: #828282;
+}
+
+.text-black, .text-black2 {
+  color: #000;
+}
+
+::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: transparent;
+}
+
+.animate-hover:hover {
+  background-color: rgba(0, 0, 0, .06);
+}
+
+.overflow-y-auto:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, .2);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, .3) !important;
+}
+
+html {
+  font-size: 16px;
+  /* This is IMPORTANT since some copied values use "REM" units */
 }
 </style>
