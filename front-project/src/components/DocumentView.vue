@@ -462,14 +462,16 @@ padding: 4px 0; max-width: 600px;" v-if="this.isDocumentChosen">
         this.newDirectoryDialogVisible = false;  // 关闭对话框
       },
       handleEdit(){
-        this.$router.push({
-          name: "tiptap",
-          params:{
-            "teamid": this.$store.state.curTeam.team_id,
-            "projectid": this.project_id,
-            "docid": this.curDocument.document_id
-          }
-        })
+        const murl = '/Tiptap/'+ this.$store.state.curTeam.team_id + '/' + this.project_id + '/' + this.curDocument.document_id;
+        this.$router.push(murl)
+        // this.$router.push({
+        //   name: "tiptap",
+        //   params:{
+        //     "teamid": this.$store.state.curTeam.team_id,
+        //     "projectid": this.project_id,
+        //     "docid": this.curDocument.document_id
+        //   }
+        // })
       },
 
       

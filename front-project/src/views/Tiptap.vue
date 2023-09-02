@@ -34,6 +34,7 @@
       :his="his"
       @child-event="handleChildEvent"
       @click="returnNow"
+      @returnNow="returnNow"
     ></time-line>
     <floating-menu
       class="floating-menu"

@@ -501,7 +501,6 @@ export default {
         .post_user_login(data)
         .then((response) => {
           if (response.data["errno"] == 0) {
-            alert("1");
             console.log(response.data["token_key"]);
             // this.$router.push({
             //   path: `/WorkSpace`,
@@ -516,7 +515,6 @@ export default {
             localStorage.setItem("curUserMail", this.$store.state.curUserMail);
             localStorage.setItem("token", response.data["token_key"]);
             localStorage.setItem("curUserName", response.data["user_name"]);
-            alert("登录成功");
             // this.wrapper.classList.remove("active-popup");
 
             this.flashTeamList();
