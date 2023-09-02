@@ -2421,7 +2421,7 @@ export default {
         });
     },
     startTimer() {
-      this.timer = setInterval(this.acquireUnreadMessage, 1000);
+      // this.timer = setInterval(this.acquireUnreadMessage, 1000);
     },
     stopTimer() {
       clearInterval(this.timer);
