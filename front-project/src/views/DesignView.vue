@@ -321,7 +321,7 @@
             :y="y_off[index]"
             @activated="onSelected($event, index)"
             style="
-              background-color: green;
+              /* background-color: green; */
               border: 1px solid rgb(255, 255, 255);
               -webkit-transition: background-color 200ms linear;
               -ms-transition: background-color 200ms linear;
@@ -379,6 +379,7 @@ export default {
       selectComponent: null,
       selectedIndex: -1,
       ws: null,
+      new_join_info: "new",
       x_point: [
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -469,8 +470,12 @@ export default {
     this.ptid = this.$route.params.ptid;
     // TODO 添加检测
     document.addEventListener("keydown", this.handleKeyDown);
-    this.ws = new WebSocket("ws://182.92.86.71:4514/ws/editor/1145/");
+    this.ws = new WebSocket("ws://182.92.86.71:4514/ws/editor/"+this.ptid+"/");
     this.ws.onmessage = this.handleMessage;
+
+    this.ws.onopen = () => {
+      this.sendMessage();
+    };
   },
   computed: {
     computedStyle() {
@@ -506,13 +511,22 @@ export default {
 
     handleMessage(event) {
       const data = JSON.parse(event.data);
-      this.clonedComponents = data.message;
-      this.x_off = data.x_off;
-      this.y_off = data.y_off;
-      this.x_scale = data.x_scale;
-      this.y_scale = data.y_scale;
-      this.canvasX = data.x_canvas;
-      this.canvasY = data.y_canvas;
+
+      if (this.new_join_info !== "new") {
+        this.clonedComponents = data.message;
+        this.x_off = data.x_off;
+        this.y_off = data.y_off;
+        this.x_scale = data.x_scale;
+        this.y_scale = data.y_scale;
+        this.canvasX = data.x_canvas;
+        this.canvasY = data.y_canvas;
+        this.x_point = data.x_point;
+        this.y_point = data.y_point;
+        this.p_vis = data.p_vis;
+      } else {
+        this.sendMessage();
+      }
+
       console.log("receive");
     },
 
@@ -525,8 +539,13 @@ export default {
         y_scale: this.y_scale,
         x_canvas: this.canvasX,
         y_canvas: this.canvasY,
+        x_point: this.x_point,
+        y_point: this.y_point,
+        p_vis: this.p_vis,
+        new_join_info: this.new_join_info,
       });
       this.ws.send(sendData);
+      this.new_join_info = "old";
     },
 
     downloadHtmlFile(fileName) {
