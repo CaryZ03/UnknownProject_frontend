@@ -158,17 +158,17 @@
               <t-menu-item value="7-1-1" @click="cloneElement('testVue')"
                 >IPONE
               </t-menu-item>
-              <t-menu-item value="7-1-2" @click="cloneElement('testVue')"
-                >7寸平板电脑(600×1024)</t-menu-item
+              <t-menu-item value="7-1-2" @click="cloneElement('Dropdown2')"
+                >多层下拉菜单</t-menu-item
               >
-              <t-menu-item value="7-1-3" @click="cloneElement('testVue')"
-                >10寸平板电脑(720×1280)</t-menu-item
+              <t-menu-item value="7-1-3" @click="cloneElement('Dropdown3')"
+                >带禁用操作项的下拉菜单</t-menu-item
               >
-              <t-menu-item value="7-1-4" @click="cloneElement('testVue')"
-                >iPad(1024×768)</t-menu-item
+              <t-menu-item value="7-1-4" @click="cloneElement('Dropdown4')"
+                >自定义主题的下拉菜单</t-menu-item
               >
-              <t-menu-item value="7-1-5" @click="cloneElement('testVue')"
-                >iPad(1024×768)</t-menu-item
+              <t-menu-item value="7-1-5" @click="cloneElement('Dropdown5')"
+                >带图标的下拉菜单</t-menu-item
               >
             </t-submenu>
 
@@ -197,20 +197,20 @@
               <template #icon>
                 <icon name="server" />
               </template>
-              <t-menu-item value="9-1-1" @click="cloneElement('testVue')"
-                >IPONE
+              <t-menu-item value="9-1-1" @click="cloneElement('Pagination1')"
+                >少量分页
               </t-menu-item>
-              <t-menu-item value="9-1-2" @click="cloneElement('testVue')"
-                >7寸平板电脑(600×1024)</t-menu-item
+              <t-menu-item value="9-1-2" @click="cloneElement('Pagination2')"
+                >带数据总量显示的分页</t-menu-item
               >
-              <t-menu-item value="9-1-3" @click="cloneElement('testVue')"
-                >10寸平板电脑(720×1280)</t-menu-item
+              <t-menu-item value="9-1-3" @click="cloneElement('Pagination3')"
+                >带页面展示数量选择的分页</t-menu-item
               >
-              <t-menu-item value="9-1-4" @click="cloneElement('testVue')"
-                >iPad(1024×768)</t-menu-item
+              <t-menu-item value="9-1-4" @click="cloneElement('Pagination4')"
+                >带快速跳转的分页</t-menu-item
               >
-              <t-menu-item value="9-1-5" @click="cloneElement('testVue')"
-                >iPad(1024×768)</t-menu-item
+              <t-menu-item value="9-1-5" @click="cloneElement('Pagination5')"
+                >极简版迷你分页</t-menu-item
               >
             </t-submenu>
 
@@ -219,19 +219,19 @@
                 <icon name="server" />
               </template>
               <t-menu-item value="10-1-1" @click="cloneElement('testVue')"
-                >IPONE
+                >不带序的水平步骤条
               </t-menu-item>
               <t-menu-item value="10-1-2" @click="cloneElement('testVue')"
-                >7寸平板电脑(600×1024)</t-menu-item
+                >不带序号的垂直步骤条</t-menu-item
               >
               <t-menu-item value="10-1-3" @click="cloneElement('testVue')"
-                >10寸平板电脑(720×1280)</t-menu-item
+                >带状态的步骤条</t-menu-item
               >
               <t-menu-item value="10-1-4" @click="cloneElement('testVue')"
-                >iPad(1024×768)</t-menu-item
+                >带图标的步骤条</t-menu-item
               >
               <t-menu-item value="10-1-5" @click="cloneElement('testVue')"
-                >iPad(1024×768)</t-menu-item
+                >带额外内容的步骤条</t-menu-item
               >
             </t-submenu>
 
@@ -355,6 +355,20 @@ import mLinkComponent from "../components/Prototype/Components/mLinkComponent.vu
 import mPagination from "../components/Prototype/Components/mPagination.vue";
 import mTabs from "../components/Prototype/Components/mTabs.vue";
 import mToolBar from "../components/Prototype/Components/mToolBar.vue";
+import Dropdown2 from "../components/Prototype/Components/Dropdown2.vue";
+import Dropdown3 from "../components/Prototype/Components/Dropdown3.vue";
+import Dropdown4 from "../components/Prototype/Components/Dropdown4.vue";
+import Dropdown5 from "../components/Prototype/Components/Dropdown5.vue";
+import Pagination1 from "../components/Prototype/Components/Pagination1.vue";
+import Pagination2 from "../components/Prototype/Components/Pagination2.vue";
+import Pagination3 from "../components/Prototype/Components/Pagination3.vue";
+import Pagination4 from "../components/Prototype/Components/Pagination4.vue";
+import Pagination5 from "../components/Prototype/Components/Pagination5.vue";
+import Steps1 from "../components/Prototype/Components/Steps1.vue";
+import Steps2 from "../components/Prototype/Components/Steps2.vue";
+import Steps3 from "../components/Prototype/Components/Steps3.vue";
+import Steps4 from "../components/Prototype/Components/Steps4.vue";
+import Steps5 from "../components/Prototype/Components/Steps5.vue";
 import domToImage from "dom-to-image";
 import testVue from "./test.vue";
 import { Icon } from "tdesign-icons-vue";
@@ -464,6 +478,20 @@ export default {
     testVue,
     SideBar,
     Icon,
+    Dropdown2,
+    Dropdown3,
+    Dropdown4,
+    Dropdown5,
+    Pagination1,
+    Pagination2,
+    Pagination3,
+    Pagination4,
+    Pagination5,
+    Steps1,
+    Steps2,
+    Steps3,
+    Steps4,
+    Steps5,
   },
   mounted() {
     this.teamid = this.$route.params.teamid;
