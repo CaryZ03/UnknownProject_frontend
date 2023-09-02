@@ -161,7 +161,7 @@
 
     <!-- main -->
     <el-main style="background-color:#fffcd7;">
-      <el-descriptions class="margin-top"  :column="1" :size="size" style="max-width: 600px;
+      <el-descriptions class="margin-top"  :column="1"  style="max-width: 600px;
       box-shadow: 0px 0px 16px rgba(17, 17, 26, 0.1);" border>
                 
                 <el-descriptions-item>

@@ -731,7 +731,7 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
 
               <span  class="inherited-styles-for-exported-element">项目信息</span>
               
-              <el-descriptions class="margin-top"  :column="1" :size="size" v-if="!isProgInfoEditting" border>
+              <el-descriptions class="margin-top"  :column="1"  v-if="!isProgInfoEditting" border>
                 
                 <el-descriptions-item>
                   <template slot="label">
