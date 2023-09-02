@@ -1,7 +1,7 @@
 <template>
   <div class="outcontainer" v-scroll="handleScroll">
     <header>
-      <h2 class="logo">logo</h2>
+      <h2 class="logo"  >UnKnown</h2>
       <nav class="navigation">
         <a href=""
           ><router-link v-show="this.$store.state.isLogin" to=""
@@ -34,7 +34,7 @@
       </nav>
     </header>
 
-    <section class="panel" id="1">
+    <section class="panel" v-show="!isJumpTutor" id="1">
       <transition name="slide-fade" mode="out-in">
         <div v-if="show" ref="leftPic" class="leftPic"></div>
       </transition>
@@ -44,7 +44,7 @@
       </transition>
     </section>
 
-    <section class="panel" id="2">
+    <section class="panel" v-show="!isJumpTutor" id="2">
       <transition name="slide-fade" mode="out-in">
         <div v-if="!show" ref="leftPic" class="leftPic"></div>
       </transition>
@@ -54,7 +54,7 @@
       </transition>
     </section>
 
-    <section class="panel" id="3">
+    <section class="panel" v-show="!isJumpTutor" id="3">
       <transition name="slide-fade" mode="out-in">
         <div v-if="show" ref="leftPic" class="leftPic"></div>
       </transition>
@@ -64,7 +64,7 @@
       </transition>
     </section>
 
-    <section class="panel" id="4">
+    <section class="panel" v-show="!isJumpTutor" id="4">
       <transition name="slide-fade" mode="out-in">
         <div v-if="!show" ref="leftPic" class="leftPic"></div>
       </transition>
@@ -149,7 +149,7 @@
       </el-dialog>
       <div class="container">
         <div v-show="!this.$store.state.isLogin" class="wrapper active-popup">
-          <span class="icon-close"><i class="el-icon-close"></i></span>
+          <span class="icon-close" ><i class="el-icon-close" style="color: black;"></i></span>
 
           <div class="form-box login">
             <h2>Login</h2>
@@ -174,7 +174,7 @@
               <button @click="login" class="btn">Login</button>
 
               <div class="login-register">
-                <p>
+                <p style="font-size: 16px;">
                   Don't have an account?<a href="#" @click="changeToRegister" class="register-link"
                     >Register</a
                   >
@@ -184,30 +184,30 @@
           </div>
 
           <div class="form-box register">
-            <h2>Registeration</h2>
+            <h2>注册</h2>
             <form @submit.prevent="">
               <div class="input-box">
                 <span class="icon"><i class="el-icon-edit"></i></span>
                 <input type="text" v-model="userR.email" required />
-                <label>Email</label>
+                <label>邮箱</label>
               </div>
 
               <div class="input-box">
                 <span class="icon"><i class="el-icon-lock"></i></span>
-                <input type="text" v-model="userR.password1" required />
-                <label>password</label>
+                <input type="password" v-model="userR.password1" required />
+                <label>密码</label>
               </div>
 
               <div class="input-box">
                 <span class="icon"><i class="el-icon-lock"></i></span>
                 <input type="password" v-model="userR.password2" required />
-                <label>repeat password</label>
+                <label>重复密码</label>
               </div>
 
               <div v-show="showVeriBox" class="input-box">
                 <span class="icon"><i class="el-icon-lock"></i></span>
-                <input type="password" v-model="vericode" required />
-                <label>Vericode</label>
+                <input type="text" v-model="vericode" required />
+                <label>验证信息</label>
               </div>
 
               <div class="remember-forgot">
@@ -225,7 +225,7 @@
               </button>
 
               <div class="login-register">
-                <p>
+                <p style="font-size: 16px;">
                   Already have an account?<a href="#" @click="changeToLogin" class="login-link"
                     >Login</a
                   >
@@ -288,6 +288,8 @@ export default {
       isRemember: false,
       showVeriBox: false,
       sectionid: "1",
+
+      isJumpTutor: false,
 
       //chooseTeam
       teamList: [
@@ -730,8 +732,7 @@ export default {
       this.wrapper.classList.remove("active");
     },
     goDown(){
-      window.scrollTo(0, document.body.scrollHeight);
-      console.log("goDown");
+      this.isJumpTutor=true;
     }
   },
   created() {},

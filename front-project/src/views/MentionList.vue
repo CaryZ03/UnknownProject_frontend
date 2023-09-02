@@ -17,7 +17,8 @@
   
 
   <script>
-import store from '@/store';
+import store from "@/store";
+import router from '@/router';
 export default {
   props: {
     items: {
@@ -101,21 +102,20 @@ export default {
         // const uid = this.$store.state.curUserID ;
         receiver_list.push(numberPart);
 
-        const jsonString=JSON.stringify({
-          'notification':{
-            'name': '有人@了你',
-            'content': "@@@",
-            'creater_id': store.state.curUserID,
-            'type': 'document',
-            'cm_id': 0,
+        const jsonString = JSON.stringify({
+          notification: {
+            name: "文件名",
+            content: "文件分享链接",
+            creator_id: 1,
+            type: "document",
           },
-          'receiver_list': receiver_list
-        })
-        this.$api.message.post_group_send_notification_to_user(jsonString).then((res)=>{
-          console.log(res);
-        })
-
-        
+          receiver_list: [1],
+        });
+        this.$api.message
+          .post_group_send_notification_to_user(jsonString)
+          .then((res) => {
+            console.log(res);
+          });
       }
     },
   },
