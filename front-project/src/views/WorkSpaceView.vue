@@ -850,12 +850,19 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
                       <el-input v-model="newProto.name" placeholder="请输入原型名"></el-input>
                     </el-form-item>
 
-                    <!-- <el-form-item label="上次修改时间" required>
-                      <el-date-picker v-model="newDocument.lastChangeTime" type="datetime" placeholder="请选择上次修改时间"></el-date-picker>
-                    </el-form-item> -->
-
-                    <el-form-item label="大小" required>
-                      <el-input v-model="newProto.size" placeholder="请输入大小"></el-input>
+                    <el-form-item label="模板">
+                      <el-select v-model="newProto.template" placeholder="请选择模板">
+                        <el-option
+                          value=""
+                          label="不使用模板"
+                        ></el-option>
+                        <el-option
+                          v-for="template in templateList"
+                          :key="template.template_id"
+                          :label="template.template_name"
+                          :value="template.template_id"
+                        ></el-option>
+                      </el-select>
                     </el-form-item>
 
                     <!-- 其他表单项 -->
@@ -1325,6 +1332,8 @@ export default {
   data() {
       
       return {
+        templateList:[],
+
         editPersonInformDialogVisible: false,
         formData: {
           realname: '',
@@ -1521,7 +1530,8 @@ export default {
         newProto: {
           name: '',
           lastChangeTime: '',
-          size: ''
+          size: '',
+          template:'',
         },
 
         //new demand
@@ -1626,6 +1636,29 @@ export default {
     },
   
     methods: {
+
+      showTemplateList(){
+        const tmp = {
+          "template_type": "prototype",
+        }
+        this.$api.document.post_show_template_list(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取成功")
+              console.log('template_info:',response.data.template_info)
+              this.templateList = response.data.template_info;
+            }
+            else{
+	console.log(response.data)
+            }
+          }).catch(error => {
+            alert("获取失败")
+            console.log("error：\n");
+            console.log(error)
+          })
+        
+      },
 
       handleMenuItemSelect(index, indexPath){
           // // 获取当前点击的 el-menu-item 的索引路径
@@ -3033,7 +3066,8 @@ export default {
         });
         const tmp = {
           "prototype_name":this.newProto.name,
-          "project_id": this.currentProgram.project_id
+          "project_id": this.currentProgram.project_id,
+          "template_id": this.newProto.template
         }
         this.$api.document.post_create_prototype(tmp).then((response) => {
             // console.log(tmp)
@@ -3455,6 +3489,7 @@ export default {
       }
       
       await this.loadInfo();
+      this.showTemplateList();
       console.log("this.currentProgram",this.currentProgram)
       console.log("this.isProgramChosen:",this.isProgramChosen)
       console.log("this.activeIndex;",this.activeIndex)
