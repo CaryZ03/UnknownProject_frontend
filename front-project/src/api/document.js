@@ -166,6 +166,16 @@ export async function post_change_document(data) {
     })
 }
 
+//show_template_list
+export async function post_show_template_list(data) {
+    return request({
+        method: 'POST',
+        url:  '/document/show_template_list',
+        data: data,
+    })
+}
+
+
 
 
 

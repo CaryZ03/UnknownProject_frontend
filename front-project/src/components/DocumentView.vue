@@ -88,13 +88,26 @@
                   @close="resetNewDocument"
                 >
                   <el-form ref="newDocumentForm" :model="newDocument">
+
+
                     <el-form-item label="文件名" required>
                       <el-input v-model="newDocument.name" placeholder="请输入文件名"></el-input>
                     </el-form-item>
 
-                    <!-- <el-form-item label="上次修改时间" required>
-                      <el-date-picker v-model="newDocument.lastChangeTime" type="datetime" placeholder="请选择上次修改时间"></el-date-picker>
-                    </el-form-item> -->
+                    <el-form-item label="模板">
+                      <el-select v-model="newDocument.template" placeholder="请选择模板">
+                        <el-option
+                          value=""
+                          label="不使用模板"
+                        ></el-option>
+                        <el-option
+                          v-for="template in templateList"
+                          :key="template.template_id"
+                          :label="template.template_name"
+                          :value="template.template_id"
+                        ></el-option>
+                      </el-select>
+                    </el-form-item>
 
                     <!-- 其他表单项 -->
                   </el-form>
@@ -211,6 +224,13 @@ padding: 4px 0; max-width: 600px;" v-if="this.isDocumentChosen">
   export default {
     data() {
       return {
+
+        templateList:[{
+          template_id: 1, 
+          template_name: 'hihi',
+           template_editable: false, 
+           template_type: 'document'
+        },],
         dialogVisible:false,
         newName: '',
 
@@ -257,7 +277,8 @@ padding: 4px 0; max-width: 600px;" v-if="this.isDocumentChosen">
         newDocument: {
           name: '',
           lastChangeTime: '',
-          size: ''
+          size: '',
+          template: '',
         },
 
         newDirectoryDialogVisible:false,
@@ -275,6 +296,30 @@ padding: 4px 0; max-width: 600px;" v-if="this.isDocumentChosen">
       };
     },
     methods: {
+
+      showTemplateList(){
+        const tmp = {
+          "template_type": "document",
+        }
+        this.$api.document.post_show_template_list(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取成功")
+              console.log('template_info:',response.data.template_info)
+              this.templateList = response.data.template_info;
+              // this.templateList = JSON.parse(response.data.template_info);
+            }
+            else{
+	console.log(response.data)
+            }
+          }).catch(error => {
+            alert("获取失败")
+            console.log("error：\n");
+            console.log(error)
+          })
+        
+      },
 
       openDialog() {
       this.dialogVisible = true;
@@ -359,7 +404,7 @@ padding: 4px 0; max-width: 600px;" v-if="this.isDocumentChosen">
           })
 
 
-        this.newDocumentDialogVisible = false;  // 关闭对话框
+        this.newDirectoryDialogVisible = false;  // 关闭对话框
 
         this.$message.success('新文件夹添加成功');
       }
@@ -377,6 +422,7 @@ padding: 4px 0; max-width: 600px;" v-if="this.isDocumentChosen">
         const tmp = {
           "document_name": this.newDocument.name,
           "directory_id": folder_id,
+          "template_id": this.newDocument.template,
         }
         console.log("input:",tmp)
         this.$api.document.post_create_document(tmp).then((response) => {
@@ -413,7 +459,7 @@ padding: 4px 0; max-width: 600px;" v-if="this.isDocumentChosen">
 
       resetNewDirectory(){
         this.$refs.newDocumentForm.resetFields();  // 重置表单数据
-    this.newDirectoryDialogVisible = false;  // 关闭对话框
+        this.newDirectoryDialogVisible = false;  // 关闭对话框
       },
       handleEdit(){
         this.$router.push({
@@ -729,6 +775,7 @@ padding: 4px 0; max-width: 600px;" v-if="this.isDocumentChosen">
       this.curTeam = this.$store.state.curTeam;
       console.log("received data: ",this.project_id)
       this.showDirectoryTree();
+      this.showTemplateList();
     },
   };
 </script>
