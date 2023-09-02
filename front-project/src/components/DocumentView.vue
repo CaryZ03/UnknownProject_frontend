@@ -2,12 +2,15 @@
   <el-container style="background-color: rgb(255, 255, 255);">
 
     <!-- 侧边 -->
-  <el-aside width="300px" style="border: 1px solid #eee">
-    
-      <div>
-              <span  class="inherited-styles-for-exported-element">文档目录</span>
-              <div class="document-list" style="border: 1px solid #eee; min-height: 300px;">
+  <el-aside width="300px" style="border: 1px solid #eee; ">
+    <span  class="inherited-styles-for-exported-element">文档目录</span>
+      <div  >
+              
+              <div class="document-list" style="border: 1.5px solid #eee; height: 400px; overflow: auto;
+               ">
+                <!-- 目录树 -->
               <el-tree
+              ref="tree"
               :data="data"
               node-key="id"
               default-expand-all
@@ -24,7 +27,7 @@
               <span class="custom-tree-node" slot-scope="{ node, data }" style="display: flex;align-items: center;margin-left: 8px;" @click="chooseDocument(node)">
                 <span v-if="data.isFolder" class="folder-icon">
                   <i class="el-icon-folder">{{ node.label }}</i>
-                  <i class="el-icon-circle-plus-outline" style="background-color: aqua;margin-left: 5px;" @click="showDialog(node.data.id)"></i>
+                  <i class="el-icon-circle-plus-outline" style="background-color: rgb(165, 231, 249);margin-left: 5px;border-radius: 13px;" @click="showDialog(node.data.id)"></i>
                    <!-- <el-button icon="el-icon-plus" type="primary" size="mini" circle></el-button> -->
                 </span>
                 <span v-else class="file-icon"><i class="el-icon-document">{{ node.label }}</i>  </span>
@@ -38,15 +41,26 @@
                   ></el-button>
               </span>
               </el-tree>
+
               </div>
               <!-- button -->
               <div class="program-bottom" style="border-radius: 0px; !important">
               <!-- @click="newDocumentDialogVisible = true"   -->
+              
               <el-button
                   size="mini"
-                  type="success" class="bottom-button"
+                  type="info" class="bottom-button"
+                  @click="showDirectoryDialog()"
+                  icon="el-icon-folder-add"
+                  circle>
+                </el-button>
+              
+              
+              <el-button
+                  size="mini"
+                  type="info" class="bottom-button"
                   @click="showDialog(root_id)"
-                  icon="el-icon-circle-plus-outline"
+                  icon="el-icon-document-add"
                   circle>
                 </el-button>
 
@@ -90,6 +104,31 @@
                     <el-button type="primary" @click="addNewDocument(chosen_id)">确定</el-button>
                   </span>
               </el-dialog>
+
+              <!-- 新建文件夹对话框 -->
+              <el-dialog
+                  title="新建文件夹"
+                  :visible.sync="newDirectoryDialogVisible"
+                  width="30%"
+                  @close="resetNewDirectory"
+                >
+                  <el-form ref="newDocumentForm" :model="newDirectory">
+                    <el-form-item label="文件夹名" required>
+                      <el-input v-model="newDirectory.name" placeholder="请输入文件夹名"></el-input>
+                    </el-form-item>
+
+                    <!-- <el-form-item label="上次修改时间" required>
+                      <el-date-picker v-model="newDocument.lastChangeTime" type="datetime" placeholder="请选择上次修改时间"></el-date-picker>
+                    </el-form-item> -->
+
+                    <!-- 其他表单项 -->
+                  </el-form>
+
+                  <span slot="footer" class="dialog-footer">
+                    <el-button @click="newDirectoryDialogVisible = false">取消</el-button>
+                    <el-button type="primary" @click="addNewDirectory()">确定</el-button>
+                  </span>
+              </el-dialog>
     </div>
   </el-aside>
 
@@ -108,8 +147,9 @@
 
 
     <!-- main -->
-    <el-main>
-      <el-descriptions class="margin-top"  :column="1" :size="size" style="max-width: 600px;" border>
+    <el-main style="background-color:#fffcd7;">
+      <el-descriptions class="margin-top"  :column="1" :size="size" style="max-width: 600px;
+      box-shadow: 0px 0px 16px rgba(17, 17, 26, 0.1);" border>
                 
                 <el-descriptions-item>
                   <template slot="label">
@@ -128,7 +168,7 @@
 
               </el-descriptions>
       <div style="margin: 16px 0 0;
-padding: 4px 0; max-width: 600px;">
+padding: 4px 0; max-width: 600px;" v-if="this.isDocumentChosen">
           <span style="float:right">
           <el-button
                 size="mini"
@@ -137,7 +177,8 @@ padding: 4px 0; max-width: 600px;">
 
           <el-button
                 size="mini"
-                type="danger">
+                type="danger"
+                @click="handleDeleteDocument1()">删除
           </el-button>
         </span>
     </div>
@@ -155,6 +196,7 @@ padding: 4px 0; max-width: 600px;">
     data() {
       return {
         data: [{
+            parent_id: 1 ,
             id: 1,
             label: '文件夹 1',
             isFolder: true,
@@ -183,10 +225,10 @@ padding: 4px 0; max-width: 600px;">
 
         curDocument:{
             document_id: '',
-            name: 'csndm',
+            name: '-----',
             document_allowed_editors: '',
             size: 1, 
-            lastChangeTime: '2022-10-10',
+            lastChangeTime: '-----',
             editable: '',
             save_id: ''
         },
@@ -196,8 +238,19 @@ padding: 4px 0; max-width: 600px;">
           lastChangeTime: '',
           size: ''
         },
+
+        newDirectoryDialogVisible:false,
+        newDirectory:{
+          name: '',
+          lastChangeTime: '',
+          size: ''
+        },
+
         root_id: 1,
         chosen_id: 1,
+        chosenNode:null,
+        beforeDrag:'',
+        isDocumentChosen: false
       };
     },
     methods: {
@@ -207,6 +260,48 @@ padding: 4px 0; max-width: 600px;">
         this.newDocumentDialogVisible = true;
         this.chosen_id = id
 
+      },
+      showDirectoryDialog(){
+        event.stopPropagation(); // 阻止冒泡事件
+        this.newDirectoryDialogVisible = true;
+      },
+      addNewDirectory(){
+          // event.stopPropagation(); // 阻止冒泡事件
+    // 验证表单数据
+    this.$refs.newDocumentForm.validate(valid => {
+      if (valid) {
+
+        //后端
+        const tmp = {
+          "name": this.newDirectory.name,
+          "project_id": this.project_id,
+        }
+        console.log("input:",tmp)
+        this.$api.document.post_create_directory(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取成功")
+              console.log(response.data.msg)
+              // this.
+              this.showDirectoryTree();
+
+            }
+            else{
+              console.log(response.data)
+            }
+          }).catch(error => {
+            alert("获取失败")
+            console.log("error：\n");
+            console.log(error)
+          })
+
+
+        this.newDocumentDialogVisible = false;  // 关闭对话框
+
+        this.$message.success('新文件夹添加成功');
+      }
+        });
       },
 
       addNewDocument(folder_id) {
@@ -254,9 +349,15 @@ padding: 4px 0; max-width: 600px;">
     this.newDocumentDialogVisible = false;  // 关闭对话框
       },
 
+      resetNewDirectory(){
+        this.$refs.newDocumentForm.resetFields();  // 重置表单数据
+    this.newDirectoryDialogVisible = false;  // 关闭对话框
+      },
+
       
       chooseDocument(node){
         event.stopPropagation(); // 阻止冒泡事件
+        this.isDocumentChosen =true
         console.log("node:",node)
         if( node.data.isFolder)
           console.log('is Folder,over...')
@@ -290,12 +391,130 @@ padding: 4px 0; max-width: 600px;">
       handleDeleteNode(node){
         event.stopPropagation(); // 阻止冒泡事件
         console.log("1111111")
+        this.$confirm('确定要删除文件吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+            
+          //后端逻辑s
+
+          if(node.data.isFolder){  //是文件夹
+            // change_directory_recycle
+            //True/False 删除/移出回收站
+            const tmp={
+              "directory_id": node.data.id,
+              "recycle": 'True',
+            }
+            console.log("change_directory_recycle input:",tmp)
+            this.$api.document.post_change_directory_recycle(tmp).then((response) => {
+              // console.log(tmp)
+              // console.log(response.data)
+              if (response.data.errno == 0) {
+                console.log("获取成功")
+                console.log(response.data.msg)
+                this.showDirectoryTree();
+
+              }
+              else{
+                console.log(response.data)
+              }
+            }).catch(error => {
+              alert("获取失败")
+              console.log("error：\n");
+              console.log(error)
+            })
+        }
+        else{  //不是
+          
+            //True/False 删除/移出回收站
+            const tmp={
+              "document_id": node.data.id,
+              "recycle": 'True',
+            }
+            console.log("change_document_recycle input:",tmp)
+            this.$api.document.post_change_document_recycle(tmp).then((response) => {
+              // console.log(tmp)
+              // console.log(response.data)
+              if (response.data.errno == 0) {
+                console.log("获取成功")
+                console.log(response.data.msg)
+                this.showDirectoryTree();
+              }
+              else{
+                console.log(response.data)
+              }
+            }).catch(error => {
+              alert("获取失败")
+              console.log("error：\n");
+              console.log(error)
+            })
+        }
+          //后端逻辑e
+
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+
       },
 
 
       handleDeleteDocument(){
         this.showDeleteButton = ! this.showDeleteButton 
       },
+
+      handleDeleteDocument1(){
+        this.$confirm('确定要删除文件吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+            
+          //后端逻辑s
+            //True/False 删除/移出回收站
+            const tmp={
+              "document_id": this.curDocument.document_id,
+              "recycle": 'True',
+            }
+            console.log("change_document_recycle input:",tmp)
+            this.$api.document.post_change_document_recycle(tmp).then((response) => {
+              // console.log(tmp)
+              // console.log(response.data)
+              if (response.data.errno == 0) {
+                console.log("获取成功")
+                console.log(response.data.msg)
+                this.showDirectoryTree();
+              }
+              else{
+                console.log(response.data)
+              }
+            }).catch(error => {
+              alert("获取失败")
+              console.log("error：\n");
+              console.log(error)
+            })
+        
+          //后端逻辑e
+
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+      },
+
 
       showDirectoryTree(){
           const tmp ={
@@ -320,35 +539,100 @@ padding: 4px 0; max-width: 600px;">
       },
 
       handleDragStart(node, ev) {
-        console.log('drag start', node);
-        
+        console.log('drag start, beforeDragNode:', node);
+        // this.chosenNode = node;
+        this.beforeDrag = node;
       },
       handleDragEnter(draggingNode, dropNode, ev) {
-        console.log('tree drag enter: ', dropNode.label);
-        
+        // console.log('tree drag enter: ', dropNode.label);
+        // console.log('draggingNode: ',draggingNode)
+        // console.log('dropNode: ',dropNode)
+        // console.log('ev:',ev)
       
       },
       handleDragLeave(draggingNode, dropNode, ev) {
-        console.log('tree drag leave: ', dropNode.label);
+        // console.log('tree drag leave: ', dropNode.label);
      
       },
       handleDragOver(draggingNode, dropNode, ev) {
-        console.log('tree drag over: ', dropNode.label);
+        // console.log('tree drag over: ', dropNode.label);
         
       },
       handleDragEnd(draggingNode, dropNode, dropType, ev) {
         console.log('tree drag end: ', dropNode && dropNode.label, dropType);
-        this.draggingNode = null;
+
+        console.log('draggingNode: ',draggingNode)
+        console.log('dropNode: ',dropNode)
+        this.chosenNode = draggingNode;
+
+        // if( this.beforeDrag.parent === this.draggingNode.parent)
+        //   return
+
+        // console.log('droptype:',dropType)
+        
+        // //move..
+        // //放入文件夹
+        // if(dropType === 'inner'){
+
+        
+        
+
+        
+
       },
       handleDrop(draggingNode, dropNode, dropType, ev) {
+        // console.log('handleDrop:')
+        // console.log('draggingNode: ',draggingNode)
+        // console.log('dropNode: ',dropNode)
+
+        // console.log('chosenNode:',this.chosenNode)
+        // console.log('data:',this.data)
         
+        let parentData = dropType != 'inner'? dropNode.parent.data : dropNode.data;
+        console.log("parentData:",parentData)
+
+        let directory_id = '';
+        if( typeof parentData === 'Array'){ //根目录
+          //...
+          directory_id = this.root_id;
+        }
+        else{ //其他目录
+          directory_id = parentData.id
+        }
+        const tmp ={
+          "document_id": draggingNode.data.id,
+          "directory_id": directory_id
+        }
+        console.log("move_document input: ",tmp)
+        this.$api.document.post_move_document(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取成功")
+              console.log(response.data.msg)
+
+            }
+            else{
+	              console.log(response.data)
+            }
+          }).catch(error => {
+            alert("获取失败")
+            console.log("error：\n");
+            console.log(error)
+          })
+
+ 
+
       },
+
+
+
       allowDrop(draggingNode, dropNode, type) {
         if( dropNode == null)
           return false
 
         if(type == 'inner')
-          return dropNode.data.isFolder ;
+          return dropNode.data.isFolder && !draggingNode.data.isFolder;
 
         return true
       },
@@ -388,6 +672,25 @@ padding: 4px 0; max-width: 600px;">
 </script>
 
 <style scoped>
+
+
+.bottom-button{
+  color: #1b1913;
+  background-color: #faec4e;
+  border-color: #1b1913;
+}
+
+/* .bottom-button :hover{
+  background-color: #FE83C6; 
+  border-color: #FE83C6;
+}
+
+.bottom-button :focus{
+  background-color:  #FE83C6;
+  border-color:  #FE83C6;
+} */
+
+
 .document-list{
   /* width: 300px; */
   margin-left: 5px;
@@ -432,7 +735,8 @@ padding: 4px 0; max-width: 600px;">
     
     /* el-tree 背景 */
     .el-tree {
-      background: #fefefe;
+      /* background: #fefefe; */
+      background:transparent;
     }
     .el-tree-node__content {
       height: 50px;
