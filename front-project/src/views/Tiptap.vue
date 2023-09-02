@@ -1,5 +1,5 @@
 <template>
-  <div class="container" v-if="editor">
+  <div class="container" v-show="editor">
     <div class="editor" style="max-height: 45rem" v-if="editor">
       <menu-bar
         @upload="uploadDoc"
@@ -173,52 +173,6 @@ export default {
       localStorage.setItem("currentUser", JSON.stringify(cusr));
 
       this.getHistory();
-    setTimeout(() => {
-      // 在此处添加需要延迟执行的代码
-      // ...
-      const ydoc = new Y.Doc();
-
-      this.provider = new TiptapCollabProvider({
-        appId: "w9n1xdmo",
-        name: this.room,
-        document: ydoc,
-      });
-
-      this.provider.on("status", (event) => {
-        this.status = event.status;
-      });
-
-      this.editor = new Editor({
-        extensions: [
-          StarterKit.configure({
-            history: false,
-          }),
-          Mention.configure({
-            HTMLAttributes: {
-              class: "mention",
-            },
-            suggestion,
-          }),
-
-          Highlight,
-          TaskList,
-          TaskItem,
-          Collaboration.configure({
-            document: ydoc,
-          }),
-          CollaborationCursor.configure({
-            provider: this.provider,
-            user: this.currentUser,
-          }),
-          CharacterCount.configure({
-            limit: 10000,
-          }),
-        ],
-      });
-      localStorage.setItem("currentUser", JSON.stringify(this.currentUser));
-
-      this.getHistory();
-    }, 500); // 延迟时间为0.5秒，即500毫秒
   },
 
   methods: {
