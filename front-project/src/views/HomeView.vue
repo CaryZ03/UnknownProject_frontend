@@ -40,41 +40,82 @@
 
     <section class="panel" v-show="!isJumpTutor" id="1">
       <transition name="slide-fade" mode="out-in">
-        <div v-if="show" ref="leftPic" class="leftPic"></div>
+        <img
+          v-if="show"
+          ref="leftPic"
+          :src="require('@/assets/Directors.png')"
+          class="leftPic"
+          alt=""
+        />
+        <!-- <div v-if="show" ref="leftPic" class="leftPic" ></div> -->
       </transition>
 
       <transition name="rlide-fade" mode="out-in">
-        <div v-if="show" class="rightTxt">HIHIHIHIHIHIH</div>
+        <div v-if="show" class="rightTxt">
+          <h1>HIHIHIHIH</h1>
+          <h2>HIHIHIHIHIHIHIHI</h2>
+          <h3>HIHIHIHIHHIHIHIHIHIHI</h3>
+        </div>
       </transition>
     </section>
 
     <section class="panel" v-show="!isJumpTutor" id="2">
       <transition name="slide-fade" mode="out-in">
-        <div v-if="!show" ref="leftPic" class="leftPic"></div>
+        <img
+          v-if="!show"
+          ref="leftPic"
+          :src="require('@/assets/Directors.png')"
+          class="leftPic"
+          alt=""
+        />
       </transition>
 
       <transition name="rlide-fade" mode="out-in">
-        <div v-if="!show" class="rightTxt">HIHIHIHIHIHIH</div>
+        <div v-if="!show" class="rightTxt">
+          <h1>HIHIHIHIH</h1>
+          <h2>HIHIHIHIHIHIHIHI</h2>
+          <h3>HIHIHIHIHHIHIHIHIHIHI</h3>
+        </div>
       </transition>
     </section>
 
     <section class="panel" v-show="!isJumpTutor" id="3">
       <transition name="slide-fade" mode="out-in">
-        <div v-if="show" ref="leftPic" class="leftPic"></div>
+        <img
+          v-if="show"
+          ref="leftPic"
+          :src="require('@/assets/Directors.png')"
+          class="leftPic"
+          alt=""
+        />
       </transition>
 
       <transition name="rlide-fade" mode="out-in">
-        <div v-if="show" class="rightTxt">HIHIHIHIHIHIH</div>
+        <div v-if="show" class="rightTxt">
+          <h1>HIHIHIHIH</h1>
+          <h2>HIHIHIHIHIHIHIHI</h2>
+          <h3>HIHIHIHIHHIHIHIHIHIHI</h3>
+        </div>
       </transition>
     </section>
 
     <section class="panel" v-show="!isJumpTutor" id="4">
       <transition name="slide-fade" mode="out-in">
-        <div v-if="!show" ref="leftPic" class="leftPic"></div>
+        <img
+          v-if="!show"
+          ref="leftPic"
+          :src="require('@/assets/Directors.png')"
+          class="leftPic"
+          alt=""
+        />
       </transition>
 
       <transition name="rlide-fade" mode="out-in">
-        <div v-if="!show" class="rightTxt">HIHIHIHIHIHIH</div>
+        <div v-if="!show" class="rightTxt">
+          <h1>HIHIHIHIH</h1>
+          <h2>HIHIHIHIHIHIHIHI</h2>
+          <h3>HIHIHIHIHHIHIHIHIHIHI</h3>
+        </div>
       </transition>
     </section>
 
@@ -225,7 +266,7 @@
       </el-dialog>
       <div class="container">
         <div v-show="!this.$store.state.isLogin" class="wrapper active-popup">
-          <span class="icon-close" style="color: black;"
+          <span class="icon-close" style="color: black"
             ><i class="el-icon-close"></i
           ></span>
 
@@ -928,7 +969,7 @@ body {
   padding: 0;
   width: 100%;
   height: 100vh;
-  background: url("../assets/background.png");
+  background: url("../assets/background.jpg");
   background-size: cover;
   background-position: center;
 
@@ -1233,7 +1274,7 @@ body {
 .panel {
   scroll-snap-align: start;
   height: 100vh;
-  background-image: linear-gradient(222deg, #6a6767 0%, #181818 100%);
+  background-image: url("../assets/background.jpg");
 }
 
 .red {
@@ -1267,11 +1308,12 @@ body {
 .leftPic {
   left: 10%;
   top: 20vh;
-  width: 32vw;
-  height: 60vh;
   background-color: antiquewhite;
   float: left;
   position: relative;
+
+  max-width: 40%;
+  height: auto;
 }
 </style>
 
@@ -1302,9 +1344,6 @@ body {
 
 <!-- hide scrollbar -->
 <style scoped>
-
-
-
 ::-webkit-scrollbar {
   display: none; /* Chrome Safari */
 }
@@ -1330,9 +1369,9 @@ body {
 } */
 
 .inherited-styles-for-exported-element2 {
-  font-family: "PingFang SC", "Microsoft YaHei", ui-sans-serif,
-   -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, 
-   "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+  font-family: "PingFang SC", "Microsoft YaHei", ui-sans-serif, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial,
+    sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
   tab-size: 4;
   width: 100%;
 }
@@ -1341,20 +1380,23 @@ svg {
   vertical-align: middle;
 }
 
-*, ::after, ::before {
+*,
+::after,
+::before {
   -webkit-font-smoothing: subpixel-antialiased;
   border-color: #e5e5e5;
 }
 
 ::selection {
-  background: rgba(24, 160, 251, .12);
+  background: rgba(24, 160, 251, 0.12);
 }
 
 :disabled {
   cursor: default;
 }
 
-.text-t2, .text-t4 {
+.text-t2,
+.text-t4 {
   font-size: 14px;
   font-weight: 400;
   line-height: 20px;
@@ -1377,9 +1419,9 @@ svg {
 }
 
 .animate-hover {
-  transition-duration: .1s;
+  transition-duration: 0.1s;
   transition-property: background-color, border-color, color, fill, stroke;
-  transition-timing-function: cubic-bezier(.4, 0, .2, 1);
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   user-select: none;
 }
 
@@ -1387,7 +1429,8 @@ svg {
   background-clip: padding-box;
   background-color: #fff;
   border-radius: 4px;
-  box-shadow: rgba(0, 0, 0, .03) 0 0 0 1px, rgba(0, 0, 0, .1) 0 3px 6px, rgba(0, 0, 0, .1) 0 12px 20px;
+  box-shadow: rgba(0, 0, 0, 0.03) 0 0 0 1px, rgba(0, 0, 0, 0.1) 0 3px 6px,
+    rgba(0, 0, 0, 0.1) 0 12px 20px;
   color: #000;
 }
 
@@ -1396,16 +1439,16 @@ svg {
 }
 
 .mx-2 {
-  margin-left: .5rem;
-  margin-right: .5rem;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
 }
 
 .mr-1 {
-  margin-right: .25rem;
+  margin-right: 0.25rem;
 }
 
 .mr-2 {
-  margin-right: .5rem;
+  margin-right: 0.5rem;
 }
 
 .mt-px {
@@ -1521,7 +1564,7 @@ svg {
 }
 
 .rounded {
-  border-radius: .25rem;
+  border-radius: 0.25rem;
 }
 
 .border-t {
@@ -1537,16 +1580,16 @@ svg {
 }
 
 .p-2 {
-  padding: .5rem;
+  padding: 0.5rem;
 }
 
 .px-2 {
-  padding-left: .5rem;
-  padding-right: .5rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
 }
 
 .pb-1 {
-  padding-bottom: .25rem;
+  padding-bottom: 0.25rem;
 }
 
 .uppercase {
@@ -1565,7 +1608,8 @@ svg {
   color: #828282;
 }
 
-.text-black, .text-black2 {
+.text-black,
+.text-black2 {
   color: #000;
 }
 
@@ -1579,15 +1623,15 @@ svg {
 }
 
 .animate-hover:hover {
-  background-color: rgba(0, 0, 0, .06);
+  background-color: rgba(0, 0, 0, 0.06);
 }
 
 .overflow-y-auto:hover::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, .2);
+  background-color: rgba(0, 0, 0, 0.2);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(0, 0, 0, .3) !important;
+  background-color: rgba(0, 0, 0, 0.3) !important;
 }
 
 html {

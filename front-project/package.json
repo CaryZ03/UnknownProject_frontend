@@ -35,6 +35,7 @@
     "html-docx-js": "^0.1.0",
     "html2canvas": "^1.4.1",
     "konva": "^9.2.0",
+    "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "moveable": "^0.51.1",
     "prosemirror-model": "^1.19.3",
