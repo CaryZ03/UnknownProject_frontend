@@ -106,7 +106,7 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
       
     </div>
 
-    <div class="aside-top-below" v-if="this.isProgramChosen === true">
+    <div class="aside-top-below" v-if="this.isProgramChosen ">
       <!-- <span style="padding: 0 7px 0 0px;; font-size: 10px;"><i class="el-icon-collection-tag"></i>当前项目：</span> -->
       
         <div class="relative" style="display: flex;margin: 19px 0 0px;">
@@ -123,7 +123,7 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
     </div>
 
     <!-- 返回工作栏按钮 -->
-    <div  v-if="this.isProgramChosen === true">
+    <div  v-if="this.isProgramChosen ">
       <el-button  @click="backToWorkspace()" style="margin: 16px 0 0 23px;" size="mini">返回工作台</el-button>
     </div>
 
@@ -137,7 +137,7 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
       @select="handleMenuItemSelect"
       >
 
-      <el-menu-item index="7" @click="changeContent(3)" v-if="this.isProgramChosen === true">
+      <el-menu-item index="7" @click="changeContent(3)" v-if="this.isProgramChosen ">
         <i class="el-icon-s-order"></i>项目详情</el-menu-item>
 
       <el-menu-item index="6" @click="changeContent(2.2)" v-if="!this.isProgramChosen">
@@ -184,7 +184,7 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
 
       </el-submenu>
 
-      <el-submenu index="2" v-if="this.isProgramChosen === true" ref="submenu1">
+      <el-submenu index="2" v-if="this.isProgramChosen" ref="submenu1">
         <template slot="title"><i class="el-icon-document" @click="changeContent(1)"></i>文档管理</template>
         <el-menu-item-group>
 
@@ -198,7 +198,7 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
       </el-submenu>
 
       <!-- 3 -->
-      <el-submenu index="3" v-if="this.isProgramChosen === true" ref="submenu1">
+      <el-submenu index="3" v-if="this.isProgramChosen" ref="submenu1">
         <template slot="title"><i class="el-icon-s-help" @click="changeContent(1)"></i>原型管理</template>
         <el-menu-item-group>
           
@@ -208,7 +208,7 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
       </el-submenu>
 
       <!-- 4 -->
-      <el-submenu index="4" v-if="this.isProgramChosen === true" ref="submenu1">
+      <el-submenu index="4" v-if="this.isProgramChosen" ref="submenu1">
         <template slot="title"><i class="el-icon-s-claim" @click="changeContent(1)"></i>需求管理</template>
         <el-menu-item-group>
           
@@ -466,161 +466,6 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
           <transition name="el-fade-in-linear">  
             <div v-if="activeIndex === 1">
 
-              <span  class="inherited-styles-for-exported-element">文档列表</span>
-              <div>
-                <el-dropdown >
-                  <span class="el-dropdown-link" >
-                   <el-button icon="el-icon-s-grid" size="mini">
-                   </el-button>
-                   <i class="el-icon-arrow-down el-icon--right"></i>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="changeDisplay('list')">列表模式</el-dropdown-item>
-                    <el-dropdown-item @click.native="changeDisplay('thumbnail')">略缩图模式</el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </div>
-
-              <!-- docuList-top -->
-              <div class="program-bottom" style="border-radius: 0px; !important">
-
-                
-
-                <el-button
-                  size="mini"
-                  type="success" class="bottom-button"
-                  @click="newDocumentDialogVisible = true"
-                  icon="el-icon-circle-plus-outline"
-                  >新建文档
-              </el-button>
-
-              <el-button
-                  size="mini"
-                  type="primary" class="bottom-button"
-                  icon="el-icon-upload2"
-                  >上传
-              </el-button>
-
-              <!-- 新建文档对话框 -->
-              <el-dialog
-                  title="新建文档"
-                  :visible.sync="newDocumentDialogVisible"
-                  width="30%"
-                  @close="resetNewDocument"
-                >
-                  <el-form ref="newDocumentForm" :model="newDocument">
-                    <el-form-item label="文件名" required>
-                      <el-input v-model="newDocument.name" placeholder="请输入文件名"></el-input>
-                    </el-form-item>
-
-                    <!-- <el-form-item label="上次修改时间" required>
-                      <el-date-picker v-model="newDocument.lastChangeTime" type="datetime" placeholder="请选择上次修改时间"></el-date-picker>
-                    </el-form-item> -->
-
-                    <el-form-item label="文件大小" required>
-                      <el-input v-model="newDocument.size" placeholder="请输入文件大小"></el-input>
-                    </el-form-item>
-
-                    <!-- 其他表单项 -->
-                  </el-form>
-
-                  <span slot="footer" class="dialog-footer">
-                    <el-button @click="newDocumentDialogVisible = false">取消</el-button>
-                    <el-button type="primary" @click="addNewDocument">确定</el-button>
-                  </span>
-              </el-dialog>
-
-              </div>
-              
-              <!-- 列表展示 -->
-              <div v-if="displayMode === 'list'">
-                 <el-table
-             :data="documentTable.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
-             :default-sort = "{prop: 'date', order: 'descending'}"
-             style="width: 100%" >
-                <!-- column 1 -->
-                <el-table-column
-                  label="文件名" sortable
-                  prop="name">
-                  <template slot-scope="scope">
-              <template v-if="scope.row.editable">
-                <div style="display: flex;">
-                      <el-input v-model="scope.row.name" size="mini" @blur="saveEditDoc(scope.row)" ref="nameInput"></el-input>
-                      <el-button type="text" icon="el-icon-check" @click="saveEditDoc(scope.row)"></el-button>
-                </div>
-              </template>
-              <template v-else>
-                  <span @click="startEdit(scope.row)">{{ scope.row.name }}</span>
-                  <el-button type="text" icon="el-icon-edit" @click="startEdit(scope.row)" style="float: right;"></el-button>
-              </template>
-            </template>
-                </el-table-column>
-          
-                <!-- column 2 -->
-                <el-table-column
-                  label="上次修改时间" sortable
-                  prop="lastChangeTime">
-                </el-table-column>
-
-                <!-- column 3 -->
-                <el-table-column
-                  label="文件大小" sortable
-                  prop="size">
-                </el-table-column>
-          
-                <!-- column 4 -->
-                <el-table-column
-                  align="right">
-                  <template slot="header" slot-scope="scope">
-                    <el-input
-                      v-model="search"
-                      size="mini"
-                      placeholder="输入关键字搜索"/>
-                  </template>
-                  <template slot-scope="scope">
-                    <el-button
-                      size="mini"
-                      @click="handleEditDoc(scope.$index, scope.row)">Edit</el-button>
-                    <el-button
-                      size="mini"
-                      type="danger"
-                      @click="handleDeleteDoc(scope.$index, scope.row)">Delete</el-button>
-                  </template>
-                </el-table-column>
-          
-                 </el-table>
-              </div>
-
-              <!-- 略缩图展示 -->
-              <div v-if="displayMode === 'thumbnail'">
-                  <!-- 略缩图模式布局 -->
-                  <div class="pic-background">
-                    <!-- <el-row>
-                    <el-col v-for="document in documentTable" :key="document.id" :span="6">
-                      <el-card>
-                        <img src="https://cdn.flowus.cn/assets/byte-icon/light/grey/doc-search-two.svg" alt="文档略缩图" style="width: 100%">
-                        <div>{{ document.name }}</div>
-                      </el-card>
-                    </el-col>
-                  </el-row> -->
-
-                  <el-row style="display:flex; flex-wrap:wrap">
-                     
-                        <el-card :body-style="{ padding: '0px' }" v-for="(document,index) in documentTable" :key="index"   shadow="hover" style="margin: 0 0 0 30px; width: 30%; ">
-                          <img src="https://cdn.flowus.cn/assets/byte-icon/light/grey/doc-search-two.svg" class="image" style="height: 100px;">
-                          <div style="padding: 14px;">
-                            <span>{{document.name}}</span>
-                            <div class="bottom clearfix">
-                              <time class="time">{{ document.lastChangeTime }}</time>
-                              <el-button type="danger"  size="mini" style="float:right;" @click="handleDeleteFlex(document,index)">delete</el-button>
-                            </div>
-                          </div>
-                        </el-card>
-                      
-                  </el-row>
-                  </div>
-                  
-                </div>
 
               <drag-tree :project_id="this.currentProgram.project_id"></drag-tree>
                                     
@@ -632,67 +477,9 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
           <transition name="el-fade-in-linear">  
             <div v-if="activeIndex === 1.1">
 
-              <span  class="inherited-styles-for-exported-element">回收站</span>
+             
 
-
-             <el-table
-             :data="documentRecycleTable.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
-             :default-sort = "{prop: 'date', order: 'descending'}"
-             style="width: 100%" >
-
- 
-       <!-- column 1 -->
-       <el-table-column
-         label="文件名" sortable
-         prop="name">
-         <template slot-scope="scope">
-     <template v-if="scope.row.editable">
-       <div style="display: flex;">
-             <el-input v-model="scope.row.name" size="mini" @blur="saveEditDoc(scope.row)" ref="nameInput"></el-input>
-             <el-button type="text" icon="el-icon-check" @click="saveEditDoc(scope.row)"></el-button>
-       </div>
-     </template>
-     <template v-else>
-         <span @click="startEdit(scope.row)">{{ scope.row.name }}</span>
-         <el-button type="text" icon="el-icon-edit" @click="startEdit(scope.row)" style="float: right;"></el-button>
-     </template>
-   </template>
-       </el-table-column>
- 
-       <!-- column 2 -->
-       <el-table-column
-         label="上次修改时间" sortable
-         prop="lastChangeTime">
-       </el-table-column>
-
-       <!-- column 3 -->
-       <el-table-column
-         label="文件大小" sortable
-         prop="size">
-       </el-table-column>
- 
-       <!-- column 4 -->
-       <el-table-column
-         align="right">
-         <template slot="header" slot-scope="scope">
-           <el-input
-             v-model="search"
-             size="mini"
-             placeholder="输入关键字搜索"/>
-         </template>
-         <template slot-scope="scope">
-           <el-button
-             size="mini"
-             type="success"
-             @click="handleRecycleDoc(scope.$index, scope.row)">Recycle</el-button>
-           <el-button
-             size="mini"
-             type="danger"
-             @click="handleDeleteDoc2(scope.$index, scope.row)">Delete</el-button>
-         </template>
-       </el-table-column>
- 
-             </el-table>
+             <recycle-tree :project_id="this.currentProgram.project_id"></recycle-tree>
             </div>
               
           </transition>
@@ -724,7 +511,8 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
               <el-table
              :data="TeamPersonInform.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
              :default-sort = "{prop: 'date', order: 'descending'}"
-             style="width: 100%" >
+             height="300"
+             style="width: 100%; " >
 
           
                 <!-- column 1 -->
@@ -1531,6 +1319,8 @@ import moment from 'moment';
 
 import DragTree from '../components/DocumentView.vue';
 
+import RecycleTree from '../components/DocumentRecycleView.vue'
+
 export default {
   data() {
       
@@ -2300,8 +2090,8 @@ export default {
           })
     },
 
-    getPersonInfo(){
-      this.$api.user.post_check_profile_self().then((response) => {
+    async getPersonInfo(){
+      await this.$api.user.post_check_profile_self().then((response) => {
             // console.log(tmp)
             // console.log(response.data)
             if (response.data.errno == 0) {
@@ -2349,7 +2139,7 @@ export default {
           })
     },
 
-    loadInfo(){
+     loadInfo(){
 
 
           //获取当前团队信息
@@ -2382,6 +2172,7 @@ export default {
 
     changeCurTeam(team){
         this.$store.state.curTeam = team;
+        localStorage.setItem('curTeam',JSON.stringify(team))
         this.loadInfo();
         this.changeContent(2.2);
         this.isProgramChosen = false;
@@ -2540,6 +2331,8 @@ export default {
     // 示例中直接在控制台输出信息来表示切换内容
    
     console.log(`切换到按钮${index + 1}的内容`);
+    localStorage.setItem('activeIndex:',this.activeIndex)
+    this.getTeamApplyList()
 
     
       },
@@ -2582,6 +2375,9 @@ export default {
         console.log(index, row);
         this.isProgramChosen = true;
         this.currentProgram = row;
+
+        localStorage.setItem('isProgramChosen',true)
+        localStorage.setItem('currentProgram',JSON.stringify(row))
 
         // document.documentElement.setAttribute('theme-mode', 'dark');
         
@@ -3634,18 +3430,40 @@ export default {
 
   created(){
     this.uniqueIdentities = Array.from(new Set(this.TeamPersonInform.map(item => item.permission)));
+   
   },
 
-  mounted: function (){
+  mounted: async function (){
 
       this.$store.state.curUserID = localStorage.getItem("curUserID");
       this.$store.state.curTeam = JSON.parse(localStorage.getItem("curTeam"));
       console.log('curTeam:',this.$store.state.curTeam)
       console.log('curUserID:',this.$store.state.curUserID)
-      this.loadInfo();
+
+      if(localStorage.getItem("isProgramChosen")!== null)
+        this.isProgramChosen = localStorage.getItem("isProgramChosen")
+
+      if(this.isProgramChosen)
+      {
+        if(localStorage.getItem("currentProgram")!== null)
+          this.currentProgram = JSON.parse(localStorage.getItem("currentProgram"))
+        this.getRequirementList();
+        this.getProtoList();
+        this.getProtoRecycleList(); 
+        this.activeIndex = 3
+
+      }
+      
+      await this.loadInfo();
+      console.log("this.currentProgram",this.currentProgram)
+      console.log("this.isProgramChosen:",this.isProgramChosen)
+      console.log("this.activeIndex;",this.activeIndex)
+
+      
   },
   components: {
-    DragTree
+    DragTree,
+    RecycleTree
   },
     
 }

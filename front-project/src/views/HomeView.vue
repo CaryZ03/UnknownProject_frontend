@@ -1,7 +1,7 @@
 <template>
   <div class="outcontainer" v-scroll="handleScroll">
     <header>
-      <h2 class="logo"  >UnKnown</h2>
+      <h2 class="logo">UnKnown</h2>
       <nav class="navigation">
         <a href=""
           ><router-link v-show="this.$store.state.isLogin" to=""
@@ -21,7 +21,11 @@
           >WorkSpace</a
         >
         <!-- <a href=""><router-link to="UML">UML</router-link></a> -->
-        <button v-show="!this.$store.state.isLogin" class="btnLogin-popup" @click="goDown">
+        <button
+          v-show="!this.$store.state.isLogin"
+          class="btnLogin-popup"
+          @click="goDown"
+        >
           Login
         </button>
         <button
@@ -74,44 +78,113 @@
       </transition>
     </section>
 
-    <section  class="panel" id="5">
+    <section class="panel" id="5">
+      <!-- 选择团队界面 -->
+
       <!-- 选择团队界面 -->
       <el-dialog
         title="选择团队"
         :visible.sync="dialogVisible"
-        width="50%"
+        width="40%"
         :modal-append-to-body="false"
+        class="class_dialog_hospital"
       >
-        <el-table
-          :data="teamList"
-          style="width: 100%"
-          @row-click="handleRowClick"
-        >
-          <el-table-column prop="team_id" label="团队ID"></el-table-column>
-          <el-table-column prop="team_name" label="团队名称"></el-table-column>
-          <el-table-column
-            prop="team_description"
-            label="团队描述"
-          ></el-table-column>
-          <el-table-column prop="team_tel" label="联系电话"></el-table-column>
-          <el-table-column prop="team_creator" label="创建者"></el-table-column>
-          <el-table-column label="操作">
-            <template slot-scope="{ row }">
-              <el-button
-                type="danger"
-                icon="el-icon-delete"
-                size="mini"
-                @click="deleteTeam(row)"
-              ></el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-button
-          type="primary"
-          icon="el-icon-plus"
-          @click="showCreateTeamDialog()"
-          >新建团队</el-button
-        >
+        <!-- <el-table :data="teamList" style="width: 100%" @row-click="handleRowClick">
+      <el-table-column prop="team_id" label="团队ID" width="70"></el-table-column>
+      <el-table-column prop="team_name" label="团队名称"></el-table-column>
+      <el-table-column prop="team_description" label="团队描述"></el-table-column>
+      <el-table-column prop="team_tel" label="联系电话"></el-table-column>
+      <el-table-column prop="team_creator" label="创建者"></el-table-column>
+      <el-table-column label="操作">
+          <template slot-scope="{ row }">
+            <el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteTeam(row)"></el-button>
+          </template>
+        </el-table-column>
+    </el-table> -->
+
+        <!-- 新团队列表 -->
+        <div class="overflow-y-auto pb-1 select-none">
+          <div>
+            <!-- <el-col v-for="document in documentTable" :key="document.id" :span="6"></el-col> -->
+            <!-- 切换团队单元格 -->
+            <div
+              style="opacity: 1"
+              v-for="team in teamList"
+              :key="team.team_id"
+              :span="6"
+              @click="handleRowClick(team)"
+            >
+              <div
+                data-test-id="aside-space-item"
+                class="flex relative items-center justify-between cursor-pointer px-2 rounded text-black animate-hover h-[58px]"
+              >
+                <div class="flex items-center w-10/12">
+                  <span class="mr-2 flex items-center">
+                    <div class="flex items-center">
+                      <div class="relative">
+                        <!-- 图标 -->
+                        <span
+                          class="text-h4 flex flex-shrink-0 select-none items-center justify-center rounded uppercase leading-none text-black2 w-[34px] h-[34px]"
+                          style="
+                            font-size: 20px;
+                            background-color: rgb(62, 193, 250);
+                          "
+                        >
+                          {{ getInitials(team.team_creator) }}
+                        </span>
+                      </div>
+                    </div>
+                  </span>
+                  <div class="w-full text-ellipsis">
+                    <div
+                      data-no-cancel-selected="true"
+                      class="text-ellipsis w-full block"
+                    >
+                      {{ team.team_creator }}的团队空间
+                    </div>
+                    <div class="text-ellipsis text-grey3 text-t4 mt-px w-full">
+                      {{ team.team_name }}
+                    </div>
+                  </div>
+
+                  <!-- <i class="el-icon-check" v-if="team.team_id === currentTeam.team_id"></i> -->
+                  <el-button
+                    type="danger"
+                    icon="el-icon-close"
+                    size="mini"
+                    @click="deleteTeam(team)"
+                    v-if="isDeleteButtonPressed"
+                  ></el-button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 新增和删除按钮 -->
+            <div style="opacity: 1" :span="6">
+              <div
+                data-test-id="aside-space-item"
+                class="flex relative items-center justify-between cursor-pointer px-2 rounded text-black animate-hover h-[58px]"
+              >
+                <div class="flex items-center w-10/12">
+                  <!-- 按钮 -->
+                  <el-button
+                    type="primary"
+                    icon="el-icon-plus"
+                    @click="showCreateTeamDialog()"
+                    circle
+                  ></el-button>
+                  <el-button
+                    type="danger"
+                    icon="el-icon-delete"
+                    @click="isDeleteButtonPressed = !isDeleteButtonPressed"
+                    circle
+                  ></el-button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- <el-button type="primary" icon="el-icon-plus" @click="showCreateTeamDialog()" size="mini">新建团队</el-button> -->
       </el-dialog>
 
       <!-- 新建团队界面 -->
@@ -119,6 +192,7 @@
         :visible.sync="createTeamDialogVisible"
         title="新建团队"
         :modal-append-to-body="false"
+        class="class_dialog_hospital"
       >
         <el-form label-width="100px">
           <el-form-item label="团队名称">
@@ -143,13 +217,17 @@
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="cancelCreateTeam">取消</el-button>
-          <el-button type="primary" @click="submitCreateTeam">确定</el-button>
+          <el-button @click="cancelCreateTeam" size="mini">取消</el-button>
+          <el-button type="primary" @click="submitCreateTeam" size="mini"
+            >确定</el-button
+          >
         </span>
       </el-dialog>
       <div class="container">
         <div v-show="!this.$store.state.isLogin" class="wrapper active-popup">
-          <span class="icon-close" ><i class="el-icon-close" style="color: black;"></i></span>
+          <span class="icon-close" style="ab"
+            ><i class="el-icon-close"></i
+          ></span>
 
           <div class="form-box login">
             <h2>Login</h2>
@@ -174,8 +252,11 @@
               <button @click="login" class="btn">Login</button>
 
               <div class="login-register">
-                <p style="font-size: 16px;">
-                  Don't have an account?<a href="#" @click="changeToRegister" class="register-link"
+                <p style="font-size: 16px">
+                  Don't have an account?<a
+                    href="#"
+                    @click="changeToRegister"
+                    class="register-link"
                     >Register</a
                   >
                 </p>
@@ -225,8 +306,11 @@
               </button>
 
               <div class="login-register">
-                <p style="font-size: 16px;">
-                  Already have an account?<a href="#" @click="changeToLogin" class="login-link"
+                <p style="font-size: 16px">
+                  Already have an account?<a
+                    href="#"
+                    @click="changeToLogin"
+                    class="login-link"
                     >Login</a
                   >
                 </p>
@@ -316,6 +400,12 @@ export default {
   watch: {},
   computed: {},
   methods: {
+    getInitials(name) {
+      const splitName = name.split(" ");
+      const initials = splitName.map((part) => part[0]).join("");
+      return initials.toUpperCase();
+    },
+
     deleteTeam(row) {
       event.stopPropagation(); // 阻止冒泡事件
       this.$confirm("确定要删除团队吗?", "提示", {
@@ -583,6 +673,27 @@ export default {
       );
 
       this.$router.push("/WorkSpace"); // 进行页面跳转
+
+      if (localStorage.getItem("curTeam") === null)
+        localStorage.setItem(
+          "curTeam",
+          JSON.stringify(this.$store.state.curTeam)
+        );
+      else {
+        if (
+          this.$store.state.curTeam !==
+          JSON.parse(localStorage.getItem("curTeam"))
+        ) {
+          localStorage.setItem(
+            "curTeam",
+            JSON.stringify(this.$store.state.curTeam)
+          );
+          localStorage.removeItem("currentProgram");
+          localStorage.removeItem("isProgramChosen");
+        }
+      }
+
+      this.$router.push("/WorkSpace"); // 进行页面跳转
     },
 
     showTeamDialog() {
@@ -723,17 +834,16 @@ export default {
         });
     },
 
-    changeToRegister(){
+    changeToRegister() {
       this.wrapper.classList.add("active");
       this.showVeriBox = false;
-      
     },
-    changeToLogin(){
+    changeToLogin() {
       this.wrapper.classList.remove("active");
     },
-    goDown(){
-      this.isJumpTutor=true;
-    }
+    goDown() {
+      this.isJumpTutor = true;
+    },
   },
   created() {},
   mounted() {
@@ -783,8 +893,6 @@ export default {
     // if(this.$store.state.isLogin){
     this.flashTeamList();
     // }
-
-
   },
 
   destroyed() {
