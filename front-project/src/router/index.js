@@ -14,11 +14,9 @@ const TiptapView = () => import('../views/Tiptap.vue')
 
 const Invite = () => import('../views/InviteView.vue')
 
-const joinTeam = () => import('../views/JoinTeam.vue')
 
 const Preview = () =>  import('../views/Preview.vue')
 
-const Document = () => import('../views/DocumentView.vue')
 
 
 

@@ -189,27 +189,6 @@
                 >带额外内容的步骤条</t-menu-item
               >
             </t-submenu>
-
-            <t-submenu title="Steps" value="11-1">
-              <template #icon>
-                <icon name="server" />
-              </template>
-              <t-menu-item value="11-1-1" @click="cloneElement('testVue')"
-                >IPONE
-              </t-menu-item>
-              <t-menu-item value="11-1-2" @click="cloneElement('testVue')"
-                >7寸平板电脑(600×1024)</t-menu-item
-              >
-              <t-menu-item value="11-1-3" @click="cloneElement('testVue')"
-                >10寸平板电脑(720×1280)</t-menu-item
-              >
-              <t-menu-item value="11-1-4" @click="cloneElement('testVue')"
-                >iPad(1024×768)</t-menu-item
-              >
-              <t-menu-item value="11-1-5" @click="cloneElement('testVue')"
-                >iPad(1024×768)</t-menu-item
-              >
-            </t-submenu>
           </t-menu-group>
           <t-menu-group title="导出">
             <t-menu-item @click="downloadHtmlFile" value="item4">
@@ -238,7 +217,14 @@
               保存该原型
             </t-menu-item>
           </t-menu-group>
-          <template #operations>
+
+          <t-menu-item @click="goBack">
+              <template #icon>
+                <icon name="login" />
+              </template>
+              返回上一页
+            </t-menu-item>
+          <!-- <template #operations>
             <t-button
               class="t-demo-collapse-btn"
               variant="text"
@@ -247,7 +233,7 @@
             >
               <icon name="view-list" />
             </t-button>
-          </template>
+          </template> -->
         </t-menu>
       </template>
     </div>
@@ -541,7 +527,6 @@ export default {
         backgroundColor: randomColor,
         width: "50px",
         height: "auto",
-
       };
     },
   },
@@ -553,7 +538,7 @@ export default {
       const element = this.$refs.elementToCapture; // 替换为你的 DOM 元素的引用
       const htmlString = element.outerHTML;
       console.log(htmlString);
-      alert(element);
+      // alert(element);
       this.imageUrl = await domToImage
         .toPng(element)
         .then((dataUrl) => {
@@ -638,7 +623,7 @@ export default {
       const element = this.$refs.elementToCapture; // DOM 元素的引用
       const htmlString = element.outerHTML;
       console.log(htmlString);
-      alert(element);
+      // alert(element);
       const htmlContent = htmlString;
       this.previewContent = htmlString;
       const blob = new Blob([htmlContent], { type: "text/html" });
@@ -765,12 +750,15 @@ export default {
       this.sendMessage();
     },
     onDelete() {},
+    goBack(){
+      this.$router.go(-1);
+    },
 
     createPreview() {
       const element = this.$refs.elementToCapture; // DOM 元素的引用
       const htmlString = element.outerHTML;
       console.log(htmlString);
-      alert(element);
+      // alert(element);
       const htmlContent = htmlString;
       this.previewContent = htmlString;
 
@@ -806,11 +794,23 @@ export default {
         .then((res) => {
           if (res.data["errno"] === 0) {
             console.log("参数保存成功");
+            this.$message({
+              message: "保存成功",
+              type: "success",
+            });
           } else {
+            this.$message({
+              message: "保存失败",
+              type: "warning",
+            });
             console.log("参数保存失败：" + res.data["errno"]);
           }
         })
         .catch((err) => {
+          this.$message({
+            message: "保存失败",
+            type: "warning",
+          });
           console.log("获得error");
         });
     },

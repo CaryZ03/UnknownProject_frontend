@@ -48,7 +48,7 @@ export default {
         alert("error");
       });
     this.socket = new WebSocket('ws://182.92.86.71:4514/ws/notification/receiver/7/');
-
+    this.$store.state.curTeam =JSON.parse(localStorage.getItem("curTeam"));
     this.socket.addEventListener('open', (event) => {
       console.log('WebSocket connection opened:', event);
 

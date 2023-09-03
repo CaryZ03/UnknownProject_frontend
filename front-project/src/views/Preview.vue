@@ -2,46 +2,17 @@
 <!-- todo 需要查询组织其他的预览 -->
 <template>
   <div class="tdesign-demo-item--layout">
+    <t-button theme="default" variant="dashed" @click="sendLink">分享预览</t-button>
+    <t-button theme="default" variant="dashed" @click="ret">返回上一级</t-button>
     <t-layout>
-      <t-header>
-        <t-head-menu theme="light" value="item1" height="120px">
-          <!-- <img
-            slot="logo"
-            width="136"
-            class="logo"
-            src="https://www.tencent.com/img/index/menu_logo_hover.png"
-            alt="logo"
-          /> -->
-          <t-menu-item value="item1">已选内容</t-menu-item>
-          <t-menu-item value="item2">菜单内容一</t-menu-item>
-          <t-menu-item value="item3">菜单内容二</t-menu-item>
-          <t-menu-item value="item4" :disabled="true">菜单内容三</t-menu-item>
-          <template #operations>
-            <a href="javascript:;"
-              ><icon class="t-menu__operations-icon" name="search"
-            /></a>
-            <a href="javascript:;"
-              ><icon class="t-menu__operations-icon" name="notification-filled"
-            /></a>
-              <router-link to="/Workspace"><icon class="t-menu__operations-icon" name="home"/></router-link>
-          </template>
-        </t-head-menu>
-      </t-header>
       <t-content>
         <div
           class="main"
           style="
-            -webkit-tap-highlight-color: transparent;
-            background-color: #f0f8ff;
-            color: rgba(0, 0, 0, 0.9);
-            font-size: 14px;
-            font-weight: 400;
-            height: 825px;
-            line-height: 22px;
-            list-style: none;
-            padding: 0;
-            width: 800px;
-            margin: 0 0 0 10%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* 可以根据需要设置容器的高度 */
           "
           v-html="htmlString"
         ></div>
@@ -59,6 +30,7 @@ export default {
   data() {
     return {
       htmlString: "",
+      link: "",
     };
   },
   components: {
@@ -67,12 +39,30 @@ export default {
   mounted() {
     // 获取传递过来的 HTML 字符串
     this.htmlString = this.$route.query.htmlString;
+    this.link = this.$route.fullPath;
   },
 
+  methods: {
+    sendLink(){
 
-  methods(){
+      const fullPath = this.link;
+      const textArea = document.createElement('textarea');
+      textArea.value = fullPath;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      this.$message({
+          message: '已经复制分享链接',
+          type: 'success'
+        });
+      // return this.link;
+    },
+    ret(){
+      this.$router.go(-1);
+    }
 
-  }
+  },
 };
 </script>
 

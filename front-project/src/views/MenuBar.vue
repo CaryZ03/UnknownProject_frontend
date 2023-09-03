@@ -4,6 +4,7 @@
       <div class="divider" v-if="item.type === 'divider'" :key="`divider${index}`" />
       <menu-item v-else :key="index" v-bind="item" />
     </template>
+    <menu-item v-bind="items[0]" />
     
   </div>
 </template>
@@ -169,38 +170,42 @@ export default {
           title: 'Redo',
           action: () => this.editor.chain().focus().redo().run(),
         },
-
         {
-          icon: 'ri-save-line',
+          type: 'divider',
+        },
+        {
+          icon: 'html5-fill',
           title: 'Save',
           action: () => this.$emit('saveHTML')
         },
         {
-          icon: 'ri-save-line',
+          icon: 'markdown-line',
           title: 'Save',
           action: () => this.$emit('saveMD')
         },
         {
-          icon: 'ri-save-line',
-          title: 'Save',
+          icon: 'file-pdf-line',
+          title: 'savePDF',
           action: () => this.$emit('savePDF')
         },
         {
-          icon: 'ri-save-line',
-          title: 'Save',
+          icon: 'file-text-fill',
+          title: 'saveTXT',
           action: () => this.$emit('saveTXT')
         },
         {
-          icon: 'ri-save-line',
-          title: 'Save',
+          icon: 'file-word-2-fill',
+          title: 'saveWORD',
           action: () => this.$emit('saveWORD')
         },
 
         {
-          icon: 'bold',
-          title: 'Save',
+          icon: 'chat-upload-line',
+          title: 'UpLoad',
           action: () => this.$emit('upload')
         },
+        
+        
       ],
     }
   },

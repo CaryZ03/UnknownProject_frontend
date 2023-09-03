@@ -72,12 +72,12 @@
                   circle>
                 </el-button>
 
-                <el-button
+                <!-- <el-button
                   size="mini"
                   type="primary" class="bottom-button"
                   icon="el-icon-upload2"
                   circle>
-                </el-button>
+                </el-button> -->
               </div>
 
               <!-- 新建文档对话框 -->
@@ -161,7 +161,7 @@
 
     <!-- main -->
     <el-main style="background-color:#fffcd7;">
-      <el-descriptions class="margin-top"  :column="1" :size="size" style="max-width: 600px;
+      <el-descriptions class="margin-top"  :column="1"  style="max-width: 600px;
       box-shadow: 0px 0px 16px rgba(17, 17, 26, 0.1);" border>
                 
                 <el-descriptions-item>
@@ -462,14 +462,16 @@ padding: 4px 0; max-width: 600px;" v-if="this.isDocumentChosen">
         this.newDirectoryDialogVisible = false;  // 关闭对话框
       },
       handleEdit(){
-        this.$router.push({
-          name: "tiptap",
-          params:{
-            "teamid": this.$store.state.curTeam.team_id,
-            "projectid": this.project_id,
-            "docid": this.curDocument.document_id
-          }
-        })
+        const murl = '/Tiptap/'+ this.$store.state.curTeam.team_id + '/' + this.project_id + '/' + this.curDocument.document_id;
+        this.$router.push(murl)
+        // this.$router.push({
+        //   name: "tiptap",
+        //   params:{
+        //     "teamid": this.$store.state.curTeam.team_id,
+        //     "projectid": this.project_id,
+        //     "docid": this.curDocument.document_id
+        //   }
+        // })
       },
 
       
@@ -479,8 +481,13 @@ padding: 4px 0; max-width: 600px;" v-if="this.isDocumentChosen">
         this.curNode = node
         this.isDocumentChosen =true
         console.log("node:",node)
-        if( node.data.isFolder)
+        if( node.data.isFolder){
           console.log('is Folder,over...')
+          this.curDocument.name = '-----';
+          this.curDocument.lastChangeTime = '-----';
+          this.isDocumentChosen = false
+          console.log("curDocument:",this.curDocument)
+        }
         else{
           const tmp = {
             "document_id":node.data.id,
