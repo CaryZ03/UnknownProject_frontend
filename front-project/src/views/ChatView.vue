@@ -2130,14 +2130,14 @@ export default {
       }
 
       self.checkTeamMessage(index);
-      await self.sleep(1500);
+      await self.sleep(4000);
       let index_chat = 0;
       for (var i = 0; i < self.chatMessages.length; i++) {
         if (self.chatMessages[i].cm_id == cm_id) {
           index_chat = i;
         }
       }
-      await self.sleep(2500);
+      await self.sleep(4000);
       console.log(index_chat);
       const divElement = document.getElementById('div-' + index_chat);
 
