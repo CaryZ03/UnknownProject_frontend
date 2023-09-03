@@ -124,6 +124,16 @@ export default {
     this.teamid = this.$route.params.teamid;
     this.docid = this.$route.params.docid;
     this.room = this.docid;
+    const data = {
+      document_allow_check: this.docid
+    }
+
+    // this.$api.doc.post_search_document(data).then((res)=>{
+    //   if(!res.data["document_info"][document_allow_check]){
+    //     this.$router
+    //   }
+    // })
+
   },
 
   mounted() {
