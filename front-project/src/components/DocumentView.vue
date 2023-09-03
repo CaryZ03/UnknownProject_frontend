@@ -534,7 +534,9 @@ padding: 4px 0" v-if="this.isDocumentChosen">
       },
       handleEdit(){
         const murl = '/Tiptap/'+ this.$store.state.curTeam.team_id + '/' + this.project_id + '/' + this.curDocument.document_id;
-        this.$router.push(murl)
+        this.$router.push({
+          path: murl
+        } )
         // this.$router.push({
         //   name: "tiptap",
         //   params:{
@@ -793,11 +795,14 @@ padding: 4px 0" v-if="this.isDocumentChosen">
         console.log("parentData:",parentData)
 
         let directory_id = '';
-        if( typeof parentData === 'Array'){ //根目录
+        console.log("type:",parentData.length)
+        if( parentData.length !== undefined){ //根目录
           //...
+          console.log("root_id:",this.root_id)
           directory_id = this.root_id;
         }
         else{ //其他目录
+          console.log("1111")
           directory_id = parentData.id
         }
         const tmp ={
