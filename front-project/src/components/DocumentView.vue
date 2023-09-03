@@ -223,7 +223,7 @@ padding: 4px 0; max-width: 600px;" v-if="this.isDocumentChosen">
     <div style="margin: -8px 0 0;;
 padding: 4px 0" v-if="this.isDocumentChosen">
     <p style="color:black;margin: -6px 0 11px;">游客权限</p>
-    <el-select v-model="this.curDocument.permission" placeholder="请选择权限" @change="uploadPermission">
+    <el-select v-model="curDocument.permission" placeholder="请选择权限" @change="uploadPermission">
       <el-option label="可读" value="check"></el-option>
       <el-option label="可读可写" value="edit"></el-option>
       <el-option label="不可见" value="none"></el-option>
