@@ -38,7 +38,7 @@
       </nav>
     </header>
 
-    <section v-show="show" class="panel" id="1">
+    <section class="panel" id="1">
       <img
         src="@/assets/UnKnown.png"
         ref="leftPic"
@@ -56,7 +56,7 @@
       </div>
     </section>
 
-    <section v-show="show" class="panel" id="2">
+    <section class="panel" id="2">
       <img
         src="@/assets/WorkSpace.png"
         ref="leftPic"
@@ -64,16 +64,16 @@
         alt="My Image"
       />
       <div class="rightTxt">
-        <h1>团队管理:</h1>
-        <h2>告别杂乱无章</h2>
-        <h2>
-          团队间轻松切换,
-          提供不同团队成员身份,职责明确,权限分明,方便管理,满足第三方需求.
-        </h2>
+        <h1>团队管理</h1>
+        <h2>团队管理页面可展示团队详情</h2>
+        <h2>可添加/删除团队人员</h2>
+        <h2>可审核其他用户加入团队的申请</h2>
+        <h2>管理员可修改成员身份</h2>
+        <h2>可查看项目列表进行管理/复制</h2>
       </div>
     </section>
 
-    <section v-show="show" class="panel" id="3">
+    <section class="panel" id="3">
       <img
         src="@/assets/Chat.png"
         ref="leftPic"
@@ -81,15 +81,16 @@
         alt="My Image"
       />
       <div class="rightTxt">
-        <h1>团队交流:</h1>
-        <h2>助力高效工作</h2>
-        <h2>
-          支持消息通知,不遗漏每一条重要讯息,可任意私聊一对一推进任务,支持消息合并转发,管理未读消息,方便您的工作.
-        </h2>
+        <h1>团队交流</h1>
+        <h2>支持实时通讯</h2>
+        <h2>支持多种消息类型</h2>
+        <h2>支持查找/转发消息</h2>
+        <h2>可创建个人群聊和私聊</h2>
+        <h2>支持@功能</h2>
       </div>
     </section>
 
-    <section v-show="show" class="panel" id="4">
+    <section class="panel" id="4">
       <img
         src="@/assets/Doc.png"
         ref="leftPic"
@@ -99,8 +100,11 @@
 
       <div class="rightTxt">
         <h1>共享文档</h1>
-        <h2>助力高效工作</h2>
-        <h2>多人实时编辑，光标检测，可以@文档外的组员</h2>
+        <h2>多人光标协同实时编辑</h2>
+        <h2>可保存/回退文档版本</h2>
+        <h2>支持全格式导出</h2>
+        <h2>支持@功能与分享</h2>
+        <h2>支持自选模板</h2>
       </div>
     </section>
 
@@ -113,12 +117,13 @@
       />
 
       <div class="rightTxt">
-        <h1>设计原型:</h1>
+        <h1>设计原型</h1>
         <h2>网页设计最强辅助</h2>
-        <h2>
-          界面简介易懂,适应不同尺寸,提供大量基础模板,支持在线预览实时查看,多光标协同实时编辑
-        </h2>
-        <h2>不仅是项目团队管理工具,更是强大的软件开发创作平台</h2>
+        <h2>多人光标协同实时编辑</h2>
+        <h2>可设计页面尺寸</h2>
+        <h2>可拖拽组件自由创作</h2>
+        <h2>支持多种格式导出</h2>
+        <h2>支持自选模板</h2>
       </div>
     </section>
 
@@ -131,10 +136,10 @@
       />
 
       <div class="rightTxt">
-        <h1>文件系统</h1>
-        <h2>拖拽式云文件系统</h2>
-        <h2>点击可看历史信息</h2>
-        <h2>突破个人开发界限,探索团队无限潜能</h2>
+        <h1>文档管理页面</h1>
+        <h2>可创建/删除/重命名文件</h2>
+        <h2>可创建删除文件夹</h2>
+        <h2>可在不同文件夹下拖动文件</h2>
       </div>
     </section>
 
@@ -842,7 +847,6 @@ export default {
     this.btnLogin.addEventListener("click", () => {
       console.log("click Login ???");
       this.wrapper.classList.add("active-popup");
-      this.show = false;
     });
 
     this.iconClose.addEventListener("click", () => {
@@ -869,9 +873,10 @@ export default {
   font-family: "Poppins", sans-serif;
 }
 h1 {
+  margin-top: 3vh;
   margin-bottom: 8vh;
   /* position: absolute; */
-  font-size: 8vh;
+  font-size: 7vh;
   /* margin-left: 6vw; */
   display: flex;
   justify-content: center; /* 在水平方向上居中对齐 */
@@ -886,6 +891,9 @@ h2 {
   font-size: 4vh;
   margin-left: 3vh;
   font-weight: bold;
+
+  justify-content: center; /* 在水平方向上居中对齐 */
+  align-items: center; /* 在垂直方向上居中对齐 */
 }
 html,
 body {
@@ -1308,25 +1316,4 @@ body {
 
 <!-- hide scrollbar -->
 <style scoped>
-/* 隐藏所有滚动条，包括垂直和水平滚动条 */
-::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
-}
-
-/* Edge浏览器的滚动条样式 */
-/* 注意：Edge浏览器可能需要单独的样式 */
-/* 这是Edge浏览器中隐藏滚动条的方式 */
-* {
-  scrollbar-width: none; /* Firefox */
-}
-
-/* 隐藏滚动条的轨道 */
-*::-webkit-scrollbar-track {
-  display: none; /* Chrome, Safari */
-}
-
-/* 隐藏滚动条的滑块 */
-*::-webkit-scrollbar-thumb {
-  display: none; /* Chrome, Safari */
-}
 </style>
