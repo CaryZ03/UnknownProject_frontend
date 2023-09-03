@@ -122,7 +122,7 @@ export default {
       contentIsNow: false,
       content: null,
       tmpcontent: null,
-      editable: false,
+      editable: true,
     };
   },
   created() {
@@ -187,7 +187,7 @@ export default {
           limit: 10000,
         }),
       ],
-      editable: this.editable,
+      // editable: this.editable,
     });
     const cusr = {
       name: this.$store.state.curUserName,
