@@ -926,9 +926,9 @@ padding-right: 7px;">{{ this.currentTeam.team_creator }}的团队</span>
                     </el-table-column>
 
                     <!--  -->
-                    <el-table-column label="大小" prop="size" sortable>
+                    <!-- <el-table-column label="大小" prop="size" sortable>
                 
-                    </el-table-column>
+                    </el-table-column> -->
 
 
                     <!-- 操作列 -->
