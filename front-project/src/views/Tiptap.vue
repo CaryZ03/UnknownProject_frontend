@@ -11,7 +11,11 @@
         class="editor__header"
         :editor="editor"
       />
-      <editor-content class="editor__content" :editor="editor" />
+      <editor-content
+        class="editor__content"
+        :editor="editor"
+        :editable="this.editable"
+      />
       <div class="editor__footer">
         <div :class="`editor__status editor__status--${status}`">
           <template v-if="status === 'connected'">
@@ -104,7 +108,7 @@ export default {
 
   data() {
     return {
-      currentUser: JSON.parse(localStorage.getItem('currentUser')) || {
+      currentUser: JSON.parse(localStorage.getItem("currentUser")) || {
         name: this.getRandomName(),
         color: this.getRandomColor(),
       },
@@ -118,6 +122,7 @@ export default {
       contentIsNow: false,
       content: null,
       tmpcontent: null,
+      editable: false,
     };
   },
   created() {
@@ -125,64 +130,72 @@ export default {
     this.docid = this.$route.params.docid;
     this.room = this.docid;
     const data = {
-      document_allow_check: this.docid
-    }
+      document_id: this.docid,
+    };
 
-    // this.$api.doc.post_search_document(data).then((res)=>{
-    //   if(!res.data["document_info"][document_allow_check]){
-    //     this.$router
-    //   }
-    // })
+    this.$api.doc.post_search_document(data).then((res) => {
+      console.log(res.data);
 
+      const info = JSON.parse(res.data["document_info"]);
+
+      console.log(info["document_allow_check"]);
+      this.editable = info["document_allow_edit"];
+      if (!info["document_allow_check"]) {
+        this.$router.push({
+          name: "Home",
+        });
+      }
+    });
   },
 
   mounted() {
     const ydoc = new Y.Doc();
 
-      this.provider = new TiptapCollabProvider({
-        appId: "w9n1xdmo",
-        name: this.room,
-        document: ydoc,
-      });
+    this.provider = new TiptapCollabProvider({
+      appId: "w9n1xdmo",
+      name: this.room,
+      document: ydoc,
+    });
 
-      this.provider.on("status", (event) => {
-        this.status = event.status;
-      });
+    this.provider.on("status", (event) => {
+      this.status = event.status;
+    });
 
-      this.editor = new Editor({
-        extensions: [
-          StarterKit.configure({
-            history: false,
-          }),
-          Mention.configure({
-            HTMLAttributes: {
-              class: "mention",
-            },
-            suggestion,
-          }),
+    this.editor = new Editor({
+      extensions: [
+        StarterKit.configure({
+          history: false,
+        }),
+        Mention.configure({
+          HTMLAttributes: {
+            class: "mention",
+          },
+          suggestion,
+        }),
 
-          Highlight,
-          TaskList,
-          TaskItem,
-          Collaboration.configure({
-            document: ydoc,
-          }),
-          CollaborationCursor.configure({
-            provider: this.provider,
-            user: this.currentUser,
-          }),
-          CharacterCount.configure({
-            limit: 10000,
-          }),
-        ],
-      });
-      const cusr = {
-        name: this.$store.state.curUserName,
-        color: this.getRandomColor(),
-      }
-      localStorage.setItem("currentUser", JSON.stringify(cusr));
+        Highlight,
+        TaskList,
+        TaskItem,
+        Collaboration.configure({
+          document: ydoc,
+        }),
+        CollaborationCursor.configure({
+          provider: this.provider,
+          user: this.currentUser,
+        }),
+        CharacterCount.configure({
+          limit: 10000,
+        }),
+      ],
+      editable: this.editable,
+    });
+    const cusr = {
+      name: this.$store.state.curUserName,
+      color: this.getRandomColor(),
+    };
+    localStorage.setItem("currentUser", JSON.stringify(cusr));
 
-      this.getHistory();
+    this.getHistory();
   },
 
   methods: {
