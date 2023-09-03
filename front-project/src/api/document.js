@@ -175,6 +175,15 @@ export async function post_show_template_list(data) {
     })
 }
 
+//change_document_permission
+export async function post_change_document_permission(data) {
+    return request({
+        method: 'POST',
+        url:  '/document/change_document_permission',
+        data: data,
+    })
+}
+
 
 
 

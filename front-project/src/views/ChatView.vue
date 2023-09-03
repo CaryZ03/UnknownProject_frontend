@@ -830,7 +830,7 @@ export default {
   },
   methods: {
     async createRedWebSocket() {
-      await this.sleep(2000);
+      await this.sleep(4000);
       const self = this;
       self.departmentList.forEach((element, index) => {
         // console.log("abc11111");
