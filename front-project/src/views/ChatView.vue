@@ -1965,7 +1965,7 @@ export default {
 
 
       self.checkTeamMessage(index);
-      await self.sleep(1500);
+      await self.sleep(4000);
       console.log(typeof cm_id);
       let index_chat = 0;
       await new Promise((resolve, reject) => {
@@ -1978,7 +1978,7 @@ export default {
       })
 
       ////// !!!!!!!!!!!这里取不到
-      await self.sleep(2000);
+      await self.sleep(4000);
       console.log(index_chat);
       const divElement = document.getElementById('div-' + index_chat);
 
