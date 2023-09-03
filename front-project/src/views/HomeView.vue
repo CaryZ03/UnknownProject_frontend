@@ -844,10 +844,11 @@ export default {
       this.wrapper.classList.remove("active");
     });
 
-    this.btnLogin.addEventListener("click", () => {
-      console.log("click Login ???");
-      this.wrapper.classList.add("active-popup");
-    });
+    // this.btnLogin.addEventListener("click", () => {
+    //   console.log("click Login ???");
+    //   // this.wrapper.classList.add("active-popup");
+
+    // });
 
     this.iconClose.addEventListener("click", () => {
       this.wrapper.classList.remove("active-popup");
