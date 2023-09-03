@@ -220,9 +220,9 @@
             <div>
             </div>
             <el-col :span="1">
-              <el-dropdown>
+              <el-dropdown v-if="isInCreateGroup">
                 <span class="el-dropdown-link">
-                  <el-button icon="el-icon-more-outline" circle v-if="isInCreateGroup"></el-button>
+                  <el-button icon="el-icon-more-outline" circle></el-button>
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item>
@@ -242,6 +242,18 @@
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
+              <el-dropdown v-else-if="isInJoinGroup">
+                <span class="el-dropdown-link">
+                  <el-button icon="el-icon-more-outline" circle></el-button>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item class="delete-group">
+                    <div @click="exitGroupVisible = true">
+                      退出群聊
+                    </div>
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
             </el-col>
           </el-row>
         </el-header>
@@ -256,9 +268,9 @@
               </div>
             </el-col>
             <el-col :span="1">
-              <el-dropdown>
+              <el-dropdown v-if="isInCreateGroup">
                 <span class="el-dropdown-link">
-                  <el-button icon="el-icon-more-outline" circle v-if="isInCreateGroup"></el-button>
+                  <el-button icon="el-icon-more-outline" circle></el-button>
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item>
@@ -274,6 +286,18 @@
                   <el-dropdown-item class="delete-group">
                     <div @click="deleteGroupVisible = true">
                       解散群聊
+                    </div>
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+              <el-dropdown v-else-if="isInJoinGroup">
+                <span class="el-dropdown-link">
+                  <el-button icon="el-icon-more-outline" circle></el-button>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item class="delete-group">
+                    <div @click="exitGroupVisible = true">
+                      退出群聊
                     </div>
                   </el-dropdown-item>
                 </el-dropdown-menu>
@@ -310,6 +334,14 @@
           <span slot="footer" class="dialog-footer">
             <el-button @click="deleteGroupVisible = false">取 消</el-button>
             <el-button type="primary" @click="deleteGroup">确 定</el-button>
+          </span>
+        </el-dialog>
+
+        <el-dialog title="退出群聊" :visible.sync="exitGroupVisible" width="30%" :before-close="handleClose">
+          确定要退出群聊吗？
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="exitGroupVisible = false">取 消</el-button>
+            <el-button type="primary" @click="exitGroup">确 定</el-button>
           </span>
         </el-dialog>
 
@@ -452,7 +484,8 @@
         <el-main id="scrollContainer" class="scrollContainer">
           <div>
             <div v-for="(message, index) in chatMessages" :key="index" :id="'div-' + index" :ref="'div-' + index">
-              <div v-if="isRelayMode && (typeof message.private_connect_id === 'undefined' || message.private_connect_id === uid || message.private_connect_id === 0)">
+              <div
+                v-if="isRelayMode && (typeof message.private_connect_id === 'undefined' || message.private_connect_id === uid || message.private_connect_id === 0)">
                 <el-checkbox @change="handleCheckboxChange(index)"></el-checkbox>
               </div>
               <div class="recv-message"
@@ -475,7 +508,7 @@
                           v-if="searchType === '企业群聊'">跳转至相应区域</el-button>
                         <el-button size="mini" round @click="skipToGroupHistoryMessage(message)"
                           v-if="searchType === '多人群聊'">跳转至相应区域</el-button>
-                        <el-button size="mini" round @click="skipToChatHistoryMessage(message)"
+                        <el-button size="mini" round @click="skipToPrivateHistoryMessage(message)"
                           v-if="searchType === '个人聊天'">跳转至相应区域</el-button>
                       </span>
                     </div>
@@ -495,7 +528,10 @@
                         <div>
                           {{ message.content }}
                         </div>
-                        <el-button size="mini" round @click="skipToMessage(message.notification_id)">跳转至相应区域</el-button>
+                        <el-button size="mini" round v-if="message.message_type === 'document'">
+                          <a :href="message.URL">跳转至相应文档</a>
+                        </el-button>
+                        <el-button size="mini" round @click="skipToMessage(message.notification_id)" v-else>跳转至相应区域</el-button>
                         <el-button size="mini" round @click="changeToUnread">标记为未读</el-button>
                       </span>
                     </div>
@@ -525,7 +561,7 @@
                           v-if="searchType === '企业群聊'">跳转至相应区域</el-button>
                         <el-button size="mini" round @click="skipToGroupHistoryMessage(message)"
                           v-if="searchType === '多人群聊'">跳转至相应区域</el-button>
-                        <el-button size="mini" round @click="skipToChatHistoryMessage(message)"
+                        <el-button size="mini" round @click="skipToPrivateHistoryMessage(message)"
                           v-if="searchType === '个人聊天'">跳转至相应区域</el-button>
                       </span>
                     </div>
@@ -723,6 +759,7 @@ export default {
       historyVisible: false,
       atVisible: false,
       privateVisible: false,
+      exitGroupVisible: false,
       isAtAll: false,
       atList: [],
       privateChatMember: 0,
@@ -743,6 +780,7 @@ export default {
       is_creator_or_manager: false,
       searchType: '企业群聊',
       isInCreateGroup: false,
+      isInJoinGroup: false,
       departmentMemberList: [],
       inviteVisible: false,
       inviteMemberList: [],
@@ -881,10 +919,8 @@ export default {
       // console.log(chat_index);
       if (chat_type === 1) {
         let chat_index = 0;
-        for(var i = 0; i < this.departmentList.length; i++)
-        {
-          if(this.departmentList[i].team_id === chat_id)
-          {
+        for (var i = 0; i < this.departmentList.length; i++) {
+          if (this.departmentList[i].team_id === chat_id) {
             chat_index = i;
           }
         }
@@ -892,10 +928,8 @@ export default {
       }
       else if (chat_type === 2) {
         let chat_index = 0;
-        for(var i = 0; i < this.createGroupChatList.length; i++)
-        {
-          if(this.createGroupChatList[i].gc_id === chat_id)
-          {
+        for (var i = 0; i < this.createGroupChatList.length; i++) {
+          if (this.createGroupChatList[i].gc_id === chat_id) {
             chat_index = i;
           }
         }
@@ -903,10 +937,8 @@ export default {
       }
       else if (chat_type === 3) {
         let chat_index = 0;
-        for(var i = 0; i < this.joinGroupChatList.length; i++)
-        {
-          if(this.joinGroupChatList[i].gc_id === chat_id)
-          {
+        for (var i = 0; i < this.joinGroupChatList.length; i++) {
+          if (this.joinGroupChatList[i].gc_id === chat_id) {
             chat_index = i;
           }
         }
@@ -914,10 +946,8 @@ export default {
       }
       else if (chat_type === 4) {
         let chat_index = 0;
-        for(var i = 0; i < this.privateChatList.length; i++)
-        {
-          if(this.privateChatList[i].pc_id === chat_id)
-          {
+        for (var i = 0; i < this.privateChatList.length; i++) {
+          if (this.privateChatList[i].pc_id === chat_id) {
             chat_index = i;
           }
         }
@@ -1016,6 +1046,7 @@ export default {
       // }
       this.curDepartmentId = 0;
       this.isInCreateGroup = false;
+      this.isInJoinGroup = false;
       this.isPrivateChat = false;
       this.chatMessages.splice(0, this.chatMessages.length);
       this.memberList.splice(0, this.memberList.length);
@@ -1028,19 +1059,33 @@ export default {
       const jsonString = JSON.stringify(dataObject);
       await this.$api.message.post_check_notification_list(jsonString)
         .then(function (response) {
-          console.log(response)
           for (const item of response.data.notification_list_info) {
             const jsonObj = JSON.parse(item);
-            const data = {
-              content: jsonObj.notification_name + ", 点击此处查看",
-              isSentByCurrentUser: false,
-              user_name: "系统消息",
-              message_type: "message",
-              notification_id: jsonObj.notification_id,
-              private_connect_id: jsonObj.private_connect_id
+            console.log(item);
+            if (jsonObj.notification_type === "document") {
+              const data = {
+                content: jsonObj.notification_name + ", 点击此处跳转至相应文档",
+                isSentByCurrentUser: false,
+                user_name: "系统消息",
+                message_type: "document",
+                notification_id: jsonObj.notification_id,
+                private_connect_id: jsonObj.private_connect_id,
+                URL: jsonObj.notification_content
+              }
+              self.chatMessages.push(data);
+            }
+            else {
+              const data = {
+                content: jsonObj.notification_name + ", 点击此处查看",
+                isSentByCurrentUser: false,
+                user_name: "系统消息",
+                message_type: "message",
+                notification_id: jsonObj.notification_id,
+                private_connect_id: jsonObj.private_connect_id
+              }
+              self.chatMessages.push(data);
             }
             // console.log(jsonObj);
-            self.chatMessages.push(data);
           }
         })
         .catch(function (error) {
@@ -1059,6 +1104,7 @@ export default {
       this.isInTheChat[index] = true;
       this.chat_type = 'team_chat';
       this.isInCreateGroup = false;
+      this.isInJoinGroup = false;
       this.isPrivateChat = false;
       this.teamRedDotNum[index] = 0;
       this.curentChatIndex = index;
@@ -1145,12 +1191,14 @@ export default {
       if (this.activeSelectName === 'second') {
         this.createGroupRedDotNum[index] = 0;
         this.isInCreateGroup = true;
+        this.isInJoinGroup = false;
         this.curDepartment = this.createGroupChatList[index].gc_name;
         this.curDepartmentId = this.createGroupChatList[index].gc_id;
       }
       else {
         this.joinGroupRedDotNum[index] = 0;
         this.isInCreateGroup = false;
+        this.isInJoinGroup = true;
         this.curDepartment = this.joinGroupChatList[index].gc_name;
         this.curDepartmentId = this.joinGroupChatList[index].gc_id;
       }
@@ -1251,6 +1299,7 @@ export default {
       this.isInTheChat[index] = true;
       this.chat_type = 'private_chat';
       this.isInCreateGroup = false;
+      this.isInJoinGroup = false;
       this.isPrivateChat = true;
       this.privateRedDotNum[index] = 0;
       this.curDepartment = this.privateChatList[index].user_name;
@@ -1296,7 +1345,7 @@ export default {
               message_type: element.message_type,
               file_id: element.file_id,
               cm_id: element.cm_id,
-              private_connect_id: 0
+              private_connect_id: 0,
             }
             // console.log(message);
             self.chatMessages.push(message);
@@ -2088,7 +2137,7 @@ export default {
           index_chat = i;
         }
       }
-      await self.sleep(1500);
+      await self.sleep(2500);
       console.log(index_chat);
       const divElement = document.getElementById('div-' + index_chat);
 
@@ -2118,7 +2167,7 @@ export default {
           this.activeSelectName = 'third';
         }
       }
-
+      await self.sleep(1500);
       self.checkGroupMessage(index);
       await self.sleep(1500);
       let index_chat = 0;
@@ -2127,7 +2176,7 @@ export default {
           index_chat = i;
         }
       }
-      await self.sleep(1500);
+      await self.sleep(2000);
       console.log(index_chat);
       const divElement = document.getElementById('div-' + index_chat);
 
@@ -2139,7 +2188,10 @@ export default {
       let index = 0;
       let cm_id = 0;
       console.log(message);
+      await self.sleep(2000);
       for (var i = 0; i < self.privateChatList.length; i++) {
+        console.log(self.privateChatList[i].pc_id);
+        console.log(message.pc_id);
         if (self.privateChatList[i].pc_id === message.pc_id) {
           index = i;
           cm_id = message.cm_id;
@@ -2147,16 +2199,19 @@ export default {
           console.log(message.cm_id);
         }
       }
-
+      await self.sleep(2000);
       self.checkPrivateMessage(index);
-      await self.sleep(1500);
+      await self.sleep(2000);
       let index_chat = 0;
+      console.log("self.chatMessages: " + self.chatMessages);
       for (var i = 0; i < self.chatMessages.length; i++) {
+        // console.log("AAA" + self.chatMessages[i].cm_id);
+        // console.log(cm_id);
         if (self.chatMessages[i].cm_id == cm_id) {
           index_chat = i;
         }
       }
-      await self.sleep(1500);
+      await self.sleep(2000);
       console.log(index_chat);
       const divElement = document.getElementById('div-' + index_chat);
 
@@ -2695,6 +2750,35 @@ export default {
       const splitName = name.split(" ");
       const initials = splitName.map((part) => part[0]).join("");
       return initials.toUpperCase();
+    },
+    async exitGroup() {
+      const self = this;
+      const array_data = [self.uid];
+      console.log(array_data)
+      const dataObject = {
+        gc_id: self.curDepartmentId,
+        array_data: array_data
+      };
+      console.log(dataObject);
+      const jsonString = JSON.stringify(dataObject);
+      await this.$api.chat.post_group_delete_member(jsonString)
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      self.deleteMemberList.splice(0, self.deleteMemberList.length);
+      self.exitGroupVisible = false;
+
+      const h = this.$createElement;
+
+      this.$notify({
+        title: '通知',
+        message: h('i', { style: 'color: teal' }, '退出群聊成功！')
+      });
+      self.getGroupChat();
+      self.checkSystemMessage();
     },
   }
 }
