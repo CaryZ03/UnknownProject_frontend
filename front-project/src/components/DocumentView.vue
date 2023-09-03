@@ -223,10 +223,10 @@ padding: 4px 0; max-width: 600px;" v-if="this.isDocumentChosen">
     <div style="margin: -8px 0 0;;
 padding: 4px 0" v-if="this.isDocumentChosen">
     <p style="color:black;margin: -6px 0 11px;">游客权限</p>
-    <el-select v-model="curDocument.permission" placeholder="请选择权限" @change="uploadPermission">
-      <el-option label="可读" value="check"></el-option>
-      <el-option label="可读可写" value="edit"></el-option>
-      <el-option label="不可见" value="none"></el-option>
+    <el-select v-model="selectedPermission" placeholder="请选择权限" @change="uploadPermission" :content="renderLabel('curDocument.permission')">
+      <el-option label="可读" value="check" :content="renderLabel('check')"></el-option>
+      <el-option label="可读可写" value="edit" :content="renderLabel('edit')"></el-option>
+      <el-option label="不可见" value="none" :content="renderLabel('none')"></el-option>
     </el-select>
     </div>
     </el-main>
@@ -318,9 +318,19 @@ padding: 4px 0" v-if="this.isDocumentChosen">
       };
     },
     methods: {
+      renderLabel(value) {
+      if (value === 'check') {
+        return '可读';
+      } else if (value === 'edit') {
+        return '可读可写';
+      } else if (value === 'none') {
+        return '不可见';
+      }
+    },
 
       uploadPermission(){
         //edit check 其他
+        this.curDocument.permission = this.selectedPermission
         const tmp ={
           'document_id': this.curDocument.document_id,
           'permission': this.curDocument.permission,
@@ -331,6 +341,8 @@ padding: 4px 0" v-if="this.isDocumentChosen">
             if (response.data.errno == 0) {
               console.log("获取成功")
               console.log(response.data.msg)
+
+            
 
             }
             else{
@@ -579,6 +591,8 @@ padding: 4px 0" v-if="this.isDocumentChosen">
                 this.curDocument.permission = 'edit'
               else if(this.curDocument.document_allow_check)
                 this.curDocument.permission = 'check'
+
+              this.selectedPermission = this.curDocument.permission
 
             }
           }).catch(error => {
