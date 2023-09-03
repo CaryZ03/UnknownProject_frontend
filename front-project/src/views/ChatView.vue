@@ -830,7 +830,7 @@ export default {
   },
   methods: {
     async createRedWebSocket() {
-      await this.sleep(2000);
+      await this.sleep(4000);
       const self = this;
       self.departmentList.forEach((element, index) => {
         // console.log("abc11111");
@@ -1515,7 +1515,7 @@ export default {
 
       this.atList.splice(0, this.atList.length);
       this.isAtAll = false;
-      // await self.sleep(1300);
+      await self.sleep(1300);
       self.scrollToBottom();
       // console.log(this.chatMessages)
       console.log("send success")

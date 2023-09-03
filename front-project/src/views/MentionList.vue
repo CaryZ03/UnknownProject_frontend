@@ -104,7 +104,7 @@ export default {
 
         console.log("STORE ID" + store.state.curUserID);
 
-        const currentPath = 'http://localhost:8080'+ window.location.pathname;
+        const currentPath = 'http://unknown.blablablabla.fun'+ window.location.pathname;
         console.log(currentPath);
 
         const jsonString = JSON.stringify({
