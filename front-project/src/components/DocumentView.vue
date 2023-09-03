@@ -181,9 +181,17 @@
                 </el-descriptions-item>
 
               </el-descriptions>
+
       <div style="margin: 16px 0 0;
 padding: 4px 0; max-width: 600px;" v-if="this.isDocumentChosen">
           <span style="float:right">
+
+            <el-button
+                size="mini"
+                type="primary"
+                icon="el-icon-share"
+                @click="generateLink()">
+          </el-button>
           <el-button
                 size="mini"
                 @click="handleEdit()">查看
@@ -211,6 +219,16 @@ padding: 4px 0; max-width: 600px;" v-if="this.isDocumentChosen">
 
 
     </div>
+
+    <div style="margin: -8px 0 0;;
+padding: 4px 0" v-if="this.isDocumentChosen">
+    <p style="color:black;margin: -6px 0 11px;">游客权限</p>
+    <el-select v-model="curDocument.permission" placeholder="请选择权限" @change="uploadPermission">
+      <el-option label="可读" value="check"></el-option>
+      <el-option label="可读可写" value="edit"></el-option>
+      <el-option label="不可见" value="none"></el-option>
+    </el-select>
+    </div>
     </el-main>
   </el-container>
 </el-container>
@@ -224,7 +242,7 @@ padding: 4px 0; max-width: 600px;" v-if="this.isDocumentChosen">
   export default {
     data() {
       return {
-
+        selectedPermission : '不可见',
         templateList:[{
           template_id: 1, 
           template_name: 'hihi',
@@ -271,7 +289,11 @@ padding: 4px 0; max-width: 600px;" v-if="this.isDocumentChosen">
             size: 1, 
             lastChangeTime: '-----',
             editable: '',
-            save_id: ''
+            save_id: '',
+
+            document_allow_check: '',
+            document_allow_edit: '',
+            permission: 'none',
         },
         newDocumentDialogVisible: false,
         newDocument: {
@@ -296,6 +318,55 @@ padding: 4px 0; max-width: 600px;" v-if="this.isDocumentChosen">
       };
     },
     methods: {
+
+      uploadPermission(){
+        //edit check 其他
+        const tmp ={
+          'document_id': this.curDocument.document_id,
+          'permission': this.curDocument.permission,
+        }
+        this.$api.document.post_change_document_permission(tmp).then((response) => {
+            // console.log(tmp)
+            // console.log(response.data)
+            if (response.data.errno == 0) {
+              console.log("获取成功")
+              console.log(response.data.msg)
+
+            }
+            else{
+	              console.log(response.data)
+            }
+          }).catch(error => {
+            alert("获取失败")
+            console.log("error：\n");
+            console.log(error)
+          })
+      },
+
+      generateLink(){
+         //赋值
+         let link ='http://unknown.blablablabla.fun/Tiptap/'+ this.$store.state.curTeam.team_id + '/' + this.project_id + '/' + this.curDocument.document_id
+
+          //复制到剪贴板
+          const el = document.createElement("textarea");
+          el.value = link;
+          document.body.appendChild(el);
+          el.select();
+          document.execCommand("copy");
+          document.body.removeChild(el);
+          this.$message.success("链接已复制到剪贴板");
+
+          this.$alert('链接已生成:\n'+link, '提示', {
+            confirmButtonText: '确定',
+            dangerouslyUseHTMLString: true,
+            callback: action => {
+              // this.$message({
+              //   type: 'info',
+              //   message: `action: ${ action }`
+              // });
+            }
+          }); 
+      },
 
       showTemplateList(){
         const tmp = {
@@ -502,7 +573,10 @@ padding: 4px 0; max-width: 600px;" v-if="this.isDocumentChosen">
               console.log(JSON.parse(response.data.document_info))
 
               this.curDocument = JSON.parse(response.data.document_info)
-              
+              if(this.curDocument.document_allow_edit)
+                this.curDocument.permission = 'edit'
+              else if(this.curDocument.document_allow_check)
+                this.curDocument.permission = 'check'
 
             }
           }).catch(error => {

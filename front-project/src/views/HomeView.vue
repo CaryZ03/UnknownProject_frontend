@@ -151,36 +151,59 @@
         width="50%"
         :modal-append-to-body="false"
       >
-        <el-table
-          :data="teamList"
-          style="width: 100%"
-          @row-click="handleRowClick"
-        >
-          <el-table-column prop="team_id" label="团队ID"></el-table-column>
-          <el-table-column prop="team_name" label="团队名称"></el-table-column>
-          <el-table-column
-            prop="team_description"
-            label="团队描述"
-          ></el-table-column>
-          <el-table-column prop="team_tel" label="联系电话"></el-table-column>
-          <el-table-column prop="team_creator" label="创建者"></el-table-column>
-          <el-table-column label="操作">
-            <template slot-scope="{ row }">
-              <el-button
-                type="danger"
-                icon="el-icon-delete"
-                size="mini"
-                @click="deleteTeam(row)"
-              ></el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-button
-          type="primary"
-          icon="el-icon-plus"
-          @click="showCreateTeamDialog()"
-          >新建团队</el-button
-        >
+        
+
+        <div class="overflow-y-auto pb-1 select-none">
+            <div>
+
+              <!-- <el-col v-for="document in documentTable" :key="document.id" :span="6"></el-col> -->
+              <!-- 切换团队单元格 -->
+              <div style="opacity: 1;" v-for="team in teamList" :key="team.team_id" :span="6" @click="handleRowClick(team)" >
+                <div data-test-id="aside-space-item" class="flex relative items-center justify-between cursor-pointer px-2 rounded text-black animate-hover h-[58px]">
+                  <div class="flex items-center w-10/12">
+                    <span class="mr-2 flex items-center">
+                      <div class="flex items-center">      
+                        <div class="relative">
+                            <!-- 图标 -->
+                            <span class="text-h4 flex flex-shrink-0 select-none 
+                            items-center justify-center rounded uppercase 
+                            leading-none text-black2 w-[34px] h-[34px]" 
+                            style="font-size: 20px; 
+                            background-color: rgb(62, 193, 250);">
+                            {{getInitials(team.team_creator)}}
+                            </span>
+                        </div>
+                      </div>
+                    </span>
+                    <div class="w-full text-ellipsis">
+                      <div data-no-cancel-selected="true" class="text-ellipsis w-full block">{{team.team_creator}}的团队空间</div>
+                      <div class="text-ellipsis text-grey3 text-t4 mt-px w-full">{{team.team_name}}</div>
+                    </div>
+
+                    
+
+                    <!-- <i class="el-icon-check" v-if="team.team_id === currentTeam.team_id"></i> -->
+                    <el-button type="danger" icon="el-icon-close" size="mini" @click="deleteTeam(team)" v-if="isDeleteButtonPressed "></el-button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 新增和删除按钮 -->
+              <div style="opacity: 1;"  :span="6"  >
+                <div data-test-id="aside-space-item" class="flex relative items-center justify-between cursor-pointer px-2 rounded text-black animate-hover h-[58px]">
+                  <div class="flex items-center w-10/12">
+
+                    <!-- 按钮 -->
+                    <el-button type="primary" icon="el-icon-plus"  @click="showCreateTeamDialog()" circle></el-button>
+                    <el-button type="danger" icon="el-icon-delete" @click="isDeleteButtonPressed = !isDeleteButtonPressed" circle></el-button>
+                      
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
       </el-dialog>
 
       <!-- 新建团队界面 -->
@@ -337,6 +360,7 @@ export default {
   props: {},
   data() {
     return {
+      isDeleteButtonPressed:false,
       user: {
         email: "",
         password: "",
@@ -391,6 +415,12 @@ export default {
   watch: {},
   computed: {},
   methods: {
+
+    getInitials(name) {
+      const splitName = name.split(" ");
+      const initials = splitName.map((part) => part[0]).join("");
+      return initials.toUpperCase();
+    },
     deleteTeam(row) {
       event.stopPropagation(); // 阻止冒泡事件
       this.$confirm("确定要删除团队吗?", "提示", {
@@ -844,10 +874,11 @@ export default {
       this.wrapper.classList.remove("active");
     });
 
-    this.btnLogin.addEventListener("click", () => {
-      console.log("click Login ???");
-      this.wrapper.classList.add("active-popup");
-    });
+    // this.btnLogin.addEventListener("click", () => {
+    //   console.log("click Login ???");
+    //   // this.wrapper.classList.add("active-popup");
+
+    // });
 
     this.iconClose.addEventListener("click", () => {
       this.wrapper.classList.remove("active-popup");
@@ -865,6 +896,8 @@ export default {
   },
 };
 </script>
+
+
 <style  scoped>
 * {
   margin: 0;
@@ -1316,4 +1349,284 @@ body {
 
 <!-- hide scrollbar -->
 <style scoped>
+</style>
+
+<style scoped>
+/* 上方展开栏的专属样式*/
+body {
+  background: #eee;
+  /* This is just a helper in case the element has a transparent background or white colors. */
+}
+
+/* * {
+  outline: 0;
+  transition: background-color .1s ease-out;
+}
+
+*, ::after, ::before {
+  border-style: solid;
+  border-width: 0;
+  box-sizing: border-box;
+} */
+
+.inherited-styles-for-exported-element2 {
+  font-family: "PingFang SC", "Microsoft YaHei", ui-sans-serif,
+   -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, 
+   "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+  tab-size: 4;
+  width: 100%;
+}
+
+svg {
+  vertical-align: middle;
+}
+
+*, ::after, ::before {
+  -webkit-font-smoothing: subpixel-antialiased;
+  border-color: #e5e5e5;
+}
+
+::selection {
+  background: rgba(24, 160, 251, .12);
+}
+
+:disabled {
+  cursor: default;
+}
+
+.text-t2, .text-t4 {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.text-t4 {
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.text-h4 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.text-ellipsis {
+  overflow: hidden;
+  text-wrap: nowrap;
+  white-space-collapse: collapse;
+}
+
+.animate-hover {
+  transition-duration: .1s;
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(.4, 0, .2, 1);
+  user-select: none;
+}
+
+.next-modal {
+  background-clip: padding-box;
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: rgba(0, 0, 0, .03) 0 0 0 1px, rgba(0, 0, 0, .1) 0 3px 6px, rgba(0, 0, 0, .1) 0 12px 20px;
+  color: #000;
+}
+
+.relative {
+  position: relative;
+}
+
+.mx-2 {
+  margin-left: .5rem;
+  margin-right: .5rem;
+}
+
+.mr-1 {
+  margin-right: .25rem;
+}
+
+.mr-2 {
+  margin-right: .5rem;
+}
+
+.mt-px {
+  margin-top: 1px;
+}
+
+.block {
+  display: block;
+}
+
+.inline {
+  display: inline;
+}
+
+.flex {
+  display: flex;
+}
+
+.h-full {
+  height: 100%;
+}
+
+.h-9 {
+  height: 2.25rem;
+}
+
+.h-5 {
+  height: 1.25rem;
+}
+
+.h-10 {
+  height: 2.5rem;
+}
+
+.h-\[34px\] {
+  height: 34px;
+}
+
+.h-\[58px\] {
+  height: 58px;
+}
+
+.h-\[1em\] {
+  height: 1em;
+}
+
+.max-h-\[70vh\] {
+  max-height: 70vh;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.w-5 {
+  width: 1.25rem;
+}
+
+.w-10\/12 {
+  width: 83.3333%;
+}
+
+.w-64 {
+  width: 16rem;
+}
+
+.w-\[34px\] {
+  width: 34px;
+}
+
+.w-\[1em\] {
+  width: 1em;
+}
+
+.flex-shrink-0 {
+  flex-shrink: 0;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-\[grab\] {
+  cursor: grab;
+}
+
+.select-none {
+  user-select: none;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.overflow-y-auto {
+  overflow-y: auto;
+}
+
+.text-ellipsis {
+  text-overflow: ellipsis;
+}
+
+.rounded {
+  border-radius: .25rem;
+}
+
+.border-t {
+  border-top-width: 1px;
+}
+
+.border-grey6 {
+  border-color: #e5e5e5;
+}
+
+.fill-current {
+  fill: currentcolor;
+}
+
+.p-2 {
+  padding: .5rem;
+}
+
+.px-2 {
+  padding-left: .5rem;
+  padding-right: .5rem;
+}
+
+.pb-1 {
+  padding-bottom: .25rem;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+.leading-none {
+  line-height: 1;
+}
+
+.text-grey4 {
+  color: #bdbdbd;
+}
+
+.text-grey3 {
+  color: #828282;
+}
+
+.text-black, .text-black2 {
+  color: #000;
+}
+
+::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: transparent;
+}
+
+.animate-hover:hover {
+  background-color: rgba(0, 0, 0, .06);
+}
+
+.overflow-y-auto:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, .2);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, .3) !important;
+}
 </style>

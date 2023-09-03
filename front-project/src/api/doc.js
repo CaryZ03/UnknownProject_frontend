@@ -64,3 +64,12 @@ export async function post_search_save(data) {
         data: data
     })
 }
+
+// search_doc
+export async function post_search_document(data) {
+    return request({
+        method: 'POST',
+        url:  `/document/search_document`,
+        data: data
+    })
+}

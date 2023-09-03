@@ -45,7 +45,7 @@ export default {
   methods: {
     sendLink(){
 
-      const fullPath = this.link;
+      const fullPath =  'http://' + "unknown.blablablabla.fun"+ this.link;
       const textArea = document.createElement('textarea');
       textArea.value = fullPath;
       document.body.appendChild(textArea);
